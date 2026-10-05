@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType, storage } from '../firebase';
@@ -129,11 +129,22 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   // before switching to the operator's own workspace.
   const authReady = !authLoading && !!currentUser && !!userProfile;
   const isOperator = authReady && userProfile?.role === 'operator';
-  const currentSettingsRef = authReady && currentUser
-    ? (isOperator
-        ? doc(db, 'union_settings', currentUser.uid)
-        : doc(db, 'settings', 'unionInfo'))
-    : null;
+
+  // Keep the Firestore document reference stable. Recreating doc() on every
+  // render causes the settings listener to unsubscribe/resubscribe on each
+  // keystroke, which can reset the input while the operator is typing.
+  const currentSettingsRef = useMemo(
+    () => (
+      authReady && currentUser
+        ? (
+            isOperator
+              ? doc(db, 'union_settings', currentUser.uid)
+              : doc(db, 'settings', 'unionInfo')
+          )
+        : null
+    ),
+    [authReady, isOperator, currentUser?.uid]
+  );
 
   const storageOwnerId = isOperator && currentUser ? currentUser.uid : 'global';
 
