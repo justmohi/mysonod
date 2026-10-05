@@ -355,6 +355,29 @@ select option {
     print-color-adjust: exact !important;
   }
 
+  /* Prevent non-selected print sections from consuming an extra physical sheet.
+     visibility:hidden still keeps the element in layout, so explicitly remove it from print flow. */
+  body[data-print-target="certificate"] #application-print-area,
+  body[data-print-target="certificate"] #application-print-area *,
+  body:not([data-print-target="application"]):not([data-print-target="both"]) #application-print-area,
+  body:not([data-print-target="application"]):not([data-print-target="both"]) #application-print-area * {
+    display: none !important;
+  }
+
+  body[data-print-target="application"] #certificate-print-area,
+  body[data-print-target="application"] #certificate-print-area * {
+    display: none !important;
+  }
+
+  body[data-print-target="certificate"] #certificate-print-area,
+  body:not([data-print-target="application"]):not([data-print-target="both"]) #certificate-print-area {
+    display: flex !important;
+  }
+
+  body[data-print-target="application"] #application-print-area {
+    display: flex !important;
+  }
+
   /* Default or Certificate-Only target */
   body:not([data-print-target="application"]):not([data-print-target="both"]) #certificate-print-area,
   body:not([data-print-target="application"]):not([data-print-target="both"]) #certificate-print-area *,
