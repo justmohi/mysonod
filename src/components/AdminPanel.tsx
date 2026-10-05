@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, PRIMARY_ADMIN_EMAIL } from '../context/AuthContext';
 import { db, handleFirestoreError, OperationType, createOperatorAuthAccount } from '../firebase';
 import { 
   collection, 
