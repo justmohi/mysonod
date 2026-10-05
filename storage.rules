@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isPrimaryAdmin() {
+      return signedIn() &&
+        request.auth.token.email == 'mohistudio95@gmail.com';
+    }
+
+    match /union_settings/{operatorId}/{fileName} {
+      // Union branding is safe to serve from Firebase Storage once its URL is used
+      // by the certificate portal. Upload/delete is restricted to the same UID or
+      // the primary admin. All uploads are images and <= 5 MB.
+      allow read: if signedIn() &&
+        (request.auth.uid == operatorId || isPrimaryAdmin());
+
+      allow write: if signedIn() &&
+        (request.auth.uid == operatorId || isPrimaryAdmin()) &&
+        request.resource.size <= 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
