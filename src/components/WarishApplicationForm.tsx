@@ -220,7 +220,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
       const finalApplicantNameEn = '';
       const finalGuardianName = guardianName.trim() || '-';
       const finalMotherName = motherName.trim() || '-';
-      const finalMobile = applicantMobile.trim() || '-';
+      const finalMobile = '';
       const finalApplicantRelation = applicantRelation.trim() || '-';
       const finalDeceasedIdNumber = deceasedIdNumber.trim() || '-';
       const finalDeceasedDate = deceasedDate || '-';
@@ -756,17 +756,6 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
-                আবেদনকারীর মোবাইল নম্বর
-              </label>
-              <input
-                type="text"
-                value={applicantMobile}
-                onChange={(e) => setApplicantMobile(e.target.value)}
-                placeholder="০১XXXXXXXXX (ঐচ্ছিক)"
-                className="w-full bg-[#E0FFFF] border border-cyan-800/40 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-md px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 transition font-mono"
-              />
             </div>
 
             <div>
