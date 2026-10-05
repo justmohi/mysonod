@@ -771,7 +771,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   </div>
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'এনআইডি / জন্মনিবন্ধন: '}</span>
-                                    <strong className="font-mono text-slate-900">{toBengaliNumber(application.ownerNidOrBirth || application.nidOrBirthReg || '—')}</strong>
+                                    <strong className="font-mono text-slate-900">{toBengaliNumber(application.ownerNidOrBirth || application.nidOrBirthReg || '')}</strong>
                                   </div>
                                   <div className="sm:col-span-2">
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Residential Address: ' : 'স্থায়ী ঠিকানা: '}</span>
@@ -802,7 +802,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   </div>
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'জাতীয় পরিচয়পত্র: '}</span>
-                                    <strong className="font-mono text-slate-900">{toBengaliNumber(application.nidOrBirthReg || '—')}</strong>
+                                    <strong className="font-mono text-slate-900">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
                                   </div>
                                   <div className="sm:col-span-2">
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Address: ' : 'ঠিকানা: '}</span>
@@ -855,10 +855,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}</span>
                                   <strong className="text-slate-900">{application.dob ? formatBengaliDate(application.dob) : '—'}</strong>
-                                </div>
-                                <div>
-                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Occupation: ' : 'পেশা: '}</span>
-                                  <strong className="text-slate-900">{application.occupation || '—'}</strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Tracking ID: ' : 'আবেদন ট্র্যাকিং নং: '}</span>
