@@ -692,7 +692,25 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <>
+      {editingExistingApp && (
+        <EditCertificateModal
+          application={editingExistingApp}
+          onClose={() => setEditingExistingApp(null)}
+          onSaveSuccess={(updated) => {
+            setEditingExistingApp(null);
+            setSubmittedApp(updated);
+          }}
+          onViewCertificate={(updated) => {
+            setEditingExistingApp(null);
+            setSubmittedApp(updated);
+            if (updated.status === 'Approved') {
+              onViewCertificate(updated);
+            }
+          }}
+        />
+      )}
+      <div className="max-w-4xl mx-auto space-y-6">
       {/* Insufficient Balance Alert Modal */}
       {insufficientBalanceAlert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
@@ -777,6 +795,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             </div>
 
             <div className="flex gap-3 justify-center">
+              {submittedApp.status === 'Pending' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingExistingApp(submittedApp);
+                    setSubmittedApp(null);
+                  }}
+                  className="cursor-pointer py-3 px-5 text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl transition shadow-sm flex items-center gap-2"
+                >
+                  <Edit3 className="w-5 h-5" />
+                  <span>তথ্য ভুল? এখনই সম্পাদনা করুন</span>
+                </button>
+              )}
               {submittedApp.status === 'Approved' && (
                 <button
                   type="button"
@@ -2099,6 +2130,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         </div>
       </form>
       )}
-    </div>
+      </div>
+    </>
   );
 };
