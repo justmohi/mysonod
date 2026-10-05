@@ -464,7 +464,7 @@ export const UnionSettingsManager: React.FC = () => {
                 লোগো ও জলছাপ সরাসরি আপলোড (Direct Logo & Watermark File Upload)
               </h3>
               <p className="text-xs text-slate-500">
-                কম্পিউটার বা ডিভাইস থেকে সরাসরি ইমেজ ফাইল আপলোড করুন (PNG, JPG, SVG, WebP)। সিলেক্ট করলেই সাথে সাথে ব্রাউজারে সংরক্ষিত হবে এবং সকল সনদপত্রে লাইভ যুক্ত হবে।
+                কম্পিউটার বা ডিভাইস থেকে সরাসরি ইমেজ ফাইল আপলোড করুন (PNG, JPG, SVG, WebP)। আপলোডের পর এটি আপনার ইউনিয়ন workspace-এর সকল সনদপত্রে লাইভ যুক্ত হবে।
               </p>
             </div>
           </div>
@@ -529,9 +529,7 @@ export const UnionSettingsManager: React.FC = () => {
                   </button>
                 </div>
 
-                <span className="text-[10px] sm:text-[11px] text-slate-500 block">
-                  Firebase Storage-এ সংরক্ষিত হবে। <strong>সর্বোচ্চ ৫ MB</strong> • PNG, JPG/JPEG, WebP, SVG।
-                </span>
+
               </div>
             </div>
 
@@ -594,9 +592,7 @@ export const UnionSettingsManager: React.FC = () => {
                   </button>
                 </div>
 
-                <span className="text-[10px] sm:text-[11px] text-slate-500 block">
-                  Firebase Storage-এ সংরক্ষিত হবে। <strong>সর্বোচ্চ ৫ MB</strong> • PNG, JPG/JPEG, WebP, SVG।
-                </span>
+
               </div>
             </div>
 
@@ -659,9 +655,7 @@ export const UnionSettingsManager: React.FC = () => {
                   </button>
                 </div>
 
-                <span className="text-[10px] sm:text-[11px] text-slate-500 block">
-                  Firebase Storage-এ সংরক্ষিত হবে। <strong>সর্বোচ্চ ৫ MB</strong> • PNG, JPG/JPEG, WebP, SVG।
-                </span>
+
               </div>
             </div>
           </div>
