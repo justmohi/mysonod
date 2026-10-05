@@ -941,8 +941,14 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
     : '';
   const fatherNameBn = (application as any).fatherNameBn || (application.fatherName && application.fatherName !== '-' ? application.fatherName : '');
   const motherNameBn = (application as any).motherNameBn || (application.motherName && application.motherName !== '-' ? application.motherName : '—');
-  const guardianUsesHusband = !fatherNameBn && !!application.spouseName;
-  const guardianNameBn = fatherNameBn || application.spouseName || '—';
+  const guardianUsesHusband = application.guardianType === 'husband'
+    ? true
+    : application.guardianType === 'father'
+      ? false
+      : !fatherNameBn && !!application.spouseName;
+  const guardianNameBn = guardianUsesHusband
+    ? (application.spouseName || '—')
+    : (fatherNameBn || '—');
   const guardianLabelBn = guardianUsesHusband ? 'স্বামী' : 'পিতা';
   const familyGuardianUsesHusband = application.familyGuardianType === 'husband'
     ? true
