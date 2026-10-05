@@ -37,6 +37,7 @@ interface AuthContextType {
   isStaff: boolean;
   isPrimaryAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginAdmin: (email: string, password: string) => Promise<void>;
   loginOperator: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string, phone?: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
@@ -124,6 +125,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await signInWithEmailAndPassword(auth, email.trim(), password);
   };
 
+  const loginAdmin = async (email: string, password: string) => {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!isAuthorizedAdminEmail(normalizedEmail)) {
+      throw new Error('এই লগইনটি শুধু Primary Admin-এর জন্য।');
+    }
+
+    await signInWithEmailAndPassword(auth, normalizedEmail, password);
+  };
+
   const loginOperator = async (email: string, password: string) => {
     const normalizedEmail = email.trim().toLowerCase();
     const credential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
@@ -202,6 +213,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isStaff,
       isPrimaryAdmin,
       login,
+      loginAdmin,
       loginOperator,
       signup,
       loginWithGoogle,
