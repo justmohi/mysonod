@@ -122,12 +122,18 @@ async function optimizeLogoFile(file: File): Promise<File> {
 }
 
 export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, loading: authLoading } = useAuth();
 
-  const isOperator = !!currentUser && userProfile?.role === 'operator';
-  const currentSettingsRef = isOperator
-    ? doc(db, 'union_settings', currentUser!.uid)
-    : doc(db, 'settings', 'unionInfo');
+  // Wait until AuthContext has resolved the signed-in user's Firestore role.
+  // Otherwise the first render can subscribe to the global settings document
+  // before switching to the operator's own workspace.
+  const authReady = !authLoading && !!currentUser && !!userProfile;
+  const isOperator = authReady && userProfile?.role === 'operator';
+  const currentSettingsRef = authReady && currentUser
+    ? (isOperator
+        ? doc(db, 'union_settings', currentUser.uid)
+        : doc(db, 'settings', 'unionInfo'))
+    : null;
 
   const storageOwnerId = isOperator && currentUser ? currentUser.uid : 'global';
 
@@ -135,6 +141,18 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!authReady || !currentSettingsRef) {
+      setLoading(authLoading || !!currentUser);
+
+      if (authReady && userProfile?.role === 'operator') {
+        setSettings(EMPTY_OPERATOR_UNION_SETTINGS);
+      } else if (!currentUser) {
+        setSettings(DEFAULT_UNION_SETTINGS);
+      }
+
+      return () => {};
+    }
+
     setLoading(true);
 
     const unsubscribe = onSnapshot(
@@ -178,16 +196,22 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       },
       (error) => {
         console.warn('Union settings subscription error:', error.message);
+        setSettings(
+          isOperator ? EMPTY_OPERATOR_UNION_SETTINGS : DEFAULT_UNION_SETTINGS
+        );
         setLoading(false);
       }
     );
 
     return () => unsubscribe();
   }, [
+    authReady,
+    authLoading,
     isOperator,
     currentUser?.uid,
     currentUser?.email,
     userProfile?.name,
+    userProfile?.role,
     currentSettingsRef
   ]);
 
@@ -204,10 +228,12 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         (isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'এডমিন কর্মকর্তা')
     };
 
-    setSettings(updatedPayload);
-
     try {
-      await setDoc(currentSettingsRef, updatedPayload, { merge: true });
+      await setDoc(currentSettingsRef!, updatedPayload, { merge: true });
+      // Reflect changes locally only after Firestore confirms the write.
+      // This prevents unsaved values from looking successful and then disappearing
+      // after a page refresh.
+      setSettings(updatedPayload);
     } catch (error) {
       handleFirestoreError(
         error,
