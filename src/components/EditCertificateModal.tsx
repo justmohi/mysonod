@@ -186,6 +186,9 @@ const EDITABLE_FIELDS: EditableField[] = [
 
 const readValue = (app: CertificateApplication, key: string) => {
   const value = (app as unknown as Record<string, unknown>)[key];
+  if (key === 'attachmentUrls' && Array.isArray(value)) {
+    return value.join('\n');
+  }
   return value ?? '';
 };
 
