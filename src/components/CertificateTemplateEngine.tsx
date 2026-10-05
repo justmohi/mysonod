@@ -936,7 +936,9 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const nameBn = application.applicantNameBn && application.applicantNameBn !== '-' 
     ? application.applicantNameBn 
     : (application.userName && application.userName !== '-' ? application.userName : '—');
-  const nidBn = toBengaliNumber((application as any).nidNumber || (application.nidOrBirthReg && application.nidOrBirthReg !== '-' ? application.nidOrBirthReg : '—'));
+  const nidBn = application.nidOrBirthReg && application.nidOrBirthReg !== '-'
+    ? toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg)
+    : '';
   const fatherNameBn = (application as any).fatherNameBn || (application.fatherName && application.fatherName !== '-' ? application.fatherName : '');
   const motherNameBn = (application as any).motherNameBn || (application.motherName && application.motherName !== '-' ? application.motherName : '—');
   const guardianUsesHusband = !fatherNameBn && !!application.spouseName;
@@ -960,7 +962,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const deceasedIdTypeBn = application.deceasedIdType && application.deceasedIdType !== '-' ? application.deceasedIdType : 'পরিচয়পত্র';
   const deceasedIdNumberBn = application.deceasedIdNumber && application.deceasedIdNumber !== '-'
     ? toBengaliNumber(application.deceasedIdNumber)
-    : (application.nidOrBirthReg && application.nidOrBirthReg !== '-' && application.nidOrBirthReg !== application.trackingId ? toBengaliNumber(application.nidOrBirthReg) : '—');
+    : (application.nidOrBirthReg && application.nidOrBirthReg !== '-' && application.nidOrBirthReg !== application.trackingId ? toBengaliNumber(application.nidOrBirthReg) : '');
   const deathDateBn = application.deceasedDate && application.deceasedDate !== '-' 
     ? formatBengaliDate(application.deceasedDate) 
     : (application.deathDate ? formatBengaliDate(application.deathDate) : '');
