@@ -660,12 +660,11 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* এনআইডি/জন্ম নিবন্ধন */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                এনআইডি / জন্ম নিবন্ধন নম্বর <span className="text-red-500 font-bold">*</span>
+                এনআইডি / জন্ম নিবন্ধন নম্বর
               </label>
               <input
                 type="text"
-                required
-                value={ownerNidOrBirth}
+                                value={ownerNidOrBirth}
                 onChange={(e) => setOwnerNidOrBirth(e.target.value)}
                 placeholder="১০, ১৩ বা ১৭ ডিজিটের এনআইডি বা জন্ম নিবন্ধন *"
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-mono transition"
@@ -682,21 +681,6 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 value={tinNumber}
                 onChange={(e) => setTinNumber(e.target.value)}
                 placeholder="১২ ডিজিটের ই-টিন নম্বর"
-                className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-mono transition"
-              />
-            </div>
-
-            {/* মোবাইল নম্বর */}
-            <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
-                মোবাইল নম্বর <span className="text-red-500 font-bold">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={ownerMobile}
-                onChange={(e) => setOwnerMobile(e.target.value)}
-                placeholder="০১XXXXXXXXX *"
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-mono transition"
               />
             </div>
