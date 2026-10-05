@@ -756,8 +756,6 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
               />
             </div>
 
-            </div>
-
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
                 মৃত ব্যক্তির সাথে আবেদনকারীর সম্পর্ক
