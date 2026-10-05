@@ -71,7 +71,6 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'mobile', label: 'মোবাইল নম্বর', section: 'personal' },
   { key: 'email', label: 'ইমেইল', type: 'email', section: 'personal' },
   { key: 'dob', label: 'জন্ম তারিখ', type: 'date', section: 'personal' },
-  { key: 'occupation', label: 'পেশা', section: 'personal' },
 
   // Present address
   { key: 'presentVillage', label: 'বর্তমান গ্রাম / মহল্লা', section: 'present' },
@@ -243,7 +242,6 @@ const COMMON_EDIT_KEYS = [
   'nidOrBirthReg',
   'email',
   'dob',
-  'occupation'
 ];
 
 const PRESENT_EDIT_KEYS = [
