@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export const UnionSettingsManager: React.FC = () => {
-  const { settings, updateSettings, resetToDefault } = useUnionSettings();
+  const { settings, updateSettings, resetToDefault, uploadLogo, removeLogo } = useUnionSettings();
   const { userProfile, isOperator } = useAuth();
 
   const [formState, setFormState] = useState<UnionSettings>(settings);
@@ -44,57 +44,41 @@ export const UnionSettingsManager: React.FC = () => {
     setErrorMessage(null);
   };
 
-  // Convert uploaded image file to Base64 and persist in localStorage + state + context
-  const handleFileUpload = (
+  // Upload custom union branding directly to Firebase Cloud Storage.
+  const handleFileUpload = async (
     field: 'govtLogoUrl' | 'unionLogoUrl' | 'watermarkLogoUrl',
     file: File | null
   ) => {
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage('ফাইলের সাইজ ৫ মেগাবাইটের কম হতে হবে');
-      return;
+    try {
+      setErrorMessage(null);
+      setIsSaving(true);
+      const url = await uploadLogo(field, file, userProfile?.name || 'ইউনিয়ন উদ্যোক্তা');
+      setFormState(prev => ({ ...prev, [field]: url }));
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'ফাইলটি Firebase Storage-এ সংরক্ষণ করা যায়নি');
+    } finally {
+      setIsSaving(false);
     }
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64Data = e.target?.result as string;
-      if (!base64Data) return;
-
-      setFormState(prev => ({
-        ...prev,
-        [field]: base64Data
-      }));
-
-      try {
-        await updateSettings({ [field]: base64Data }, userProfile?.name || 'ইউনিয়ন উদ্যোক্তা');
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 3000);
-      } catch (err: any) {
-        setErrorMessage(err.message || 'লোগো সংরক্ষণ করা যায়নি');
-      }
-    };
-
-    reader.onerror = () => {
-      setErrorMessage('ইমেজ ফাইলটি পড়তে সমস্যা হয়েছে। দয়া করে অন্য ফাইল নির্বাচন করুন।');
-    };
-
-    reader.readAsDataURL(file);
   };
 
-  // Reset uploaded logo back to the default official/vector fallback
   const handleResetLogo = async (
     field: 'govtLogoUrl' | 'unionLogoUrl' | 'watermarkLogoUrl'
   ) => {
-    setFormState(prev => ({
-      ...prev,
-      [field]: ''
-    }));
-
     try {
-      await updateSettings({ [field]: '' }, userProfile?.name || 'ইউনিয়ন উদ্যোক্তা');
+      setErrorMessage(null);
+      setIsSaving(true);
+      await removeLogo(field, userProfile?.name || 'ইউনিয়ন উদ্যোক্তা');
+      setFormState(prev => ({ ...prev, [field]: '' }));
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
-      setErrorMessage(err.message || 'লোগো রিসেট করা যায়নি');
+      setErrorMessage(err.message || 'লোগো রিমুভ করা যায়নি');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -546,7 +530,7 @@ export const UnionSettingsManager: React.FC = () => {
                 </div>
 
                 <span className="text-[10px] sm:text-[11px] text-slate-500 block">
-                  সনদপত্রের উপরের বাম পাশে বাংলাদেশ সরকারের অফিশিয়াল গোল সিল হিসেবে প্রদর্শিত হবে। PNG, JPG, SVG, WebP সমর্থিত।
+                  Firebase Storage-এ সংরক্ষিত হবে। <strong>সর্বোচ্চ ৫ MB</strong> • PNG, JPG/JPEG, WebP, SVG।
                 </span>
               </div>
             </div>
@@ -611,7 +595,7 @@ export const UnionSettingsManager: React.FC = () => {
                 </div>
 
                 <span className="text-[10px] sm:text-[11px] text-slate-500 block">
-                  সনদপত্রের উপরের ডান পাশে ইউনিয়ন পরিষদের অফিশিয়াল সিল হিসেবে প্রদর্শিত হবে। PNG, JPG, SVG, WebP সমর্থিত।
+                  Firebase Storage-এ সংরক্ষিত হবে। <strong>সর্বোচ্চ ৫ MB</strong> • PNG, JPG/JPEG, WebP, SVG।
                 </span>
               </div>
             </div>
@@ -676,7 +660,7 @@ export const UnionSettingsManager: React.FC = () => {
                 </div>
 
                 <span className="text-[10px] sm:text-[11px] text-slate-500 block">
-                  সনদপত্রের মাঝখানে ব্যাকগ্রাউন্ড জলছাপ (opacity 15%) হিসেবে স্থাপিত হবে। PNG, JPG, SVG, WebP সমর্থিত।
+                  Firebase Storage-এ সংরক্ষিত হবে। <strong>সর্বোচ্চ ৫ MB</strong> • PNG, JPG/JPEG, WebP, SVG।
                 </span>
               </div>
             </div>
