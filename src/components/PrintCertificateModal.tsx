@@ -271,8 +271,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const permanentVillageEn = application.permanentVillageEn || application.permanentVillage || application.villageEn || application.village || '';
   const permanentWardEn = application.permanentWard || application.wardNo || '01';
   const permanentPostEn = application.permanentPostEn || application.permanentPost || application.postOfficeEn || settings.postOfficeEn || settings.postOffice || 'Halsa-7031';
-  const permanentUpazilaEn = application.permanentUpazilaEn || settings.upazilaEn || settings.upazila || 'Mirpur';
-  const permanentDistrictEn = application.permanentDistrictEn || settings.districtEn || settings.district || 'Kushtia';
+  const permanentUpazilaEn = application.permanentUpazilaEn || settings.upazilaEn || settings.upazila || upazilaFallbackEn;
+  const permanentDistrictEn = application.permanentDistrictEn || settings.districtEn || settings.district || districtFallbackEn;
 
   // Dynamic fields for Bangladeshi legal / Sadhu Bhasha format
   const nameBn = application.applicantNameBn;
@@ -282,12 +282,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const fatherNameBn = (application as any).fatherNameBn || application.fatherName || '—';
   const motherNameBn = (application as any).motherNameBn || application.motherName || '—';
   const guardianNameBn = application.spouseName || (application as any).fatherNameBn || application.fatherName || '—';
-  const villageBn = presentVillage || application.village || 'আমবাড়ীয়া';
+  const villageBn = presentVillage || application.village || '—';
   const wardNoBn = toBengaliNumber(presentWard || application.wardNo || '০১');
-  const postOfficeBn = presentPostOffice || settings.postOffice || 'হালসা-৭০৩১';
-  const unionNameBn = settings.unionName || 'আমবাড়ীয়া ইউনিয়ন পরিষদ';
-  const upazilaBn = presentUpazila || settings.upazila || 'মিরপুর';
-  const districtBn = presentDistrict || settings.district || 'কুষ্টিয়া';
+  const postOfficeBn = presentPostOffice || settings.postOffice || postOfficeFallbackBn;
+  const unionNameBn = settings.unionName || unionNameFallbackBn;
+  const upazilaBn = presentUpazila || settings.upazila || upazilaFallbackBn;
+  const districtBn = presentDistrict || settings.district || districtFallbackBn;
 
   const deceasedNameBn = application.deceasedPersonName || application.deathPersonName || (application.applicantNameBn && application.applicantNameBn !== '-' ? application.applicantNameBn : '—');
   const deceasedGuardianTypeBn = application.deceasedFatherOrHusbandType === 'husband' ? 'স্বামী' : 'পিতা';
@@ -967,7 +967,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
                       </div>
                       <div className="text-right">
-                        <div>{settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ'}</div>
+                        <div>{settings.unionName || unionNameFallbackBn}</div>
                       </div>
                     </div>
 
@@ -1084,10 +1084,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           GOVERNMENT OF THE PEOPLE'S REPUBLIC OF BANGLADESH
                         </h3>
                         <h1 className={`${isUltraCompactTable ? 'text-base sm:text-lg mt-0 leading-tight' : (isTableCertificate ? 'text-lg sm:text-xl md:text-2xl mt-0' : 'text-xl sm:text-2xl md:text-3xl mt-0.5')} font-extrabold text-[#0d5c3a] tracking-tight leading-tight`}>
-                          {settings.unionNameEn || settings.unionName || '12 NO. AMBARIYA UNION PARISHAD'}
+                          {settings.unionNameEn || settings.unionName || unionNameFallbackEn}
                         </h1>
                         <p className={`${isUltraCompactTable ? 'text-[9.5px] mt-0 leading-tight' : (isTableCertificate ? 'text-[10.5px] sm:text-xs mt-0.5' : 'text-xs sm:text-sm mt-1')} font-semibold text-slate-800`}>
-                          Post Office: {settings.postOfficeEn || settings.postOffice || 'Halsa-7031'}, Upazila: {settings.upazilaEn || settings.upazila || 'Mirpur'}, District: {settings.districtEn || settings.district || 'Kushtia'}.
+                          Post Office: {settings.postOfficeEn || settings.postOffice || postOfficeFallbackEn}, Upazila: {settings.upazilaEn || settings.upazila || upazilaFallbackEn}, District: {settings.districtEn || settings.district || districtFallbackEn}.
                         </p>
                         <div className={`flex flex-wrap items-center justify-center gap-x-2.5 gap-y-0.5 ${isUltraCompactTable ? 'mt-0 text-[9px]' : (isTableCertificate ? 'mt-0.5 text-[10px]' : 'mt-1 text-[11px]')} font-medium text-slate-700`}>
                           <span>Chairman: <strong className="text-emerald-950 font-bold">{settings.chairmanNameEn || settings.chairmanName || chairmanFallbackEn}</strong></span>
@@ -1106,7 +1106,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           {settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ'}
                         </h1>
                         <p className={`${isUltraCompactTable ? 'text-[9.5px] mt-0 leading-tight' : (isTableCertificate ? 'text-[10.5px] sm:text-xs mt-0.5' : 'text-xs sm:text-sm mt-1')} font-semibold text-slate-800`}>
-                          ডাকঘর: {settings.postOffice || 'হালসা-৭০৩১'}, উপজেলা: {settings.upazila || 'মিরপুর'}, জেলা: {settings.district || 'কুষ্টিয়া'}।
+                          ডাকঘর: {settings.postOffice || postOfficeFallbackBn}, উপজেলা: {settings.upazila || upazilaFallbackBn}, জেলা: {settings.district || districtFallbackBn}।
                         </p>
                         <div className={`flex flex-wrap items-center justify-center gap-x-2.5 gap-y-0.5 ${isUltraCompactTable ? 'mt-0 text-[9px]' : (isTableCertificate ? 'mt-0.5 text-[10px]' : 'mt-1 text-[11px]')} font-medium text-slate-700`}>
                           <span>চেয়ারম্যান: <strong className="text-emerald-950 font-bold">{settings.chairmanName || chairmanFallbackBn}</strong></span>
