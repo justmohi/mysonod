@@ -17,6 +17,24 @@ interface UnionSettingsContextType {
   removeLogo: (field: LogoField, updatedByName?: string) => Promise<void>;
 }
 
+const EMPTY_OPERATOR_UNION_SETTINGS: UnionSettings = {
+  unionName: '',
+  unionNameEn: '',
+  postOffice: '',
+  postOfficeEn: '',
+  upazila: '',
+  upazilaEn: '',
+  district: '',
+  districtEn: '',
+  chairmanName: '',
+  chairmanNameEn: '',
+  mobileNumber: '',
+  officialEmail: '',
+  govtLogoUrl: '',
+  unionLogoUrl: '',
+  watermarkLogoUrl: ''
+};
+
 const UnionSettingsContext = createContext<UnionSettingsContextType>({
   settings: DEFAULT_UNION_SETTINGS,
   loading: false,
@@ -124,24 +142,36 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data() as Partial<UnionSettings>;
+          const baseSettings = isOperator
+            ? EMPTY_OPERATOR_UNION_SETTINGS
+            : DEFAULT_UNION_SETTINGS;
+
           setSettings({
-            ...DEFAULT_UNION_SETTINGS,
+            ...baseSettings,
             ...data
           });
         } else {
-          const seeded: UnionSettings = {
-            ...DEFAULT_UNION_SETTINGS,
-            updatedAt: new Date().toISOString(),
-            updatedBy: isOperator
-              ? (userProfile?.name || currentUser?.email || 'ইউনিয়ন উদ্যোক্তা')
-              : 'এডমিন কর্মকর্তা'
-          };
+          // A newly-created operator must configure their own union first.
+          // Do not seed the default Ambariya values into their workspace.
+          if (isOperator) {
+            setSettings({
+              ...EMPTY_OPERATOR_UNION_SETTINGS,
+              updatedAt: undefined,
+              updatedBy: undefined
+            });
+          } else {
+            const seeded: UnionSettings = {
+              ...DEFAULT_UNION_SETTINGS,
+              updatedAt: new Date().toISOString(),
+              updatedBy: 'এডমিন কর্মকর্তা'
+            };
 
-          setSettings(seeded);
+            setSettings(seeded);
 
-          setDoc(currentSettingsRef, seeded, { merge: true }).catch((error) => {
-            console.warn('Could not seed union settings:', error);
-          });
+            setDoc(currentSettingsRef, seeded, { merge: true }).catch((error) => {
+              console.warn('Could not seed union settings:', error);
+            });
+          }
         }
 
         setLoading(false);
@@ -271,12 +301,14 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     ]);
 
     await updateSettings(
-      {
-        ...DEFAULT_UNION_SETTINGS,
-        govtLogoUrl: '',
-        unionLogoUrl: '',
-        watermarkLogoUrl: ''
-      },
+      isOperator
+        ? { ...EMPTY_OPERATOR_UNION_SETTINGS }
+        : {
+            ...DEFAULT_UNION_SETTINGS,
+            govtLogoUrl: '',
+            unionLogoUrl: '',
+            watermarkLogoUrl: ''
+          },
       updatedByName
     );
   };
