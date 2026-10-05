@@ -142,10 +142,10 @@ export const UnionSettingsManager: React.FC = () => {
               onClick={handleReset}
               disabled={isSaving}
               className="cursor-pointer px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-900 shadow-2xs"
-              title="ডিফল্ট মানে ফিরিয়ে আনুন"
+              title={isOperator ? 'আপনার ইউনিয়নের তথ্য খালি করুন' : 'ডিফল্ট মানে ফিরিয়ে আনুন'}
             >
               <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-              <span>ডিফল্ট রিকভার</span>
+              <span>{isOperator ? 'তথ্য রিসেট' : 'ডিফল্ট রিকভার'}</span>
             </button>
           </div>
         </div>
@@ -205,17 +205,17 @@ export const UnionSettingsManager: React.FC = () => {
           <div className="flex-1 px-2">
             <h4 className="text-xs font-bold text-red-700">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h4>
             <h3 className="text-base sm:text-lg font-extrabold text-[#0d5c3a] mt-0.5">
-              {formState.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ'}
+              {formState.unionName || 'আপনার ইউনিয়নের নাম লিখুন'}
             </h3>
             <p className="text-xs text-slate-800 font-medium">
-              ডাকঘর: {formState.postOffice || 'হালসা-৭০৩১'}, উপজেলা: {formState.upazila || 'মিরপুর'}, জেলা: {formState.district || 'কুষ্টিয়া'}।
+              ডাকঘর: {formState.postOffice || 'ডাকঘর'}, উপজেলা: {formState.upazila || 'উপজেলা'}, জেলা: {formState.district || 'জেলা'}।
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-2 text-[10px] text-slate-700 mt-1">
-              <span>চেয়ারম্যান: <strong className="text-emerald-950 font-bold">{formState.chairmanName || 'মোঃ সাইফুদ্দিন মন্ডল'}</strong></span>
+              <span>চেয়ারম্যান: <strong className="text-emerald-950 font-bold">{formState.chairmanName || 'চেয়ারম্যানের নাম'}</strong></span>
               <span>•</span>
-              <span>ইমেইল: <strong className="font-mono">{formState.officialEmail || 'udc.ambaria@gmail.com'}</strong></span>
+              <span>ইমেইল: <strong className="font-mono">{formState.officialEmail || 'অফিসিয়াল ইমেইল'}</strong></span>
               <span>•</span>
-              <span>মোবাইল: <strong className="font-mono">{formState.mobileNumber || '০১৭৪১-১৮৫৭৬৫'}</strong></span>
+              <span>মোবাইল: <strong className="font-mono">{formState.mobileNumber || 'মোবাইল নম্বর'}</strong></span>
             </div>
           </div>
 
