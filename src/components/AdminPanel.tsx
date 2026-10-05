@@ -39,7 +39,7 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNavigate }) => {
-  const { currentUser, userProfile, isAdmin, isOperator, isPrimaryAdmin, toggleAdminMode } = useAuth();
+  const { currentUser, userProfile, isAdmin, isOperator, isStaff, isPrimaryAdmin, toggleAdminMode } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'balance' | 'certificates' | 'settings' | 'operators'>(isAdmin ? 'balance' : 'certificates');
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequest[]>([]);
@@ -319,7 +319,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             <span>সকল প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
           </button>
 
-          {isAdmin && (
+          {isStaff && (
           <button
             onClick={() => setActiveTab('settings')}
             className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
@@ -329,7 +329,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             }`}
           >
             <Building2 className="w-4 h-4" />
-            <span>ইউনিয়ন ও পোর্টাল সেটিংস (Union Settings)</span>
+            <span>{isOperator ? 'আমার ইউনিয়ন তথ্য ও সেটিংস' : 'ইউনিয়ন ও পোর্টাল সেটিংস'}</span>
           </button>
           )}
 
@@ -592,7 +592,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
       )}
 
       {/* Tab 3: Dynamic Union & Header Settings Management */}
-      {isAdmin && activeTab === 'settings' && (
+      {isStaff && activeTab === 'settings' && (
         <UnionSettingsManager />
       )}
 
