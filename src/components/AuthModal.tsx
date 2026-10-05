@@ -16,7 +16,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
-  const { login, signup, loginWithGoogle } = useAuth();
+  const { login, loginOperator, signup, loginWithGoogle } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isOperatorLogin, setIsOperatorLogin] = useState(false);
 
@@ -37,7 +37,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
 
     try {
       if (isOperatorLogin) {
-        await login(email, password);
+        await loginOperator(email, password);
       } else if (isSignUp) {
         if (!name.trim()) throw new Error('দয়া করে আপনার পূর্ণ নাম লিখুন');
         if (password.length < 6) throw new Error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
