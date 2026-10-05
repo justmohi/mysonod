@@ -447,17 +447,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         }
 
         const currentBal = Number(userDoc.data().balance) || 0;
-        if (currentBal < 2.0) {
-          throw new Error('পর্যাপ্ত ব্যালেন্স নেই! অনুগ্রহ করে এড ব্যালেন্স করুন।');
+        let newBalance = currentBal;
+
+        if (!isOperator) {
+          if (currentBal < 2.0) {
+            throw new Error('পর্যাপ্ত ব্যালেন্স নেই! অনুগ্রহ করে এড ব্যালেন্স করুন।');
+          }
+
+          newBalance = Number((currentBal - 2.0).toFixed(2));
+
+          // Citizens pay the standard 2 BDT certificate application fee.
+          transaction.update(userDocRef, {
+            balance: newBalance,
+            updatedAt: nowIso
+          });
         }
-
-        const newBalance = Number((currentBal - 2.0).toFixed(2));
-
-        // Deduct 2 BDT from user wallet
-        transaction.update(userDocRef, {
-          balance: newBalance,
-          updatedAt: nowIso
-        });
 
         // Application record (Auto-Approved for official instant delivery matching eProttoyon portal)
         const appPayload: Record<string, any> = {
@@ -509,10 +513,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           nidOrBirthReg,
           mobile,
           fee: 2.0,
-          status: 'Approved',
-          issuingOfficer: 'চেয়ারম্যান, ১২ নং আমবাড়ীয়া ইউপি',
+          status: isOperator ? 'Approved' : 'Pending',
+          issuingOfficer: isOperator ? userProfile.name : undefined,
           createdAt: nowIso,
-          approvedAt: nowIso
+          approvedAt: isOperator ? nowIso : undefined,
+          completedByUid: isOperator ? currentUser.uid : undefined,
+          completedByEmail: isOperator ? (currentUser.email || '') : undefined,
+          completedAt: isOperator ? nowIso : undefined
         };
 
         if (spouseName) appPayload.spouseName = spouseName;
@@ -631,21 +638,38 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           appPayload.generalPurpose = generalPurpose;
         }
 
+        // Operator-created certificates are completed immediately and follow
+        // the operator monthly usage billing rule.
+        if (isOperator) {
+          const billing = await applyOperatorCompletionChargeInTransaction(
+            transaction,
+            currentUser.uid,
+            appId,
+            certMeta.titleBn,
+            new Date(nowIso)
+          );
+          appPayload.completionCharge = billing.charge;
+          appPayload.completionChargeType = billing.chargeType;
+          appPayload.billingMonthKey = billing.monthKey;
+        }
+
         const cleanedApplication = cleanDataForFirestore(appPayload) as CertificateApplication;
         transaction.set(appDocRef, cleanedApplication);
 
-        // Transaction history record
-        const feeTransaction: Transaction = {
-          id: txId,
-          userId: currentUser.uid,
-          type: 'fee_deduction',
-          amount: 2.0,
-          balanceAfter: newBalance,
-          description: `সনদ আবেদন ফি: ${certMeta.titleBn} (ট্র্যাকিং: ${trackingId})`,
-          referenceId: trackingId,
-          createdAt: nowIso
-        };
-        transaction.set(txDocRef, cleanDataForFirestore(feeTransaction));
+        // Citizens are charged the standard 2 BDT application fee.
+        if (!isOperator) {
+          const feeTransaction: Transaction = {
+            id: txId,
+            userId: currentUser.uid,
+            type: 'fee_deduction',
+            amount: 2.0,
+            balanceAfter: newBalance,
+            description: `সনদ আবেদন ফি: ${certMeta.titleBn} (ট্র্যাকিং: ${trackingId})`,
+            referenceId: trackingId,
+            createdAt: nowIso
+          };
+          transaction.set(txDocRef, cleanDataForFirestore(feeTransaction));
+        }
 
         return cleanedApplication;
       }).then((newApp) => {
