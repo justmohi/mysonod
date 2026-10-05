@@ -284,7 +284,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const deceasedIdTypeBn = application.deceasedIdType && application.deceasedIdType !== '-' ? application.deceasedIdType : 'পরিচয়পত্র';
   const deceasedIdNumberBn = application.deceasedIdNumber && application.deceasedIdNumber !== '-'
     ? toBengaliNumber(application.deceasedIdNumber)
-    : (application.nidOrBirthReg && application.nidOrBirthReg !== '-' && application.nidOrBirthReg !== application.trackingId ? toBengaliNumber(application.nidOrBirthReg) : '—');
+    : (application.nidOrBirthReg && application.nidOrBirthReg !== '-' && application.nidOrBirthReg !== application.trackingId ? toBengaliNumber(application.nidOrBirthReg) : '');
   const deathDateBn = application.deceasedDate && application.deceasedDate !== '-' 
     ? formatBengaliDate(application.deceasedDate) 
     : (application.deathDate ? formatBengaliDate(application.deathDate) : '');
@@ -850,7 +850,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg No: ' : 'জাতীয় পরিচয়পত্র / জন্মনিবন্ধন: '}</span>
-                                  <strong className="font-mono text-slate-950 font-bold">{toBengaliNumber(application.nidOrBirthReg || '—')}</strong>
+                                  <strong className="font-mono text-slate-950 font-bold">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}</span>
