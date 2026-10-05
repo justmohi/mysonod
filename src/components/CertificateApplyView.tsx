@@ -206,7 +206,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [newAddress, setNewAddress] = useState('');
 
   const [sameNamePerson, setSameNamePerson] = useState('');
-  const [sameNameRelation, setSameNameRelation] = useState('');
+  const [sameNameRelation, setSameNameRelation] = useState('নিজের নাম');
+  const [sameNameField, setSameNameField] = useState('নিজের নাম');
+  const [sameNameDeceased, setSameNameDeceased] = useState(false);
+
+  const handleSameNameAdd = () => {
+    setSameNameRelation(sameNameField);
+  };
 
   const [correctionDetails, setCorrectionDetails] = useState('');
 
@@ -925,145 +931,314 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         )}
 
         {/* Section 1: Applicant Basic Info */}
-        <div>
+        <div className={selectedType === 'same_name' ? 'same-name-reference-fields' : ''}>
           <h3 className="application-section-heading text-sm font-bold text-slate-800 uppercase tracking-wider pb-2 border-b border-slate-200 flex items-center gap-2">
             <FileText className="w-4 h-4 text-emerald-600" />
             <span>{language === 'en' ? '1. Applicant Personal Information' : '১. আবেদনকারীর ব্যক্তিগত তথ্যাবলী'}</span>
           </h3>
 
-          <div className="application-basic-grid grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? 'Applicant Name (Bengali)' : 'আবেদনকারীর নাম (বাংলায়) *'}
+          {selectedType === 'same_name' ? (
+            <>
+              <div className="same-name-reference-grid">
+                <div>
+                  <label className="same-name-field-label">
+                    নাম
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={applicantNameBn}
+                    onChange={(e) => setApplicantNameBn(e.target.value)}
+                    placeholder="নাম *"
+                    className="same-name-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    জাতীয় পরিচয়পত্র
+                  </label>
+                  <input
+                    type="text"
+                    value={nidOrBirthReg}
+                    onChange={(e) => setNidOrBirthReg(e.target.value)}
+                    placeholder="*"
+                    className="same-name-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    পিতা / স্বামী বেছে নিন
+                  </label>
+                  <select
+                    value={sameNameField === 'স্বামীর নাম' ? 'husband' : 'father'}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setSameNameField(value === 'husband' ? 'স্বামীর নাম' : 'পিতার নাম');
+                    }}
+                    className="same-name-input same-name-select"
+                  >
+                    <option value="father">পিতা</option>
+                    <option value="husband">স্বামী</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    মাতা
+                  </label>
+                  <input
+                    type="text"
+                    value={motherName}
+                    onChange={(e) => setMotherName(e.target.value)}
+                    placeholder="মাতার নাম *"
+                    className="same-name-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    গ্রাম/মহল্লা
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={presentVillage}
+                    onChange={(e) => handlePresentVillageChange(e.target.value)}
+                    placeholder="গ্রাম/মহল্লা *"
+                    className="same-name-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    ওয়ার্ড
+                  </label>
+                  <select
+                    value={presentWard}
+                    onChange={(e) => handlePresentWardChange(e.target.value)}
+                    className="same-name-input same-name-select"
+                  >
+                    {['০১','০২','০৩','০৪','০৫','০৬','০৭','০৮','০৯'].map((ward) => (
+                      <option key={ward} value={ward}>{ward}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    ডাকঘর
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={presentPost}
+                    onChange={(e) => handlePresentPostChange(e.target.value)}
+                    placeholder="ডাকঘর *"
+                    className="same-name-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    ছবি (সম্প্রতি তোলা = 30-100 KB)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="same-name-file-input"
+                    onChange={() => undefined}
+                  />
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    সংযুক্তি (সর্বোচ্চ ৫টি, প্রতিটি ২০-৮০ কেবি)
+                  </label>
+                  <input
+                    type="file"
+                    multiple
+                    className="same-name-file-input"
+                    onChange={() => undefined}
+                  />
+                </div>
+              </div>
+
+              <div className="same-name-extra-fields">
+                <div className="same-name-extra-stack">
+                  <label className="same-name-field-label">ক্ষেত্র নির্বাচন করুন</label>
+                  <select
+                    value={sameNameField}
+                    onChange={(e) => setSameNameField(e.target.value)}
+                    className="same-name-input same-name-select"
+                  >
+                    <option value="নিজের নাম">নিজের নাম</option>
+                    <option value="পিতার নাম">পিতার নাম</option>
+                    <option value="স্বামীর নাম">স্বামীর নাম</option>
+                    <option value="মাতার নাম">মাতার নাম</option>
+                  </select>
+                  <input
+                    type="text"
+                    value={sameNamePerson}
+                    onChange={(e) => setSameNamePerson(e.target.value)}
+                    placeholder="নাম উল্লেখ করুন"
+                    className="same-name-input"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSameNameAdd}
+                    className="same-name-add-button"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>যোগ করুন</span>
+                  </button>
+                </div>
+              </div>
+
+              <label className="same-name-deceased-toggle">
+                <input
+                  type="checkbox"
+                  checked={sameNameDeceased}
+                  onChange={(e) => setSameNameDeceased(e.target.checked)}
+                />
+                <span>মৃত ব্যক্তি</span>
               </label>
-              <input
-                type="text"
-                required={language === 'bn'}
-                value={applicantNameBn}
-                onChange={(e) => setApplicantNameBn(e.target.value)}
-                placeholder={language === 'en' ? 'Applicant Name in Bengali' : 'আবেদনকারীর নাম (বাংলা)'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
-            </div>
-
-            {language === 'en' && (
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? 'Applicant Name (English) *' : 'Applicant Name (English) *'}
-              </label>
-              <input
-                type="text"
-                required
-                value={applicantNameEn}
-                onChange={(e) => setApplicantNameEn(e.target.value)}
-                placeholder="Applicant Name (English)"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
-            </div>
-
-            )}
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? "Father's Name *" : 'পিতার নাম (বাংলায়)'}
-              </label>
-              <input
-                type="text"
-                value={fatherName}
-                onChange={(e) => setFatherName(e.target.value)}
-                placeholder={language === 'en' ? "Father's Name" : 'পিতার নাম (বাংলা)'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? "Mother's Name *" : 'মাতার নাম (বাংলায়)'}
-              </label>
-              <input
-                type="text"
-                value={motherName}
-                onChange={(e) => setMotherName(e.target.value)}
-                placeholder={language === 'en' ? "Mother's Name" : 'মাতার নাম (বাংলা)'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? "Spouse's Name (if any)" : 'স্বামী / স্ত্রীর নাম (যদি থাকে)'}
-              </label>
-              <input
-                type="text"
-                value={spouseName}
-                onChange={(e) => setSpouseName(e.target.value)}
-                placeholder={language === 'en' ? "Spouse's Name" : 'স্বামী / স্ত্রীর নাম (বাংলা)'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
-            </div>
-
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? 'Date of Birth (DOB)' : 'জন্ম তারিখ'}
-              </label>
-              <input
-                type="date"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? 'Occupation / Profession' : 'পেশা'}
-              </label>
-              <input
-                type="text"
-                value={occupation}
-                onChange={(e) => setOccupation(e.target.value)}
-                placeholder={language === 'en' ? 'Occupation (e.g. Agriculture, Business)' : 'পেশা (যেমন: ব্যবসা, কৃষি, চাকরি)'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-slate-700">
-                  {language === 'en' ? 'National ID / Birth Registration No' : 'এনআইডি / জন্ম নিবন্ধন নম্বর'}
+            </>
+          ) : (
+            <div className="application-basic-grid grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'en' ? 'Applicant Name (Bengali)' : 'আবেদনকারীর নাম (বাংলায়) *'}
                 </label>
-                {checkingNid && (
-                  <span className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1.5 animate-pulse">
-                    <span className="inline-block w-3 h-3 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin" />
-                    <span>{language === 'en' ? 'Verifying NID in database...' : 'ডাটাবেজে তথ্য খোঁজা হচ্ছে...'}</span>
-                  </span>
-                )}
-                {nidCheckedStatus === 'found' && !checkingNid && (
-                  <span className="text-[11px] text-emerald-800 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{language === 'en' ? 'Auto-filled from records' : 'তথ্য স্বয়ংক্রিয় পূরণ হয়েছে'}</span>
-                  </span>
+                <input
+                  type="text"
+                  required={language === 'bn'}
+                  value={applicantNameBn}
+                  onChange={(e) => setApplicantNameBn(e.target.value)}
+                  placeholder={language === 'en' ? 'Applicant Name in Bengali' : 'আবেদনকারীর নাম (বাংলা)'}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              {language === 'en' && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Applicant Name (English) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={applicantNameEn}
+                    onChange={(e) => setApplicantNameEn(e.target.value)}
+                    placeholder="Applicant Name (English)"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'en' ? "Father's Name *" : 'পিতার নাম (বাংলায়)'}
+                </label>
+                <input
+                  type="text"
+                  value={fatherName}
+                  onChange={(e) => setFatherName(e.target.value)}
+                  placeholder={language === 'en' ? "Father's Name" : 'পিতার নাম (বাংলা)'}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'en' ? "Mother's Name *" : 'মাতার নাম (বাংলায়)'}
+                </label>
+                <input
+                  type="text"
+                  value={motherName}
+                  onChange={(e) => setMotherName(e.target.value)}
+                  placeholder={language === 'en' ? "Mother's Name" : 'মাতার নাম (বাংলা)'}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'en' ? "Spouse's Name (if any)" : 'স্বামী / স্ত্রীর নাম (যদি থাকে)'}
+                </label>
+                <input
+                  type="text"
+                  value={spouseName}
+                  onChange={(e) => setSpouseName(e.target.value)}
+                  placeholder={language === 'en' ? "Spouse's Name" : 'স্বামী / স্ত্রীর নাম (বাংলা)'}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'en' ? 'Date of Birth (DOB)' : 'জন্ম তারিখ'}
+                </label>
+                <input
+                  type="date"
+                  value={dob}
+                  onChange={(e) => setDob(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'en' ? 'Occupation / Profession' : 'পেশা'}
+                </label>
+                <input
+                  type="text"
+                  value={occupation}
+                  onChange={(e) => setOccupation(e.target.value)}
+                  placeholder={language === 'en' ? 'Occupation (e.g. Agriculture, Business)' : 'পেশা (যেমন: ব্যবসা, কৃষি, চাকরি)'}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    {language === 'en' ? 'National ID / Birth Registration No' : 'এনআইডি / জন্ম নিবন্ধন নম্বর'}
+                  </label>
+                  {checkingNid && (
+                    <span className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1.5 animate-pulse">
+                      <span className="inline-block w-3 h-3 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin" />
+                      <span>{language === 'en' ? 'Verifying NID in database...' : 'ডাটাবেজে তথ্য খোঁজা হচ্ছে...'}</span>
+                    </span>
+                  )}
+                  {nidCheckedStatus === 'found' && !checkingNid && (
+                    <span className="text-[11px] text-emerald-800 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>{language === 'en' ? 'Auto-filled from records' : 'তথ্য স্বয়ংক্রিয় পূরণ হয়েছে'}</span>
+                    </span>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={nidOrBirthReg}
+                  onChange={(e) => setNidOrBirthReg(e.target.value)}
+                  placeholder={language === 'en' ? 'Enter NID / Birth Reg No (10, 13 or 17 digits)' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন (১০, ১৩ বা ১৭ ডিজিট)'}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono text-sm"
+                />
+                {nidCheckedStatus === 'not_found' && !existingRecordFound && !checkingNid && (
+                  <p className="text-[11px] text-slate-600 mt-1 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{language === 'en' ? 'New NID: No previous certificate found. Please complete the form.' : 'নতুন এনআইডি - পূর্বে কোনো সনদ পাওয়া যায়নি (নিচের তথ্যগুলো পূরণ করুন)'}</span>
+                  </p>
                 )}
               </div>
-              <input
-                type="text"
-                                value={nidOrBirthReg}
-                onChange={(e) => setNidOrBirthReg(e.target.value)}
-                placeholder={language === 'en' ? 'Enter NID / Birth Reg No (10, 13 or 17 digits)' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন (১০, ১৩ বা ১৭ ডিজিট)'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono text-sm"
-              />
-              {nidCheckedStatus === 'not_found' && !existingRecordFound && !checkingNid && (
-                <p className="text-[11px] text-slate-600 mt-1 flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{language === 'en' ? 'New NID: No previous certificate found. Please complete the form.' : 'নতুন এনআইডি - পূর্বে কোনো সনদ পাওয়া যায়নি (নিচের তথ্যগুলো পূরণ করুন)'}</span>
-                </p>
-              )}
             </div>
+          )}
+        </div>
 
-            </div>
-          </div>
-
+        {selectedType !== 'same_name' && (
+          <>
         {/* Section 2: Address Info (Present & Permanent Addresses) */}
         <div className="space-y-5">
           <div className="pb-2 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
@@ -1288,6 +1463,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           )}
         </div>
 
+          </>
+        )}
         {/* Section 3: Certificate Type Specific Fields */}
         {(selectedType === 'income' || selectedType === 'annual_income') && (
           <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
