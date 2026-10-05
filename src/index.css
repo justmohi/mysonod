@@ -186,6 +186,25 @@ select option {
   min-height: 0;
 }
 
+/* Standard main-certificate flow: keep body, signature and footer in the visible A4 area. */
+.main-certificate-content {
+  justify-content: flex-start !important;
+}
+
+.main-certificate-flow {
+  flex-grow: 0 !important;
+  justify-content: flex-start !important;
+  min-height: 0 !important;
+}
+
+.main-certificate-content > .seal-signature-container {
+  margin-top: 18px !important;
+}
+
+.main-certificate-content > .certificate-footer {
+  margin-top: 10px !important;
+}
+
 /* Seal & Signature and Footer Locked Inside Flex Layout */
 .seal-signature-container, .signature-grid {
   flex-shrink: 0 !important;
