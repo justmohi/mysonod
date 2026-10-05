@@ -35,7 +35,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   onNavigate,
   onViewCertificate
 }) => {
-  const { currentUser, isStaff } = useAuth();
+  const { currentUser, isAdmin } = useAuth();
   const [applications, setApplications] = useState<CertificateApplication[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -45,7 +45,8 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   useEffect(() => {
     if (!currentUser) return;
 
-    const appQuery = isStaff
+    // Primary admin can view all applications; citizens and operators only see their own records.
+    const appQuery = isAdmin
       ? collection(db, 'applications')
       : query(collection(db, 'applications'), where('userId', '==', currentUser.uid));
 
@@ -61,7 +62,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
     });
 
     return () => unsubscribe();
-  }, [currentUser, isStaff]);
+  }, [currentUser, isAdmin]);
 
   const filteredApps = applications.filter((app) => {
     const matchesSearch = 
