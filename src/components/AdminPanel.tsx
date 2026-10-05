@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { EditCertificateModal } from './EditCertificateModal';
 import { UnionSettingsManager } from './UnionSettingsManager';
+import { applyOperatorCompletionChargeInTransaction } from '../utils/operatorBilling';
 
 interface AdminPanelProps {
   onViewCertificate: (app: CertificateApplication) => void;
@@ -165,13 +166,48 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
   const handleApproveApplication = async (app: CertificateApplication) => {
     if (!isAdmin && !isOperator) return;
     setProcessingId(app.id);
+
     try {
-      const nowIso = new Date().toISOString();
-      await updateDoc(doc(db, 'applications', app.id), cleanDataForFirestore({
-        status: 'Approved',
-        approvedAt: nowIso,
-        issuingOfficer: userProfile?.name || 'ইউনিয়ন উদ্যোক্তা'
-      }));
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const appRef = doc(db, 'applications', app.id);
+
+      await runTransaction(db, async (transaction) => {
+        const appSnap = await transaction.get(appRef);
+        if (!appSnap.exists()) {
+          throw new Error('আবেদনটি পাওয়া যায়নি।');
+        }
+
+        const liveApp = appSnap.data() as CertificateApplication;
+        if (liveApp.status !== 'Pending') {
+          throw new Error('এই আবেদনটি ইতোমধ্যে প্রসেস করা হয়েছে।');
+        }
+
+        let billing:
+          | Awaited<ReturnType<typeof applyOperatorCompletionChargeInTransaction>>
+          | null = null;
+
+        if (isOperator && currentUser) {
+          billing = await applyOperatorCompletionChargeInTransaction(
+            transaction,
+            currentUser.uid,
+            app.id,
+            app.certificateTitleBn,
+            now
+          );
+        }
+
+        transaction.update(appRef, cleanDataForFirestore({
+          status: 'Approved',
+          approvedAt: nowIso,
+          completedAt: nowIso,
+          completedByUid: isOperator ? currentUser?.uid : undefined,
+          completedByEmail: isOperator ? (currentUser?.email || '') : undefined,
+          issuingOfficer: userProfile?.name || (isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'প্রশাসক'),
+          completionCharge: billing?.charge,
+          completionChargeType: billing?.chargeType
+        }));
+      });
     } catch (err: any) {
       handleFirestoreError(err, OperationType.UPDATE, `applications/${app.id}`);
       alert(`অনুমোদন ব্যর্থ হয়েছে: ${err.message}`);
