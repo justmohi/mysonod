@@ -37,6 +37,7 @@ interface AuthContextType {
   isStaff: boolean;
   isPrimaryAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginOperator: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string, phone?: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
@@ -123,6 +124,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await signInWithEmailAndPassword(auth, email.trim(), password);
   };
 
+  const loginOperator = async (email: string, password: string) => {
+    const normalizedEmail = email.trim().toLowerCase();
+    const credential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
+    const snap = await getDoc(doc(db, 'users', credential.user.uid));
+
+    if (!isAuthorizedAdminEmail(normalizedEmail) && (!snap.exists() || snap.data().role !== 'operator')) {
+      await signOut(auth);
+      throw new Error('এই অ্যাকাউন্টটি ইউনিয়ন উদ্যোক্তা অ্যাকাউন্ট নয়।');
+    }
+  };
+
   const signup = async (name: string, email: string, password: string, phone?: string) => {
     const normalizedEmail = email.trim().toLowerCase();
     if (isAuthorizedAdminEmail(normalizedEmail)) {
@@ -190,6 +202,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isStaff,
       isPrimaryAdmin,
       login,
+      loginOperator,
       signup,
       loginWithGoogle,
       logout,
