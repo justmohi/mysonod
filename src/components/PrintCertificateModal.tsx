@@ -22,6 +22,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas-pro';
 import { BdGovernmentSeal, UnionCouncilSeal, WatermarkShapla, DEFAULT_SHAPLA_WATERMARK_SVG, getActiveWatermarkSrc } from './OfficialLogos';
 import { useUnionSettings } from '../context/UnionSettingsContext';
+import { useAuth } from '../context/AuthContext';
+import { chargeLatePrintFee } from '../utils/operatorBilling';
 import { useCurrentApplication, getCurrentApplicationData } from '../utils/currentApplication';
 import { DynamicApplicationFormDetails, DynamicCertificateBody } from './CertificateTemplateEngine';
 
@@ -41,6 +43,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const { currentApp } = useCurrentApplication(initialPropApp);
   const application = currentApp || initialPropApp;
   const { settings } = useUnionSettings();
+  const { currentUser, userProfile } = useAuth();
+  const [printDateOverride, setPrintDateOverride] = useState<string | null>(null);
   const watermarkSrc = getActiveWatermarkSrc(settings.watermarkLogoUrl);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -89,29 +93,41 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const isHighRowTable = isTableCertificate && tableRowsCount > 5;
   const isUltraCompactTable = isTableCertificate && tableRowsCount > 12;
 
-  const handlePrint = (target: 'application' | 'certificate' | 'both' = 'certificate') => {
-    // Dynamic fresh fetch of latest submitted values from active state or storage
-    const activeApp = getCurrentApplicationData() || currentApp || initialPropApp;
-    if (!activeApp) return;
+  const handlePrint = async (target: 'application' | 'certificate' | 'both' = 'certificate') => {
+    try {
+      // A certificate printed 3+ calendar months after completion incurs
+      // a one-time 2 BDT operator reprint fee. The actual print date then
+      // becomes the certificate issue date.
+      if (
+        (target === 'certificate' || target === 'both') &&
+        currentUser &&
+        userProfile?.role === 'operator'
+      ) {
+        const billing = await chargeLatePrintFee(
+          currentUser.uid,
+          application,
+          new Date()
+        );
 
-    const originalTitle = document.title;
-    const prefix = lang === 'en' ? titleEn : titleBn;
-    const targetLabel = target === 'application' 
-      ? (lang === 'en' ? 'Application_Form' : 'আবেদনপত্র')
-      : target === 'both'
-      ? (lang === 'en' ? 'Complete_Set' : 'উভয়_কপি')
-      : (lang === 'en' ? 'Certificate' : 'মূল_সনদ');
-    const copySuffix = isDuplicateCopy ? (lang === 'en' ? '_DUPLICATE' : '_অনুলিপি') : '';
-    document.title = `${prefix}_${targetLabel}${copySuffix}_${activeApp.trackingId}`;
-    
-    // Set print target attribute on body to isolate target in @media print
-    document.body.setAttribute('data-print-target', target);
-    window.print();
-    
-    setTimeout(() => {
-      document.body.removeAttribute('data-print-target');
-      document.title = originalTitle;
-    }, 1200);
+        if (billing.charged) {
+          setPrintDateOverride(billing.printDate);
+          window.setTimeout(() => {
+            alert('৩ মাস পর পুনঃপ্রিন্টের জন্য ২ টাকা কাটা হয়েছে এবং আজকের তারিখ সনদের ইস্যু তারিখ হিসেবে সেট করা হয়েছে।');
+          }, 0);
+        }
+      }
+
+      // Set print target attribute on body to isolate target in @media print
+      document.body.setAttribute('data-print-target', target);
+      window.print();
+
+      window.setTimeout(() => {
+        document.body.removeAttribute('data-print-target');
+      }, 1000);
+    } catch (err: any) {
+      console.error('Print billing error:', err);
+      alert(err?.message || 'প্রিন্টের আগে billing সম্পন্ন করা যায়নি।');
+    }
   };
 
   // High-Quality PDF generation using jsPDF & html2canvas matching the printed view
@@ -190,7 +206,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
     }
   };
 
-  const formattedDateEn = new Date(application.approvedAt || application.createdAt).toLocaleDateString('en-GB', {
+  const issueDateIso = printDateOverride || application.printDate || application.approvedAt || application.createdAt;
+  const formattedDateEn = new Date(issueDateIso).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
     year: 'numeric'
@@ -593,7 +610,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           <span className="text-[10px] text-slate-500 font-bold block">
                             {lang === 'en' ? 'Application Date:' : 'আবেদনের তারিখ:'}
                           </span>
-                          <strong className="text-slate-800">{lang === 'en' ? formattedDateEn : formatBengaliDate(application.createdAt)}</strong>
+                          <strong className="text-slate-800">{lang === 'en' ? new Date(application.createdAt).toLocaleDateString('en-GB') : formatBengaliDate(application.createdAt)}</strong>
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-500 font-bold block">
