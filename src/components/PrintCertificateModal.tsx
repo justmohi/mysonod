@@ -706,10 +706,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                     <strong className="text-slate-900">{application.applicantRelation && application.applicantRelation !== '-' ? application.applicantRelation : 'আইনগত ওয়ারিশ'}</strong>
                                   </div>
                                   <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Mobile Number: ' : 'মোবাইল নম্বর: '}</span>
-                                    <strong className="font-mono text-slate-900">{application.mobile && application.mobile !== '-' ? toBengaliNumber(application.mobile) : '—'}</strong>
-                                  </div>
-                                  <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Application Tracking No: ' : 'আবেদন ট্র্যাকিং আইডি: '}</span>
                                     <strong className="font-mono text-emerald-950 font-bold">{application.trackingId}</strong>
                                   </div>
@@ -769,15 +765,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   </div>
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? "Father's / Husband's Name: " : 'পিতা/স্বামীর নাম: '}</span>
-                                    <strong className="text-slate-900">{application.ownerFatherOrHusbandName || application.fatherName || '—'}</strong>
+                                    <strong className="text-slate-900">{application.ownerFatherOrHusbandName || application.fatherName || application.spouseName || '—'}</strong>
                                   </div>
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'এনআইডি / জন্মনিবন্ধন: '}</span>
                                     <strong className="font-mono text-slate-900">{toBengaliNumber(application.ownerNidOrBirth || application.nidOrBirthReg || '—')}</strong>
-                                  </div>
-                                  <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Mobile Number: ' : 'মোবাইল নম্বর: '}</span>
-                                    <strong className="font-mono text-slate-900">{application.mobile ? toBengaliNumber(application.mobile) : '—'}</strong>
                                   </div>
                                   <div className="sm:col-span-2">
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Residential Address: ' : 'স্থায়ী ঠিকানা: '}</span>
@@ -809,10 +801,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'জাতীয় পরিচয়পত্র: '}</span>
                                     <strong className="font-mono text-slate-900">{toBengaliNumber(application.nidOrBirthReg || '—')}</strong>
-                                  </div>
-                                  <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Mobile Number: ' : 'মোবাইল নম্বর: '}</span>
-                                    <strong className="font-mono text-slate-900">{application.mobile ? toBengaliNumber(application.mobile) : '—'}</strong>
                                   </div>
                                   <div className="sm:col-span-2">
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Address: ' : 'ঠিকানা: '}</span>
@@ -847,8 +835,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   </div>
                                 )}
                                 <div>
-                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? "Father's Name: " : 'পিতার নাম: '}</span>
-                                  <strong className="text-slate-900">{application.fatherName || '—'}</strong>
+                                  <span className="text-slate-600 font-semibold">{application.fatherName ? (lang === 'en' ? "Father's Name: " : 'পিতার নাম: ') : application.spouseName ? (lang === 'en' ? "Husband's Name: " : 'স্বামীর নাম: ') : (lang === 'en' ? "Father / Husband Name: " : 'পিতা / স্বামীর নাম: ')}</span>
+                                  <strong className="text-slate-900">{application.fatherName || application.spouseName || '—'}</strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? "Mother's Name: " : 'মাতার নাম: '}</span>
@@ -867,25 +855,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   <strong className="text-slate-900">{application.dob ? formatBengaliDate(application.dob) : '—'}</strong>
                                 </div>
                                 <div>
-                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Gender & Marital Status: ' : 'লিঙ্গ ও বৈবাহিক অবস্থা: '}</span>
-                                  <strong className="text-slate-900">
-                                    {application.gender === 'female'
-                                      ? (lang === 'en' ? 'Female' : 'মহিলা')
-                                      : application.gender === 'other'
-                                        ? (lang === 'en' ? 'Other' : 'অন্যান্য')
-                                        : application.gender === 'male'
-                                          ? (lang === 'en' ? 'Male' : 'পুরুষ')
-                                          : '—'}
-                                    {application.maritalStatus ? ', ' + application.maritalStatus : ''}
-                                  </strong>
-                                </div>
-                                <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Occupation: ' : 'পেশা: '}</span>
                                   <strong className="text-slate-900">{application.occupation || '—'}</strong>
-                                </div>
-                                <div>
-                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Mobile Number: ' : 'মোবাইল নম্বর: '}</span>
-                                  <strong className="font-mono text-slate-900">{application.mobile ? toBengaliNumber(application.mobile) : '—'}</strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Tracking ID: ' : 'আবেদন ট্র্যাকিং নং: '}</span>
