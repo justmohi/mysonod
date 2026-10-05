@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import type { CertificateApplication } from '../types';
+import type { CertificateApplication, HeirItem } from '../types';
 import { getCertificateCategory } from '../types';
 import { cleanDataForFirestore } from '../utils/firestore';
 import {
@@ -322,8 +322,17 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
     return base;
   });
 
-  const [heirsJson, setHeirsJson] = useState(
-    JSON.stringify(application.heirs || [], null, 2)
+  const [heirDrafts, setHeirDrafts] = useState<HeirItem[]>(
+    Array.isArray(application.heirs) && application.heirs.length > 0
+      ? application.heirs.map((item: any) => ({
+          name: item.name || '',
+          relation: item.relation || '',
+          nidOrBirth: item.nidOrBirth || '',
+          dob: item.dob || '',
+          age: item.age || '',
+          remarks: item.remarks || ''
+        }))
+      : [{ name: '', relation: '', nidOrBirth: '', dob: '', age: '', remarks: '' }]
   );
   const [familyMembersJson, setFamilyMembersJson] = useState(
     JSON.stringify(application.familyMembers || [], null, 2)
@@ -370,14 +379,22 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
     setSuccessMsg(null);
 
     try {
-      let heirs: unknown;
-      let familyMembers: unknown;
+      const heirs: HeirItem[] = heirDrafts
+        .filter(item => String(item.name || '').trim() !== '')
+        .map(item => ({
+          name: String(item.name || '').trim(),
+          relation: String(item.relation || '').trim(),
+          nidOrBirth: String(item.nidOrBirth || '').trim(),
+          dob: String(item.dob || '').trim(),
+          age: String(item.age || '').trim(),
+          remarks: String(item.remarks || '').trim()
+        }));
 
+      let familyMembers: unknown;
       try {
-        heirs = heirsJson.trim() ? JSON.parse(heirsJson) : [];
         familyMembers = familyMembersJson.trim() ? JSON.parse(familyMembersJson) : [];
       } catch {
-        throw new Error('ওয়ারিশ / পারিবারিক সদস্যের JSON তথ্যের ফরম্যাট সঠিক নয়।');
+        throw new Error('পারিবারিক সদস্যের তথ্যের ফরম্যাট সঠিক নয়।');
       }
 
       const allowedKeys = new Set(getRelevantEditFields(application).map(field => field.key));
@@ -590,52 +607,104 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
             {renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
             {renderSection('৪. সনদ-নির্দিষ্ট সকল তথ্য', <FileText className="h-4 w-4" />, sections.certificate)}
 
-            {(application.certificateType === 'inheritance' ||
-              application.certificateType === 'succession' ||
-              application.certificateType === 'family') && (
+            {application.certificateType === 'inheritance' || application.certificateType === 'succession' ? (
+              <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+                <div className="mb-4 flex items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+                      <ListChecks className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold text-slate-900">৫. ওয়ারিশ তালিকা</h4>
+                      <p className="text-[10px] text-slate-500">আবেদন ফরমের মতো টেবিল থেকে সরাসরি তথ্য সম্পাদনা করুন</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setHeirDrafts(prev => [
+                        ...prev,
+                        { name: '', relation: '', nidOrBirth: '', dob: '', age: '', remarks: '' }
+                      ])
+                    }
+                    className="inline-flex items-center gap-1 rounded-lg bg-emerald-700 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-800"
+                  >
+                    + ওয়ারিশ যোগ করুন
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto rounded-xl border border-slate-300 bg-white">
+                  <table className="min-w-[900px] w-full border-collapse text-[11px]">
+                    <thead>
+                      <tr className="bg-[#2196f3] text-white">
+                        <th className="border border-blue-300 px-2 py-2 text-center">ক্রমিক নং</th>
+                        <th className="border border-blue-300 px-2 py-2 text-left">নাম</th>
+                        <th className="border border-blue-300 px-2 py-2 text-left">সম্পর্ক</th>
+                        <th className="border border-blue-300 px-2 py-2 text-left">ভোটার আইডি / জন্ম সনদ</th>
+                        <th className="border border-blue-300 px-2 py-2 text-left">জন্ম তারিখ</th>
+                        <th className="border border-blue-300 px-2 py-2 text-left">বয়স</th>
+                        <th className="border border-blue-300 px-2 py-2 text-left">মন্তব্য</th>
+                        <th className="border border-blue-300 px-2 py-2 text-center">অ্যাকশন</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {heirDrafts.map((item, index) => (
+                        <tr key={index} className="odd:bg-white even:bg-slate-50">
+                          <td className="border border-slate-300 px-2 py-1.5 text-center font-bold text-slate-600">{index + 1}</td>
+                          {(['name', 'relation', 'nidOrBirth', 'dob', 'age', 'remarks'] as const).map(field => (
+                            <td key={field} className="border border-slate-300 p-1">
+                              <input
+                                type={field === 'dob' ? 'date' : 'text'}
+                                value={item[field] || ''}
+                                onChange={e =>
+                                  setHeirDrafts(prev =>
+                                    prev.map((row, rowIndex) =>
+                                      rowIndex === index
+                                        ? { ...row, [field]: e.target.value }
+                                        : row
+                                    )
+                                  )
+                                }
+                                className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20"
+                              />
+                            </td>
+                          ))}
+                          <td className="border border-slate-300 px-1 text-center">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setHeirDrafts(prev =>
+                                  prev.length > 1 ? prev.filter((_, rowIndex) => rowIndex !== index) : prev
+                                )
+                              }
+                              className="rounded-md px-2 py-1 text-[10px] font-bold text-red-600 hover:bg-red-50"
+                            >
+                              মুছুন
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            ) : application.certificateType === 'family' ? (
               <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
                 <div className="mb-3 flex items-center gap-2 border-b border-slate-200 pb-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
                     <ListChecks className="h-4 w-4" />
                   </div>
-                  <h4 className="text-sm font-extrabold text-slate-900">৫. তালিকাভুক্ত সদস্য / ওয়ারিশ তথ্য</h4>
+                  <h4 className="text-sm font-extrabold text-slate-900">৫. পরিবারের সদস্য তালিকা</h4>
                 </div>
-
-                <div className="space-y-3">
-                  {application.certificateType !== 'family' && (
-                    <div>
-                      <label className="mb-1 block text-[11px] font-bold text-slate-700">
-                        ওয়ারিশ তালিকা (JSON)
-                      </label>
-                      <textarea
-                        value={heirsJson}
-                        onChange={e => setHeirsJson(e.target.value)}
-                        rows={8}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-[11px] leading-5 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-                      />
-                    </div>
-                  )}
-
-                  {application.certificateType === 'family' && (
-                    <div>
-                      <label className="mb-1 block text-[11px] font-bold text-slate-700">
-                        পরিবারের সদস্য তালিকা (JSON)
-                      </label>
-                      <textarea
-                        value={familyMembersJson}
-                        onChange={e => setFamilyMembersJson(e.target.value)}
-                        rows={8}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-[11px] leading-5 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-                      />
-                    </div>
-                  )}
-
-                  <p className="text-[10px] leading-5 text-slate-500">
-                    JSON তালিকার প্রতিটি item-এর field নাম অপরিবর্তিত রাখুন; শুধু value পরিবর্তন করুন। উদাহরণ: <code>{'name, relation, age, nidOrBirth, dob, remarks'}</code>
-                  </p>
-                </div>
+                <textarea
+                  value={familyMembersJson}
+                  onChange={e => setFamilyMembersJson(e.target.value)}
+                  rows={6}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-[11px] leading-5 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  placeholder="পরিবারের সদস্য তথ্য"
+                />
               </section>
-            )}
+            ) : null}
 
             <div className="rounded-2xl border border-slate-200 bg-white p-4">
               <div className="mb-3 flex items-center gap-2">
