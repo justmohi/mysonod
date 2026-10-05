@@ -944,6 +944,15 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const guardianUsesHusband = !fatherNameBn && !!application.spouseName;
   const guardianNameBn = fatherNameBn || application.spouseName || '—';
   const guardianLabelBn = guardianUsesHusband ? 'স্বামী' : 'পিতা';
+  const familyGuardianUsesHusband = application.familyGuardianType === 'husband'
+    ? true
+    : application.familyGuardianType === 'father'
+      ? false
+      : guardianUsesHusband;
+  const familyGuardianLabelBn = familyGuardianUsesHusband ? 'স্বামী' : 'পিতা';
+  const familyGuardianNameBn = familyGuardianUsesHusband
+    ? (application.spouseName || '—')
+    : (fatherNameBn || '—');
   const villageBn = presentVillage;
   const wardNoBn = toBengaliNumber(presentWard);
   const postOfficeBn = presentPost;
@@ -1190,7 +1199,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       {type === 'family' && (
         <div className={tableContainerSpacing}>
           <p className={tablePClass}>
-            এই মর্মে পারিবারিক সনদপত্র প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। স্থানীয় তদন্ত ও তথ্য দাতার তথ্য মতে নিম্নে লিখিত ব্যক্তিবর্গ তাহার পরিবারের নিয়মিত আইনসম্মত সদস্য:
+            এই মর্মে পারিবারিক সনদপত্র প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {familyGuardianLabelBn}: <strong>{familyGuardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। স্থানীয় তদন্ত ও তথ্য দাতার তথ্য মতে নিম্নে লিখিত ব্যক্তিবর্গ তাহার পরিবারের নিয়মিত আইনসম্মত সদস্য:
           </p>
           <div className={`overflow-x-auto ${tableSpacingClass}`}>
             <table className={`w-full border border-slate-400 bg-white/95 ${tableModeClass}`}>
