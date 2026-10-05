@@ -33,6 +33,69 @@ select option {
   background: #ffffff;
 }
 
+/* Professional light application-form controls (eProttoyon-style readability). */
+.application-form {
+  color: #0f172a;
+}
+
+.application-form label {
+  color: #334155 !important;
+  font-weight: 700;
+}
+
+.application-form input:not([type="checkbox"]):not([type="radio"]),
+.application-form textarea,
+.application-form select {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: none;
+  opacity: 1 !important;
+}
+
+.application-form input:not([type="checkbox"]):not([type="radio"]):hover,
+.application-form textarea:hover,
+.application-form select:hover {
+  border-color: #94a3b8 !important;
+}
+
+.application-form input:not([type="checkbox"]):not([type="radio"]):focus,
+.application-form textarea:focus,
+.application-form select:focus {
+  outline: none !important;
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14) !important;
+}
+
+.application-form input::placeholder,
+.application-form textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+.application-form input:disabled,
+.application-form textarea:disabled,
+.application-form select:disabled,
+.application-form input[readonly],
+.application-form textarea[readonly] {
+  color: #475569 !important;
+  background-color: #f8fafc !important;
+  -webkit-text-fill-color: #475569 !important;
+  opacity: 1 !important;
+}
+
+.application-form input[type="date"] {
+  color-scheme: light;
+}
+
+.application-form select option {
+  color: #0f172a !important;
+  background: #ffffff !important;
+}
+
 .font-mono, code, pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
