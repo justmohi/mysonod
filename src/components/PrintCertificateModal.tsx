@@ -139,6 +139,24 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
     setPdfGeneratingTarget(target);
 
     try {
+      if (
+        target === 'certificate' &&
+        currentUser &&
+        userProfile?.role === 'operator'
+      ) {
+        const billing = await chargeLatePrintFee(
+          currentUser.uid,
+          application,
+          new Date()
+        );
+        if (billing.printDate) {
+          setPrintDateOverride(billing.printDate);
+        }
+        if (billing.charged) {
+          alert('৩ মাস পর পুনঃপ্রিন্টের জন্য ২ টাকা কাটা হয়েছে এবং আজকের তারিখ সনদের ইস্যু তারিখ হিসেবে সেট করা হয়েছে।');
+        }
+      }
+
       const elementId = target === 'application' ? 'application-print-area' : 'certificate-print-area';
       const element = document.getElementById(elementId);
       if (!element) {
