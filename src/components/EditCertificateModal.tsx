@@ -45,6 +45,16 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'spouseName', label: 'স্বামী / স্ত্রীর নাম', section: 'personal' },
   { key: 'spouseNameEn', label: 'স্বামী / স্ত্রীর নাম (ইংরেজিতে)', section: 'personal' },
   {
+    key: 'familyGuardianType',
+    label: 'পারিবারিক সনদে অভিভাবক',
+    type: 'select',
+    options: [
+      { value: 'father', label: 'পিতা' },
+      { value: 'husband', label: 'স্বামী' }
+    ],
+    section: 'certificate'
+  },
+  {
     key: 'gender',
     label: 'লিঙ্গ',
     type: 'select',
@@ -197,7 +207,7 @@ const CERTIFICATE_EDIT_KEYS: Record<string, string[]> = {
   ],
   inheritance: ['deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName'],
   succession: ['deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName'],
-  family: [],
+  family: ['familyGuardianType'],
   non_remarriage: ['previousHusbandName'],
   widow: ['previousHusbandName'],
   death: ['deathPersonName', 'deathDate', 'deathPlace'],
@@ -293,7 +303,10 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
 }
 
 const readValue = (app: CertificateApplication, key: string) => {
-  const value = (app as unknown as Record<string, unknown>)[key];
+  let value = (app as unknown as Record<string, unknown>)[key];
+  if (key === 'familyGuardianType' && !value) {
+    value = app.fatherName ? 'father' : (app.spouseName ? 'husband' : 'father');
+  }
   if (key === 'attachmentUrls' && Array.isArray(value)) {
     return value.join('\n');
   }
