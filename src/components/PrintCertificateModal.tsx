@@ -976,15 +976,19 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </span>
                       </div>
 
-                      {/* 4. Approving Authority */}
-                      <div className="flex flex-col items-center justify-between min-h-[60px] p-1 bg-white/60 rounded border border-slate-200">
+                      {/* 4. Approving Authority / Chairman */}
+                      <div className="flex flex-col items-center justify-between min-h-[78px] p-1 bg-white/60 rounded border border-slate-200">
                         <div className="h-6"></div>
                         <div className="w-full border-t border-slate-400 pt-0.5 font-bold text-slate-900">
-                          {lang === 'en' ? 'Approving Authority Seal' : 'অনুমোদনকারীর স্বাক্ষর ও সীল'}
+                          {lang === 'en' ? 'Approving Authority Seal' : 'চেয়ারম্যানের স্বাক্ষর ও সীল'}
                         </div>
                         <span className="text-[8.5px] text-emerald-950 font-bold">
                           {settings.chairmanName || (lang === 'en' ? 'Chairman' : 'চেয়ারম্যান')}
                         </span>
+                        <div
+                          className="h-7 w-20 border border-dashed border-slate-300 rounded-sm bg-slate-50/40"
+                          title={lang === 'en' ? 'Space for Chairman official seal' : 'চেয়ারম্যানের অফিসিয়াল সীলের জন্য স্থান'}
+                        ></div>
                       </div>
                     </div>
 
