@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
+import { useAuth } from './AuthContext';
 import type { UnionSettings } from '../types';
 import { DEFAULT_UNION_SETTINGS } from '../types';
 
@@ -11,8 +12,6 @@ interface UnionSettingsContextType {
   resetToDefault: (updatedByName?: string) => Promise<void>;
 }
 
-const LOCAL_STORAGE_KEY = 'union_settings_cache_v1';
-
 const UnionSettingsContext = createContext<UnionSettingsContextType>({
   settings: DEFAULT_UNION_SETTINGS,
   loading: false,
@@ -20,135 +19,193 @@ const UnionSettingsContext = createContext<UnionSettingsContextType>({
   resetToDefault: async () => {}
 });
 
+const GLOBAL_CACHE_KEY = 'union_settings_cache_v1';
+const GLOBAL_LOGO_KEYS = {
+  govtLogoUrl: 'custom_govt_logo_base64',
+  unionLogoUrl: 'custom_union_logo_base64',
+  watermarkLogoUrl: 'custom_watermark_logo_base64'
+} as const;
+
+const getScopedKey = (base: string, scopeId: string) =>
+  scopeId === 'global' ? base : `${base}__union_${scopeId}`;
+
 export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<UnionSettings>(() => {
+  const { currentUser, userProfile } = useAuth();
+
+  const isOperator = userProfile?.role === 'operator' && !!currentUser;
+  const scopeId = isOperator ? currentUser!.uid : 'global';
+
+  const cacheKey = useMemo(
+    () => getScopedKey(GLOBAL_CACHE_KEY, scopeId),
+    [scopeId]
+  );
+
+  const getLogoKey = (field: keyof typeof GLOBAL_LOGO_KEYS) =>
+    getScopedKey(GLOBAL_LOGO_KEYS[field], scopeId);
+
+  const readLocalSettings = (): UnionSettings => {
     try {
-      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-      const savedGovt = localStorage.getItem('custom_govt_logo_base64');
-      const savedUnion = localStorage.getItem('custom_union_logo_base64');
-      const savedWatermark = localStorage.getItem('custom_watermark_logo_base64') || localStorage.getItem('savedWatermarkLogo');
+      const cached = localStorage.getItem(cacheKey);
+      const savedGovt = localStorage.getItem(getLogoKey('govtLogoUrl'));
+      const savedUnion = localStorage.getItem(getLogoKey('unionLogoUrl'));
+      const savedWatermark =
+        localStorage.getItem(getLogoKey('watermarkLogoUrl')) ||
+        (scopeId === 'global' ? localStorage.getItem('savedWatermarkLogo') : null);
 
       let parsed: Partial<UnionSettings> = {};
       if (cached) {
         parsed = JSON.parse(cached);
       }
+
       return {
         ...DEFAULT_UNION_SETTINGS,
         ...parsed,
-        govtLogoUrl: savedGovt !== null ? savedGovt : (parsed.govtLogoUrl || DEFAULT_UNION_SETTINGS.govtLogoUrl),
-        unionLogoUrl: savedUnion !== null ? savedUnion : (parsed.unionLogoUrl || DEFAULT_UNION_SETTINGS.unionLogoUrl),
-        watermarkLogoUrl: savedWatermark !== null ? savedWatermark : (parsed.watermarkLogoUrl || DEFAULT_UNION_SETTINGS.watermarkLogoUrl),
+        govtLogoUrl:
+          savedGovt !== null ? savedGovt : (parsed.govtLogoUrl || DEFAULT_UNION_SETTINGS.govtLogoUrl),
+        unionLogoUrl:
+          savedUnion !== null ? savedUnion : (parsed.unionLogoUrl || DEFAULT_UNION_SETTINGS.unionLogoUrl),
+        watermarkLogoUrl:
+          savedWatermark !== null ? savedWatermark : (parsed.watermarkLogoUrl || DEFAULT_UNION_SETTINGS.watermarkLogoUrl)
       };
     } catch (e) {
       console.warn('Failed to parse cached union settings', e);
+      return DEFAULT_UNION_SETTINGS;
     }
-    return DEFAULT_UNION_SETTINGS;
-  });
+  };
 
+  const [settings, setSettings] = useState<UnionSettings>(readLocalSettings);
   const [loading, setLoading] = useState(true);
 
-  // Subscribe to real-time updates from Firestore 'settings/unionInfo'
   useEffect(() => {
-    const docRef = doc(db, 'settings', 'unionInfo');
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      const savedGovt = localStorage.getItem('custom_govt_logo_base64');
-      const savedUnion = localStorage.getItem('custom_union_logo_base64');
-      const savedWatermark = localStorage.getItem('custom_watermark_logo_base64') || localStorage.getItem('savedWatermarkLogo');
+    setSettings(readLocalSettings());
+    setLoading(true);
 
-      if (docSnap.exists()) {
-        const data = docSnap.data() as Partial<UnionSettings>;
-        const merged: UnionSettings = {
-          ...DEFAULT_UNION_SETTINGS,
-          ...data,
-          govtLogoUrl: savedGovt !== null ? savedGovt : (data.govtLogoUrl || DEFAULT_UNION_SETTINGS.govtLogoUrl),
-          unionLogoUrl: savedUnion !== null ? savedUnion : (data.unionLogoUrl || DEFAULT_UNION_SETTINGS.unionLogoUrl),
-          watermarkLogoUrl: savedWatermark !== null ? savedWatermark : (data.watermarkLogoUrl || DEFAULT_UNION_SETTINGS.watermarkLogoUrl),
-        };
-        setSettings(merged);
-        try {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
-        } catch (e) {
-          // ignore localStorage errors
+    const docRef = isOperator
+      ? doc(db, 'union_settings', currentUser!.uid)
+      : doc(db, 'settings', 'unionInfo');
+
+    const unsubscribe = onSnapshot(
+      docRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data() as Partial<UnionSettings>;
+          const savedGovt = localStorage.getItem(getLogoKey('govtLogoUrl'));
+          const savedUnion = localStorage.getItem(getLogoKey('unionLogoUrl'));
+          const savedWatermark =
+            localStorage.getItem(getLogoKey('watermarkLogoUrl')) ||
+            (scopeId === 'global' ? localStorage.getItem('savedWatermarkLogo') : null);
+
+          const merged: UnionSettings = {
+            ...DEFAULT_UNION_SETTINGS,
+            ...data,
+            govtLogoUrl:
+              savedGovt !== null ? savedGovt : (data.govtLogoUrl || DEFAULT_UNION_SETTINGS.govtLogoUrl),
+            unionLogoUrl:
+              savedUnion !== null ? savedUnion : (data.unionLogoUrl || DEFAULT_UNION_SETTINGS.unionLogoUrl),
+            watermarkLogoUrl:
+              savedWatermark !== null ? savedWatermark : (data.watermarkLogoUrl || DEFAULT_UNION_SETTINGS.watermarkLogoUrl)
+          };
+
+          setSettings(merged);
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(merged));
+          } catch (e) {
+            // ignore localStorage errors
+          }
+        } else {
+          setDoc(
+            docRef,
+            {
+              ...DEFAULT_UNION_SETTINGS,
+              updatedAt: new Date().toISOString(),
+              updatedBy: isOperator
+                ? (userProfile?.name || currentUser?.email || 'ইউনিয়ন উদ্যোক্তা')
+                : 'এডমিন কর্মকর্তা'
+            },
+            { merge: true }
+          ).catch((err) => {
+            console.warn('Could not seed union settings:', err);
+          });
         }
-      } else {
-        // If settings doc doesn't exist yet, seed it with default union info
-        setDoc(docRef, {
-          ...DEFAULT_UNION_SETTINGS,
-          updatedAt: new Date().toISOString()
-        }, { merge: true }).catch((err) => {
-          console.warn('Could not seed default settings', err);
-        });
+
+        setLoading(false);
+      },
+      (error) => {
+        console.warn('Union settings subscription fallback to cached/default:', error.message);
+        setLoading(false);
       }
-      setLoading(false);
-    }, (error) => {
-      console.warn('Settings subscription fallback to default/cached:', error.message);
-      setLoading(false);
-    });
+    );
 
     return () => unsubscribe();
-  }, []);
+  }, [isOperator, currentUser?.uid, userProfile?.name, cacheKey, scopeId]);
 
   const updateSettings = async (newSettings: Partial<UnionSettings>, updatedByName?: string) => {
-    // Sync logo Base64 to dedicated localStorage keys for immediate offline & refresh resilience
     try {
-      if (newSettings.govtLogoUrl !== undefined) {
-        if (newSettings.govtLogoUrl) {
-          localStorage.setItem('custom_govt_logo_base64', newSettings.govtLogoUrl);
-        } else {
-          localStorage.removeItem('custom_govt_logo_base64');
+      for (const field of Object.keys(GLOBAL_LOGO_KEYS) as Array<keyof typeof GLOBAL_LOGO_KEYS>) {
+        const value = newSettings[field];
+        const key = getLogoKey(field);
+
+        if (value !== undefined) {
+          if (value) {
+            localStorage.setItem(key, value);
+          } else {
+            localStorage.removeItem(key);
+          }
         }
       }
-      if (newSettings.unionLogoUrl !== undefined) {
-        if (newSettings.unionLogoUrl) {
-          localStorage.setItem('custom_union_logo_base64', newSettings.unionLogoUrl);
-        } else {
-          localStorage.removeItem('custom_union_logo_base64');
-        }
-      }
-      if (newSettings.watermarkLogoUrl !== undefined) {
-        if (newSettings.watermarkLogoUrl) {
-          localStorage.setItem('custom_watermark_logo_base64', newSettings.watermarkLogoUrl);
-          localStorage.setItem('savedWatermarkLogo', newSettings.watermarkLogoUrl);
-        } else {
-          localStorage.removeItem('custom_watermark_logo_base64');
-          localStorage.removeItem('savedWatermarkLogo');
-        }
+
+      if (scopeId === 'global' && newSettings.watermarkLogoUrl === undefined) {
+        // Preserve legacy global watermark cache compatibility.
+        const watermark = localStorage.getItem(getLogoKey('watermarkLogoUrl'));
+        if (watermark) localStorage.setItem('savedWatermarkLogo', watermark);
       }
     } catch (e) {
-      console.warn('LocalStorage error on logo sync:', e);
+      console.warn('LocalStorage error on union settings sync:', e);
     }
 
     const updatedPayload: UnionSettings = {
       ...settings,
       ...newSettings,
       updatedAt: new Date().toISOString(),
-      updatedBy: updatedByName || 'এডমিন কর্মকর্তা'
+      updatedBy: updatedByName || (isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'এডমিন কর্মকর্তা')
     };
 
-    // Optimistically update React state and local cache immediately
     setSettings(updatedPayload);
+
     try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedPayload));
+      localStorage.setItem(cacheKey, JSON.stringify(updatedPayload));
     } catch (e) {
       // ignore
     }
 
     try {
-      const docRef = doc(db, 'settings', 'unionInfo');
+      const docRef = isOperator
+        ? doc(db, 'union_settings', currentUser!.uid)
+        : doc(db, 'settings', 'unionInfo');
+
       await setDoc(docRef, updatedPayload, { merge: true });
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, 'settings/unionInfo');
+      handleFirestoreError(
+        error,
+        OperationType.WRITE,
+        isOperator ? `union_settings/${currentUser!.uid}` : 'settings/unionInfo'
+      );
+      throw error;
     }
   };
 
   const resetToDefault = async (updatedByName?: string) => {
     try {
-      localStorage.removeItem('custom_govt_logo_base64');
-      localStorage.removeItem('custom_union_logo_base64');
-      localStorage.removeItem('custom_watermark_logo_base64');
+      for (const field of Object.keys(GLOBAL_LOGO_KEYS) as Array<keyof typeof GLOBAL_LOGO_KEYS>) {
+        localStorage.removeItem(getLogoKey(field));
+      }
+      if (scopeId === 'global') {
+        localStorage.removeItem('savedWatermarkLogo');
+      }
     } catch (e) {
       // ignore
     }
+
     await updateSettings(DEFAULT_UNION_SETTINGS, updatedByName);
   };
 
