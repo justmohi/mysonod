@@ -268,19 +268,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             </div>
           </div>
 
-          {/* Quick Admin Toggle for Test Evaluation */}
+          {/* Primary-admin preview toggle; operators only see their role. */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={toggleAdminMode}
-              className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border shadow-xs ${
-                isAdmin
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-600'
-                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>{isAdmin ? 'এডমিন মোড সক্রিয় (সুইচ করুন)' : 'এডমিন হিসেবে মোড চালু করুন'}</span>
-            </button>
+            {isPrimaryAdmin ? (
+              <button
+                onClick={toggleAdminMode}
+                className="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border shadow-xs bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-600"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>{isAdmin ? 'এডমিন মোড সক্রিয়' : 'এডমিন মোড চালু করুন'}</span>
+              </button>
+            ) : (
+              <span className="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                {isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'স্টাফ'}
+              </span>
+            )}
           </div>
         </div>
 
