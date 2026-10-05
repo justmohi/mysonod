@@ -109,8 +109,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
           new Date()
         );
 
-        if (billing.charged) {
+        if (billing.printDate) {
           setPrintDateOverride(billing.printDate);
+        }
+        if (billing.charged) {
           window.setTimeout(() => {
             alert('৩ মাস পর পুনঃপ্রিন্টের জন্য ২ টাকা কাটা হয়েছে এবং আজকের তারিখ সনদের ইস্যু তারিখ হিসেবে সেট করা হয়েছে।');
           }, 0);
