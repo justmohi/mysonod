@@ -217,7 +217,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
       const appDocRef = doc(db, 'applications', appId);
 
       const finalApplicantNameBn = applicantNameBn.trim() || '-';
-      const finalApplicantNameEn = applicantNameEn.trim() || (applicantNameBn.trim() || '-');
+      const finalApplicantNameEn = '';
       const finalGuardianName = guardianName.trim() || '-';
       const finalMotherName = motherName.trim() || '-';
       const finalMobile = applicantMobile.trim() || '-';
