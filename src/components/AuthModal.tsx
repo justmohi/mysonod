@@ -16,9 +16,10 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
-  const { login, loginOperator, signup, loginWithGoogle } = useAuth();
+  const { login, loginAdmin, loginOperator, signup, loginWithGoogle } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isOperatorLogin, setIsOperatorLogin] = useState(false);
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -36,7 +37,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
     setLoading(true);
 
     try {
-      if (isOperatorLogin) {
+      if (isAdminLogin) {
+        await loginAdmin(email, password);
+      } else if (isOperatorLogin) {
         await loginOperator(email, password);
       } else if (isSignUp) {
         if (!name.trim()) throw new Error('দয়া করে আপনার পূর্ণ নাম লিখুন');
@@ -80,7 +83,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
             ১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার
           </p>
           <div className="mt-3 inline-flex items-center rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold text-emerald-50">
-            {isOperatorLogin ? 'ইউনিয়ন উদ্যোক্তা লগইন' : 'নাগরিক সেবা লগইন'}
+            {isAdminLogin ? 'প্রধান প্রশাসক (Admin) লগইন' : isOperatorLogin ? 'ইউনিয়ন উদ্যোক্তা লগইন' : 'নাগরিক সেবা লগইন'}
           </div>
           <p className="text-[11px] text-emerald-200/90 font-normal mt-0.5">
             মিরপুর, কুষ্টিয়া
@@ -92,32 +95,47 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
           <button
             type="button"
             onClick={() => {
+              setIsAdminLogin(false);
               setIsOperatorLogin(false);
               setIsSignUp(false);
               setError(null);
             }}
-            className={`flex-1 py-3 text-xs sm:text-sm font-semibold text-center transition cursor-pointer ${
-              !isOperatorLogin ? 'text-emerald-800 border-b-2 border-[#006a4e] bg-white font-bold' : 'text-gray-500 hover:text-gray-800'
+            className={`flex-1 py-3 text-[11px] sm:text-xs font-semibold text-center transition cursor-pointer ${
+              !isOperatorLogin && !isAdminLogin ? 'text-emerald-800 border-b-2 border-[#006a4e] bg-white font-bold' : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            নাগরিক লগইন
+            নাগরিক
           </button>
           <button
             type="button"
             onClick={() => {
+              setIsAdminLogin(false);
               setIsOperatorLogin(true);
               setIsSignUp(false);
               setError(null);
             }}
-            className={`flex-1 py-3 text-xs sm:text-sm font-semibold text-center transition cursor-pointer ${
+            className={`flex-1 py-3 text-[11px] sm:text-xs font-semibold text-center transition cursor-pointer ${
               isOperatorLogin ? 'text-amber-800 border-b-2 border-amber-500 bg-white font-bold' : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            উদ্যোক্তা লগইন
+            উদ্যোক্তা
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsAdminLogin(true);
+              setIsOperatorLogin(false);
+              setIsSignUp(false);
+              setError(null);
+            }}
+            className={`flex-1 py-3 text-[11px] sm:text-xs font-semibold text-center transition cursor-pointer ${
+              isAdminLogin ? 'text-red-700 border-b-2 border-red-500 bg-white font-bold' : 'text-gray-500 hover:text-gray-800'
+            }`}
+          >
+            Admin
           </button>
         </div>
-
-        {!isOperatorLogin && (
+        {!isOperatorLogin && !isAdminLogin && (
           <div className="flex border-b border-gray-200 bg-white">
             <button
               type="button"
@@ -149,7 +167,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && !isOperatorLogin && (
+            {isSignUp && !isOperatorLogin && !isAdminLogin && (
               <>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
@@ -231,14 +249,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
               ) : (
                 <>
                   {isSignUp ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
-                  <span>{isOperatorLogin ? 'উদ্যোক্তা লগইন করুন' : (isSignUp ? 'একাউন্ট তৈরি করুন' : 'পোর্টালে প্রবেশ করুন')}</span>
+                  <span>{isAdminLogin ? 'Admin প্যানেলে প্রবেশ করুন' : isOperatorLogin ? 'উদ্যোক্তা লগইন করুন' : (isSignUp ? 'একাউন্ট তৈরি করুন' : 'পোর্টালে প্রবেশ করুন')}</span>
                 </>
               )}
             </button>
           </form>
 
           {/* Google Sign-in: citizens only */}
-          {!isOperatorLogin && (
+          {!isOperatorLogin && !isAdminLogin && (
           <div className="mt-4 pt-4 border-t border-gray-200">
             <button
               type="button"
