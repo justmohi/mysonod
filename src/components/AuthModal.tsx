@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BdGovernmentSeal } from './OfficialLogos';
 import {
   LogIn,
   UserPlus,
@@ -24,6 +23,23 @@ interface AuthModalProps {
 }
 
 type LoginMode = 'citizen' | 'operator' | 'admin';
+
+const MySonodMark: React.FC<{ className?: string }> = ({ className = 'h-10 w-10' }) => (
+  <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
+    <defs>
+      <linearGradient id="mysonodMarkGradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#34d399" />
+        <stop offset="100%" stopColor="#0d9488" />
+      </linearGradient>
+    </defs>
+    <rect x="3" y="3" width="42" height="42" rx="12" fill="url(#mysonodMarkGradient)" />
+    <path d="M15 14.5h12.5L33 20v13.5a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2Z" fill="white" fillOpacity=".96"/>
+    <path d="M27.5 14.5V20H33" fill="none" stroke="#0f766e" strokeWidth="1.8" strokeLinejoin="round"/>
+    <path d="M18 25.5l3.2 3.2 7-7" fill="none" stroke="#047857" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="35.5" cy="34.5" r="5.5" fill="#064e3b" stroke="white" strokeWidth="1.5"/>
+    <path d="M33 34.5l1.6 1.6 3-3" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
   const { login, loginAdmin, loginOperator, signup, loginWithGoogle } = useAuth();
@@ -121,7 +137,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
         <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-violet-300/20 blur-3xl" />
 
-        <div className="relative grid min-h-[620px] lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="relative grid min-h-[560px] lg:grid-cols-[0.92fr_1.08fr]">
           {/* Premium brand panel */}
           <div className="relative hidden overflow-hidden bg-gradient-to-br from-[#063b2e] via-[#006a4e] to-[#0b7a59] p-8 text-white lg:flex lg:flex-col">
             <div className="absolute inset-0 opacity-20">
@@ -136,7 +152,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
               </div>
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-100/80">
-                  e-Prottoyon
+                  mysonod
                 </div>
                 <div className="text-lg font-bold">ই-প্রত্যয়ন পোর্টাল</div>
               </div>
@@ -154,7 +170,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
               </h1>
 
               <p className="mt-4 max-w-sm text-sm leading-6 text-emerald-50/80">
-                নাগরিক আবেদন থেকে উদ্যোক্তা অনুমোদন এবং প্রশাসনিক নিয়ন্ত্রণ—সবকিছু একটি আধুনিক প্ল্যাটফর্মে।
+                নাগরিক আবেদন, উদ্যোক্তা অনুমোদন এবং সনদ ব্যবস্থাপনা—সবকিছু একটি আধুনিক প্ল্যাটফর্মে।
               </p>
 
               <div className="mt-7 space-y-3">
@@ -174,25 +190,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
             </div>
 
             <div className="relative flex items-center justify-between border-t border-white/10 pt-5 text-[11px] text-emerald-100/70">
-              <span>১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ</span>
+              <span>mysonod • ডিজিটাল সনদ পোর্টাল</span>
               <span>মিরপুর, কুষ্টিয়া</span>
             </div>
           </div>
 
           {/* Auth panel */}
-          <div className="relative overflow-y-auto bg-white/95 p-5 sm:p-8">
+          <div className="relative overflow-y-auto bg-white/95 p-5 sm:p-6">
             <div className="mx-auto max-w-xl">
               <div className="lg:hidden mb-6 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-[#063b2e] to-[#006a4e] p-4 text-white shadow-lg">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
-                  <BdGovernmentSeal className="h-9 w-9" />
+                  <MySonodMark className="h-9 w-9" />
                 </div>
                 <div>
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-100/80">e-Prottoyon</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-100/80">MYSONOD</div>
                   <div className="text-base font-bold">ই-প্রত্যয়ন পোর্টাল</div>
                 </div>
               </div>
 
-              <div className="mb-6">
+              <div className="mb-4">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
                     {activeMeta.badge}
@@ -275,7 +291,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+              <form onSubmit={handleSubmit} className="mt-4 space-y-3">
                 {isSignUp && mode === 'citizen' && (
                   <>
                     <div>
@@ -390,8 +406,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
               </form>
 
               {mode === 'citizen' && !isSignUp && (
-                <div className="mt-4">
-                  <div className="relative my-4">
+                <div className="mt-3">
+                  <div className="relative my-3">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-slate-200" />
                     </div>
@@ -417,7 +433,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
                 </div>
               )}
 
-              <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 text-[10px] text-slate-400">
+              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-[10px] text-slate-400">
                 <span>কারিগরি সহায়তায়: ইউনিয়ন ডিজিটাল সেন্টার</span>
                 <span>© 2026</span>
               </div>
