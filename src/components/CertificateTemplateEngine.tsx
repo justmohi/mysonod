@@ -929,9 +929,9 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   // Shared Address & Legal Variables
   const presentVillage = application.presentVillage || application.village || 'আমবাড়ীয়া';
   const presentWard = application.presentWard || application.wardNo || '০১';
-  const presentPost = application.presentPost || application.postOffice || settings.postOffice || 'হালসা-৭০৩১';
-  const presentUpazila = application.presentUpazila || settings.upazila || 'মিরপুর';
-  const presentDistrict = application.presentDistrict || settings.district || 'কুষ্টিয়া';
+  const presentPost = application.presentPost || application.postOffice || settings.postOffice || '—';
+  const presentUpazila = application.presentUpazila || settings.upazila || '—';
+  const presentDistrict = application.presentDistrict || settings.district || '—';
 
   const nameBn = application.applicantNameBn && application.applicantNameBn !== '-' 
     ? application.applicantNameBn 
@@ -962,7 +962,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const villageBn = presentVillage;
   const wardNoBn = toBengaliNumber(presentWard);
   const postOfficeBn = presentPost;
-  const unionNameBn = settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ';
+  const unionNameBn = settings.unionName || '—';
   const upazilaBn = presentUpazila;
   const districtBn = presentDistrict;
 
@@ -988,7 +988,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const incomeAmountBn = formatCurrencyBn(incomeAmount);
   const aliasNameBn = application.sameNamePerson || (application as any).sameNameRelation || '—';
   const prevDistrictBn = (application as any).prevDistrict || application.permanentDistrict || 'কুষ্টিয়া';
-  const prevUpazilaBn = (application as any).prevUpazila || application.permanentUpazila || 'মিরপুর';
+  const prevUpazilaBn = (application as any).prevUpazila || application.permanentUpazila || settings.upazila || '—';
   const prevVillageBn = application.voterAreaOld || (application as any).prevVillage || 'পূর্ববর্তী এলাকা';
 
   // Standard legal paragraph class with enhanced line-height and balanced font size for A4 canvas
