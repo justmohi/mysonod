@@ -34,6 +34,146 @@ select option {
 }
 
 
+/* Same Name certificate - match supplied reference form layout exactly. */
+.same-name-reference-fields .application-section-heading {
+  display: none !important;
+}
+
+.same-name-reference-fields {
+  width: 100%;
+  padding-top: 4px;
+}
+
+.same-name-reference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 12px;
+  font-size: 12px;
+}
+
+.same-name-field-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.same-name-input {
+  width: 100%;
+  min-height: 31px;
+  padding: 6px 10px;
+  border: 1px solid rgba(8, 145, 178, 0.42);
+  border-radius: 5px;
+  background: #c8f7f7;
+  color: #111827;
+  -webkit-text-fill-color: #111827;
+  outline: none;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.same-name-input:focus {
+  border-color: #1e90ff;
+  box-shadow: 0 0 0 1px rgba(30, 144, 255, 0.16);
+}
+
+.same-name-input::placeholder {
+  color: #5f7f86;
+  opacity: 0.75;
+  -webkit-text-fill-color: #5f7f86;
+}
+
+.same-name-select {
+  appearance: auto;
+  cursor: pointer;
+  background: #c8f7f7;
+}
+
+.same-name-file-input {
+  width: 100%;
+  min-height: 31px;
+  padding: 3px;
+  border: 1px solid rgba(8, 145, 178, 0.42);
+  border-radius: 5px;
+  background: #c8f7f7;
+  color: #334155;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+.same-name-extra-fields {
+  margin-top: 18px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.same-name-extra-stack {
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.same-name-add-button {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 31px;
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: #20aaa4;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.14);
+}
+
+.same-name-add-button:hover {
+  background: #13938e;
+}
+
+.same-name-deceased-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 66px;
+  margin-left: 2px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.same-name-deceased-toggle input {
+  width: 14px;
+  height: 14px;
+  accent-color: #20aaa4;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .same-name-reference-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .same-name-extra-stack {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .same-name-deceased-toggle {
+    margin-top: 24px;
+  }
+}
+
 /* Reference-style citizen certificate application UI. */
 .application-titlebar {
   width: 100%;
