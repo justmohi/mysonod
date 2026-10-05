@@ -40,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpenMobile,
   onCloseMobile
 }) => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isStaff, isOperator } = useAuth();
   const { settings } = useUnionSettings();
   const [isApplyMenuOpen, setIsApplyMenuOpen] = useState(true);
   const [sidebarSearch, setSidebarSearch] = useState('');
@@ -225,7 +225,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
 
           {/* Office Forwarding & Admin Approvals (Exclusive to Admin: mohistudio95@gmail.com) */}
-          {isAdmin && (
+          {isStaff && (
             <button
               onClick={() => { onNavigate('admin_office'); onCloseMobile(); }}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition font-medium cursor-pointer ${
@@ -236,10 +236,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-3">
                 <Building className="w-4 h-4 text-amber-400" />
-                <span>অফিস ফরওয়ার্ডিং (Admin Dashboard)</span>
+                <span>{isOperator ? 'উদ্যোক্তা অফিস (Approval Panel)' : 'অফিস ফরওয়ার্ডিং (Admin Dashboard)'}</span>
               </div>
               <span className="bg-amber-400 text-slate-950 font-bold text-[10px] px-1.5 py-0.5 rounded">
-                Admin
+                {isOperator ? 'Operator' : 'Admin'}
               </span>
             </button>
           )}
