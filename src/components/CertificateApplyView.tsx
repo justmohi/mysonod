@@ -244,7 +244,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     if (data.spouseName) setSpouseName(data.spouseName);
     if (data.gender) setGender(data.gender);
     if (data.maritalStatus) setMaritalStatus(data.maritalStatus);
-    if (data.mobile) setMobile(data.mobile);
     if (data.dob) setDob(data.dob);
     if (data.occupation) setOccupation(data.occupation);
 
@@ -518,7 +517,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           gender,
           maritalStatus: maritalStatus || 'বিবাহিত',
           nidOrBirthReg,
-          mobile,
+          mobile: '',
           fee: 2.0,
           status: isOperator ? 'Approved' : 'Pending',
           issuingOfficer: isOperator ? userProfile.name : undefined,
@@ -1003,32 +1002,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? 'Gender & Marital Status *' : 'লিঙ্গ ও বৈবাহিক অবস্থা *'}
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value as any)}
-                  className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
-                >
-                  <option value="male">{language === 'en' ? 'Male' : 'পুরুষ'}</option>
-                  <option value="female">{language === 'en' ? 'Female' : 'মহিলা'}</option>
-                  <option value="other">{language === 'en' ? 'Other' : 'অন্যান্য'}</option>
-                </select>
-                <select
-                  value={maritalStatus}
-                  onChange={(e) => setMaritalStatus(e.target.value)}
-                  className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
-                >
-                  <option value="বিবাহিত">{language === 'en' ? 'Married' : 'বিবাহিত'}</option>
-                  <option value="অবিবাহিত">{language === 'en' ? 'Unmarried' : 'অবিবাহিত'}</option>
-                  <option value="বিধবা">{language === 'en' ? 'Widow' : 'বিধবা'}</option>
-                  <option value="বিপত্নীক">{language === 'en' ? 'Widower' : 'বিপত্নীক'}</option>
-                </select>
-              </div>
-            </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -1058,7 +1031,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-semibold text-slate-700">
-                  {language === 'en' ? 'National ID / Birth Registration No *' : 'এনআইডি / জন্ম নিবন্ধন নম্বর *'}
+                  {language === 'en' ? 'National ID / Birth Registration No' : 'এনআইডি / জন্ম নিবন্ধন নম্বর'}
                 </label>
                 {checkingNid && (
                   <span className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1.5 animate-pulse">
@@ -1075,8 +1048,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
               <input
                 type="text"
-                required
-                value={nidOrBirthReg}
+                                value={nidOrBirthReg}
                 onChange={(e) => setNidOrBirthReg(e.target.value)}
                 placeholder={language === 'en' ? 'Enter NID / Birth Reg No (10, 13 or 17 digits)' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন (১০, ১৩ বা ১৭ ডিজিট)'}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono text-sm"
@@ -1089,18 +1061,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               )}
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? 'Mobile Number *' : 'মোবাইল নম্বর *'}
-              </label>
-              <input
-                type="tel"
-                required
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                placeholder={language === 'en' ? 'Enter Mobile Number' : 'মোবাইল নম্বর লিখুন'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
             </div>
           </div>
         </div>
