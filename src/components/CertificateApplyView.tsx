@@ -1915,25 +1915,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           </div>
         )}
 
-        {/* Same Name */}
-        {selectedType === 'same_name' && (
-          <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="একই নামের ব্যক্তির নাম"
-              value={sameNamePerson}
-              onChange={(e) => setSameNamePerson(e.target.value)}
-            />
-
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="সম্পর্ক / পরিচয়"
-              value={sameNameRelation}
-              onChange={(e) => setSameNameRelation(e.target.value)}
-            />
-          </div>
-        )}
-
         {/* General / Miscellaneous */}
         {(selectedType === 'general' || selectedType === 'miscellaneous') && (
           <div className="border-t pt-6 space-y-4">
