@@ -226,12 +226,32 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Each union operator gets an isolated settings workspace keyed by UID.
-    // Operators can only read/write their own union configuration.
-    // Admins can manage all union workspaces.
+    // Each operator gets an isolated union workspace keyed by their Auth UID.
+    // Admins can manage every workspace; operators can only access their own.
+    // The role is checked from the authoritative /users profile document.
     match /union_settings/{operatorId} {
-      allow read, write: if isAdmin() ||
-        (isOperator() && request.auth.uid == operatorId);
+      allow read: if isAdmin() ||
+        (
+          isSignedIn() &&
+          request.auth.uid == operatorId &&
+          get(/databases/$(database)/documents/users/$(operatorId)).data.role == 'operator'
+        );
+
+      allow create: if isAdmin() ||
+        (
+          isSignedIn() &&
+          request.auth.uid == operatorId &&
+          get(/databases/$(database)/documents/users/$(operatorId)).data.role == 'operator'
+        );
+
+      allow update: if isAdmin() ||
+        (
+          isSignedIn() &&
+          request.auth.uid == operatorId &&
+          get(/databases/$(database)/documents/users/$(operatorId)).data.role == 'operator'
+        );
+
+      allow delete: if isAdmin();
     }
 
     match /{document=**} {
