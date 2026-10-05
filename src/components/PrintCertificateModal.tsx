@@ -938,9 +938,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         <div className="w-full border-t border-slate-400 pt-0.5 font-bold text-slate-900">
                           {lang === 'en' ? 'Verifying Officer Seal & Sign' : 'যাচাইকারীর স্বাক্ষর ও সীল'}
                         </div>
-                        <span className="text-[8.5px] text-slate-500">
-                          {lang === 'en' ? 'Secretary / Admin Officer' : 'ইউপি সচিব / প্রশাসনিক কর্মকর্তা'}
-                        </span>
                       </div>
                     </div>
 
