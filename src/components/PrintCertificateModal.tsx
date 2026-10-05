@@ -840,10 +840,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Name (Bangla): ' : 'আবেদনকারীর নাম (বাংলা): '}</span>
                                   <strong className="text-slate-950 font-bold">{application.applicantNameBn || '—'}</strong>
                                 </div>
-                                <div>
-                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Name (English): ' : 'নাম (ইংরেজি): '}</span>
-                                  <strong className="text-slate-900 font-medium">{application.applicantNameEn || '—'}</strong>
-                                </div>
+                                {lang === 'en' && (
+                                  <div>
+                                    <span className="text-slate-600 font-semibold">Name (English): </span>
+                                    <strong className="text-slate-900 font-medium">{application.applicantNameEn || '—'}</strong>
+                                  </div>
+                                )}
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? "Father's Name: " : 'পিতার নাম: '}</span>
                                   <strong className="text-slate-900">{application.fatherName || '—'}</strong>
@@ -867,12 +869,19 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Gender & Marital Status: ' : 'লিঙ্গ ও বৈবাহিক অবস্থা: '}</span>
                                   <strong className="text-slate-900">
-                                    {application.gender === 'female' ? (lang === 'en' ? 'Female' : 'মহিলা') : application.gender === 'other' ? (lang === 'en' ? 'Other' : 'অন্যান্য') : (lang === 'en' ? 'Male' : 'পুরুষ')}, {application.maritalStatus || (lang === 'en' ? 'Married' : 'বিবাহিত')}
+                                    {application.gender === 'female'
+                                      ? (lang === 'en' ? 'Female' : 'মহিলা')
+                                      : application.gender === 'other'
+                                        ? (lang === 'en' ? 'Other' : 'অন্যান্য')
+                                        : application.gender === 'male'
+                                          ? (lang === 'en' ? 'Male' : 'পুরুষ')
+                                          : '—'}
+                                    {application.maritalStatus ? ', ' + application.maritalStatus : ''}
                                   </strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Occupation: ' : 'পেশা: '}</span>
-                                  <strong className="text-slate-900">{application.occupation || (lang === 'en' ? 'Agriculture / Business' : 'কৃষি ও ব্যবসা')}</strong>
+                                  <strong className="text-slate-900">{application.occupation || '—'}</strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Mobile Number: ' : 'মোবাইল নম্বর: '}</span>
