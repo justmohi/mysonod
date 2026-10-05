@@ -1063,7 +1063,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
             </div>
           </div>
-        </div>
 
         {/* Section 2: Address Info (Present & Permanent Addresses) */}
         <div className="space-y-5">
