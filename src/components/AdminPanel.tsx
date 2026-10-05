@@ -3,6 +3,8 @@ import { useAuth, PRIMARY_ADMIN_EMAIL } from '../context/AuthContext';
 import { db, handleFirestoreError, OperationType, createOperatorAuthAccount } from '../firebase';
 import { 
   collection, 
+  query,
+  where,
   onSnapshot, 
   doc, 
   updateDoc,
@@ -71,7 +73,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
       });
     }
 
-    const unsubApps = onSnapshot(collection(db, 'applications'), (snapshot) => {
+    // Primary admin manages all applications; each operator only manages applications they submitted.
+    const applicationsQuery = isAdmin
+      ? collection(db, 'applications')
+      : query(collection(db, 'applications'), where('userId', '==', currentUser?.uid || ''));
+    
+    const unsubApps = onSnapshot(applicationsQuery, (snapshot) => {
       const list: CertificateApplication[] = [];
       snapshot.forEach(docSnap => {
         list.push(docSnap.data() as CertificateApplication);
@@ -86,7 +93,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
       if (unsubReqs) unsubReqs();
       unsubApps();
     };
-  }, [isAdmin]);
+  }, [isAdmin, isOperator, currentUser]);
 
   // Admin approves balance request -> Adds requested amount directly to user's wallet
   const handleApproveBalance = async (request: BalanceRequest) => {
