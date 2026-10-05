@@ -199,16 +199,18 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                     </td>
                     <td className="py-3 px-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        {isStaff && app.status === 'Approved' ? (
+                        {(!isStaff && app.status === 'Pending') || (isStaff && (app.status === 'Pending' || app.status === 'Approved')) ? (
                           <>
                             <button
                               onClick={() => setEditingApp(app)}
                               className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
-                              title="তথ্য সংশোধন / বানান ঠিক করুন"
+                              title="আবেদনের তথ্য সংশোধন করুন"
                             >
                               <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
-                              <span>সম্পাদন</span>
+                              <span>তথ্য সম্পাদনা</span>
                             </button>
+                            {isStaff && app.status === 'Approved' && (
+                              <>
                             <button
                               onClick={() => onViewCertificate(app, { isDuplicate: true })}
                               className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
@@ -223,6 +225,8 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                               <Printer className="w-3.5 h-3.5" />
                               <span>প্রিন্ট</span>
                             </button>
+                              </>
+                            )}
                           </>
                         ) : (
                           <span className="text-[10px] text-amber-700 font-semibold">
