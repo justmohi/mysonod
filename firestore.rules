@@ -96,7 +96,10 @@ service cloud.firestore {
     // Citizens create and edit their own applications only while Pending.
     // Staff can review and approve/reject applications.
     match /applications/{applicationId} {
-      allow read: if isStaff() ||
+      // Primary admin can read all applications.
+      // Operators can only read applications they submitted themselves.
+      // Citizens can only read applications they submitted themselves.
+      allow read: if isAdmin() ||
         (
           isSignedIn() &&
           resource.data.userId == request.auth.uid
