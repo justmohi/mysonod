@@ -240,7 +240,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
 
         // Applicant & Owner
         applicantNameBn: ownerName.trim(),
-        applicantNameEn: ownerName.trim(),
+        applicantNameEn: '',
         fatherName: ownerFatherOrHusbandName.trim(),
         motherName: ownerMotherName.trim(),
         ownerName: ownerName.trim(),
