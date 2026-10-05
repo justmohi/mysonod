@@ -35,7 +35,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   onNavigate,
   onViewCertificate
 }) => {
-  const { currentUser, isAdmin } = useAuth();
+  const { currentUser, isAdmin, isStaff } = useAuth();
   const [applications, setApplications] = useState<CertificateApplication[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
