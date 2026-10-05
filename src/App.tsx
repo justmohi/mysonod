@@ -19,7 +19,7 @@ import { setCurrentApplicationData } from './utils/currentApplication';
 import { Building2 } from 'lucide-react';
 
 function AppContent() {
-  const { currentUser, loading, isAdmin } = useAuth();
+  const { currentUser, loading, isAdmin, isStaff } = useAuth();
   const [currentView, setCurrentView] = useState<string>('dashboard');
   const [selectedCertType, setSelectedCertType] = useState<CertificateType>('citizenship');
   const [selectedCertificateForPrint, setSelectedCertificateForPrint] = useState<CertificateApplication | null>(null);
@@ -43,6 +43,14 @@ function AppContent() {
   };
 
   const handleViewCertificate = (app: CertificateApplication, options?: { isDuplicate?: boolean }) => {
+    if (!isStaff) {
+      alert('সনদ প্রিন্ট করার অনুমতি শুধু ইউনিয়ন উদ্যোক্তা বা প্রশাসকের জন্য।');
+      return;
+    }
+    if (app.status !== 'Approved') {
+      alert('আবেদনটি এখনো অনুমোদিত হয়নি। উদ্যোক্তা অনুমোদন করার পর সনদ প্রিন্ট করা যাবে।');
+      return;
+    }
     const unified = setCurrentApplicationData(app);
     setIsPrintDuplicate(options?.isDuplicate ?? false);
     setSelectedCertificateForPrint(unified);
@@ -117,7 +125,7 @@ function AppContent() {
               )}
 
               {currentView === 'admin_office' && (
-                isAdmin ? (
+                isStaff ? (
                   <AdminPanel 
                     onViewCertificate={handleViewCertificate}
                     onNavigate={handleNavigate}
