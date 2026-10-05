@@ -22,7 +22,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, currentView }) => {
-  const { currentUser, userProfile, isAdmin, logout, toggleAdminMode } = useAuth();
+  const { currentUser, userProfile, isAdmin, isOperator, logout, toggleAdminMode } = useAuth();
   const { settings } = useUnionSettings();
 
   const balance = userProfile?.balance ?? 0;
@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
                 className="px-2.5 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 border bg-emerald-800 text-white border-emerald-500"
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>মোড: নাগরিক সেবা (User)</span>
+                <span>মোড: {isOperator ? 'ইউনিয়ন উদ্যোক্তা (Operator)' : 'নাগরিক সেবা (User)'}</span>
               </div>
             )
           )}
@@ -155,7 +155,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
                 {userProfile?.name || currentUser?.displayName || currentUser?.email?.split('@')[0] || 'নাগরিক'}
               </span>
               <span className="text-[10px] text-slate-500 block">
-                {isAdmin ? '🛡️ প্রশাসক' : '👤 ইউজার'}
+                {isAdmin ? '🛡️ প্রশাসক' : isOperator ? '🏢 ইউনিয়ন উদ্যোক্তা' : '👤 নাগরিক'}
               </span>
             </div>
 
