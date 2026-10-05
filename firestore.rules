@@ -184,7 +184,7 @@ service cloud.firestore {
           resource.data.status == 'Pending' &&
           request.resource.data.status == 'Pending' &&
           applicationEditFieldsOnly()
-        )
+        );
 
       allow delete: if isAdmin();
     }
