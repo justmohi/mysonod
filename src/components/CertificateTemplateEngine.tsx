@@ -1188,7 +1188,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       {type === 'family' && (
         <div className={tableContainerSpacing}>
           <p className={tablePClass}>
-            এই মর্মে পারিবারিক সনদপত্র প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, স্বামী/পিতা: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। স্থানীয় তদন্ত ও তথ্য দাতার তথ্য মতে নিম্নে লিখিত ব্যক্তিবর্গ তাহার পরিবারের নিয়মিত আইনসম্মত সদস্য:
+            এই মর্মে পারিবারিক সনদপত্র প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। স্থানীয় তদন্ত ও তথ্য দাতার তথ্য মতে নিম্নে লিখিত ব্যক্তিবর্গ তাহার পরিবারের নিয়মিত আইনসম্মত সদস্য:
           </p>
           <div className={`overflow-x-auto ${tableSpacingClass}`}>
             <table className={`w-full border border-slate-400 bg-white/95 ${tableModeClass}`}>
@@ -1273,7 +1273,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       {/* 9. Unmarried & Married Certificate (অবিবাহিত ও বিবাহিত প্রত্যয়ন) */}
       {(type === 'unmarried' || type === 'married') && (
         <p className={pClass}>
-          এই মর্মে <strong>{type === 'unmarried' ? 'অবিবাহিত প্রত্যয়ন' : 'বিবাহিত প্রত্যয়ন'}</strong> প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, পিতা/স্বামী: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। {type === 'unmarried' ? 'স্থানীয় তদন্ত ও ঘোষণা মোতাবেক তিনি অদ্যবধি কোনো বিবাহ বন্ধনে আবদ্ধ হন নাই। তিনি সম্পূর্ণ আইনসম্মত একজন অবিবাহিত নাগরিক।' : `তিনি পারিবারিকভাবে বিবাহিত এবং বর্তমানে তাহার দাম্পত্য জীবন শান্তিময় ও অটুট রহিয়াছে।`} আমি তাহার জীবনের সার্বিক উন্নতি ও সুখ-শান্তি কামনা করি।
+          এই মর্মে <strong>{type === 'unmarried' ? 'অবিবাহিত প্রত্যয়ন' : 'বিবাহিত প্রত্যয়ন'}</strong> প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। {type === 'unmarried' ? 'স্থানীয় তদন্ত ও ঘোষণা মোতাবেক তিনি অদ্যবধি কোনো বিবাহ বন্ধনে আবদ্ধ হন নাই। তিনি সম্পূর্ণ আইনসম্মত একজন অবিবাহিত নাগরিক।' : `তিনি পারিবারিকভাবে বিবাহিত এবং বর্তমানে তাহার দাম্পত্য জীবন শান্তিময় ও অটুট রহিয়াছে।`} আমি তাহার জীবনের সার্বিক উন্নতি ও সুখ-শান্তি কামনা করি।
         </p>
       )}
 
@@ -1350,7 +1350,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       {/* 20. Infrastructure Permission (অবকাঠামো নির্মাণের অনুমতিপত্র) */}
       {type === 'infrastructure_permission' && (
         <p className={pClass}>
-          এই মর্মে অবকাঠামো নির্মাণের অনুমতি প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, পিতা/স্বামী: <strong>{guardianNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের অনুমোদিত সীমানায় তাহার স্বত্বদখলীয় জমিতে <strong>{application.constructionType || 'একতলা পাকা ভবন'}</strong> নির্মাণের আবেদন করিয়াছেন। স্থানীয় সরেজমিন পরিদর্শন ও সরকারি নকশা মানদণ্ড যাচাই সাপেক্ষে বিধি মোতাবেক অত্র অনুমতিপত্র মঞ্জুর করা হইল।
+          এই মর্মে অবকাঠামো নির্মাণের অনুমতি প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের অনুমোদিত সীমানায় তাহার স্বত্বদখলীয় জমিতে <strong>{application.constructionType || 'একতলা পাকা ভবন'}</strong> নির্মাণের আবেদন করিয়াছেন। স্থানীয় সরেজমিন পরিদর্শন ও সরকারি নকশা মানদণ্ড যাচাই সাপেক্ষে বিধি মোতাবেক অত্র অনুমতিপত্র মঞ্জুর করা হইল।
         </p>
       )}
 
@@ -1364,7 +1364,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       {/* 22. Childless Certificate (নিঃসন্তান প্রত্যয়ন) */}
       {type === 'childless' && (
         <p className={pClass}>
-          এই মর্মে নিঃসন্তান প্রত্যয়ন প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, স্বামী/পিতা: <strong>{guardianNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের একজন স্থায়ী বাসিন্দা। স্থানীয় বয়োজ্যেষ্ঠ ও জনপ্রতিনিধিদের সাক্ষ্য মোতাবেক তিনি ও তাহার দাম্পত্য জীবনে কোনো প্রকার জীবিত বা মৃত সন্তান-সন্ততি নাই। তিনি একজন নিঃসন্তান নাগরিক। আমি তাহার সার্বিক শান্তি ও কল্যাণ কামনা করি।
+          এই মর্মে নিঃসন্তান প্রত্যয়ন প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের একজন স্থায়ী বাসিন্দা। স্থানীয় বয়োজ্যেষ্ঠ ও জনপ্রতিনিধিদের সাক্ষ্য মোতাবেক তিনি ও তাহার দাম্পত্য জীবনে কোনো প্রকার জীবিত বা মৃত সন্তান-সন্ততি নাই। তিনি একজন নিঃসন্তান নাগরিক। আমি তাহার সার্বিক শান্তি ও কল্যাণ কামনা করি।
         </p>
       )}
 
