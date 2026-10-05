@@ -60,7 +60,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   onNavigate,
   onViewCertificate
 }) => {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, isOperator } = useAuth();
   const [selectedType, setSelectedType] = useState<CertificateType>(initialType);
   const [language, setLanguage] = useState<'bn' | 'en'>('bn');
   const [editingExistingApp, setEditingExistingApp] = useState<CertificateApplication | null>(null);
