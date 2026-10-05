@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eProttoyon - Union Digital Center Portal</title>
+    <meta name="description" content="Union Digital Center Portal matching eProttoyon.com for online citizenship, character, inheritance, income certificates, trade licenses, fee deduction and balance top-ups." />
+    <meta property="og:title" content="eProttoyon - Union Digital Center Portal" />
+    <meta property="og:description" content="Union Digital Center Portal matching eProttoyon.com for online citizenship, character, inheritance, income certificates, trade licenses, fee deduction and balance top-ups." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts for Bengali Typography: Tiro Bangla -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Runtime Fix: Prevent "Cannot set property fetch of #<Window> which has only a getter" -->
+    <script>
+      (function() {
+        try {
+          var nativeFetch = window.fetch;
+          if (typeof nativeFetch === 'function') {
+            nativeFetch = nativeFetch.bind(window);
+          }
+          var _currentFetch = nativeFetch;
+
+          // 1. Ensure Window.prototype allows both getter and setter for fetch
+          if (typeof Window !== 'undefined' && Window.prototype) {
+            try {
+              var protoDesc = Object.getOwnPropertyDescriptor(Window.prototype, 'fetch');
+              if (protoDesc && (!protoDesc.writable || !protoDesc.set)) {
+                Object.defineProperty(Window.prototype, 'fetch', {
+                  get: function() { return _currentFetch; },
+                  set: function(fn) { _currentFetch = fn; },
+                  configurable: true,
+                  enumerable: true
+                });
+              }
+            } catch (err) {}
+          }
+
+          // 2. Ensure window instance has a setter and getter for fetch
+          try {
+            Object.defineProperty(window, 'fetch', {
+              get: function() { return _currentFetch; },
+              set: function(fn) { _currentFetch = fn; },
+              configurable: true,
+              enumerable: true
+            });
+          } catch (err) {}
+        } catch (e) {
+          console.warn('Window fetch patch bypassed:', e);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

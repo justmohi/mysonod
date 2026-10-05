@@ -1,0 +1,497 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { db, handleFirestoreError, OperationType } from '../firebase';
+import { 
+  collection, 
+  onSnapshot, 
+  doc, 
+  updateDoc, 
+  runTransaction,
+  getDoc 
+} from 'firebase/firestore';
+import type { BalanceRequest, CertificateApplication, Transaction } from '../types';
+import { toBengaliNumber, formatCurrencyBn, formatBengaliDate } from '../utils/bengali';
+import { cleanDataForFirestore } from '../utils/firestore';
+import { 
+  Building, 
+  CheckCircle, 
+  XCircle, 
+  Clock, 
+  FileText, 
+  Wallet, 
+  UserCheck, 
+  ShieldCheck, 
+  Search, 
+  Filter, 
+  Eye, 
+  Printer, 
+  CheckCheck,
+  Edit3,
+  Building2
+} from 'lucide-react';
+import { EditCertificateModal } from './EditCertificateModal';
+import { UnionSettingsManager } from './UnionSettingsManager';
+
+interface AdminPanelProps {
+  onViewCertificate: (app: CertificateApplication) => void;
+  onNavigate: (view: string) => void;
+}
+
+export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNavigate }) => {
+  const { currentUser, userProfile, isAdmin, toggleAdminMode } = useAuth();
+
+  const [activeTab, setActiveTab] = useState<'balance' | 'certificates' | 'settings'>('balance');
+  const [balanceRequests, setBalanceRequests] = useState<BalanceRequest[]>([]);
+  const [applications, setApplications] = useState<CertificateApplication[]>([]);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'Pending' | 'Approved' | 'Rejected'>('all');
+  const [editingApp, setEditingApp] = useState<CertificateApplication | null>(null);
+
+  // Listen to all balance requests (Admin view)
+  useEffect(() => {
+    const unsubReqs = onSnapshot(collection(db, 'balance_requests'), (snapshot) => {
+      const list: BalanceRequest[] = [];
+      snapshot.forEach(docSnap => {
+        list.push(docSnap.data() as BalanceRequest);
+      });
+      list.sort((a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime());
+      setBalanceRequests(list);
+    }, (err) => {
+      handleFirestoreError(err, OperationType.GET, 'balance_requests');
+    });
+
+    const unsubApps = onSnapshot(collection(db, 'applications'), (snapshot) => {
+      const list: CertificateApplication[] = [];
+      snapshot.forEach(docSnap => {
+        list.push(docSnap.data() as CertificateApplication);
+      });
+      list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setApplications(list);
+    }, (err) => {
+      handleFirestoreError(err, OperationType.GET, 'applications');
+    });
+
+    return () => {
+      unsubReqs();
+      unsubApps();
+    };
+  }, []);
+
+  // Admin approves balance request -> Adds requested amount directly to user's wallet
+  const handleApproveBalance = async (request: BalanceRequest) => {
+    if (processingId) return;
+    setProcessingId(request.id);
+
+    try {
+      const userDocRef = doc(db, 'users', request.userId);
+      const reqDocRef = doc(db, 'balance_requests', request.id);
+      const txId = `tx_topup_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+      const txDocRef = doc(db, 'transactions', txId);
+      const nowIso = new Date().toISOString();
+
+      await runTransaction(db, async (transaction) => {
+        const userSnap = await transaction.get(userDocRef);
+        const currentBal = userSnap.exists() ? (Number(userSnap.data().balance) || 0) : 0;
+        const newBalance = Number((currentBal + request.amount).toFixed(2));
+
+        // 1. Update user balance
+        transaction.update(userDocRef, {
+          balance: newBalance,
+          updatedAt: nowIso
+        });
+
+        // 2. Mark request as Approved
+        transaction.update(reqDocRef, {
+          status: 'Approved',
+          reviewedAt: nowIso,
+          reviewedBy: userProfile?.name || 'ইউনিয়ন পরিষদ এডমিন'
+        });
+
+        // 3. Record transaction log
+        const topupTx: Transaction = {
+          id: txId,
+          userId: request.userId,
+          type: 'balance_topup',
+          amount: request.amount,
+          balanceAfter: newBalance,
+          description: `ব্যালেন্স অনুমোদন (${request.method} - TrxID: ${request.trxId})`,
+          referenceId: request.trxId,
+          createdAt: nowIso
+        };
+        transaction.set(txDocRef, cleanDataForFirestore(topupTx));
+      });
+
+      alert(`সাফল্য: ৳${toBengaliNumber(request.amount)} টাকা সফলভাবে ব্যবহারকারীর ওয়ালেটে যুক্ত করা হয়েছে!`);
+    } catch (err: any) {
+      console.error(err);
+      handleFirestoreError(err, OperationType.UPDATE, `balance_requests/${request.id}`);
+      alert(`অনুমোদন ব্যর্থ হয়েছে: ${err.message}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  // Reject balance request
+  const handleRejectBalance = async (request: BalanceRequest) => {
+    const reason = prompt('বাতিলের কারণ লিখুন (ঐচ্ছিক):', 'ভুল ট্রানজেকশন আইডি বা অপর্যাপ্ত তথ্য');
+    if (reason === null) return;
+
+    setProcessingId(request.id);
+    try {
+      await updateDoc(doc(db, 'balance_requests', request.id), cleanDataForFirestore({
+        status: 'Rejected',
+        reviewedAt: new Date().toISOString(),
+        reviewedBy: userProfile?.name || 'ইউনিয়ন পরিষদ এডমিন',
+        rejectionReason: reason || 'বাতিল করা হয়েছে'
+      }));
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, `balance_requests/${request.id}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  // Admin approves certificate application
+  const handleApproveApplication = async (app: CertificateApplication) => {
+    try {
+      await updateDoc(doc(db, 'applications', app.id), cleanDataForFirestore({
+        status: 'Approved',
+        approvedAt: new Date().toISOString(),
+        issuingOfficer: userProfile?.name || 'চেয়ারম্যান, ১২ নং আমবাড়ীয়া ইউপি'
+      }));
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, `applications/${app.id}`);
+    }
+  };
+
+  const pendingRequests = balanceRequests.filter(r => r.status === 'Pending');
+  const filteredApps = applications.filter(a => {
+    const matchesSearch = a.applicantNameBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          a.trackingId.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || a.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Top Banner & Role Toggle Bar */}
+      <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-300 flex items-center justify-center">
+              <Building className="w-7 h-7" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-slate-900">
+                  অফিস ফরওয়ার্ডিং ও প্রশাসন
+                </h2>
+                <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded-full border border-amber-200">
+                  ইউপি কন্ট্রোল প্যানেল
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                ১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ - ব্যালেন্স রিচার্জ অনুমোদন ও প্রত্যয়ন পত্র ব্যবস্থাপনা
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Admin Toggle for Test Evaluation */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleAdminMode}
+              className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border shadow-xs ${
+                isAdmin
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-600'
+                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>{isAdmin ? 'এডমিন মোড সক্রিয় (সুইচ করুন)' : 'এডমিন হিসেবে মোড চালু করুন'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Switcher */}
+        <div className="flex gap-2 mt-6 border-b border-slate-200">
+          <button
+            onClick={() => setActiveTab('balance')}
+            className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
+              activeTab === 'balance'
+                ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Wallet className="w-4 h-4" />
+            <span>ব্যালেন্স অনুমোদন রিকোয়েস্ট</span>
+            {pendingRequests.length > 0 && (
+              <span className="bg-red-500 text-white font-bold text-[10px] px-2 py-0.5 rounded-full animate-pulse">
+                {toBengaliNumber(pendingRequests.length)}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('certificates')}
+            className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
+              activeTab === 'certificates'
+                ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            <span>সকল প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
+              activeTab === 'settings'
+                ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Building2 className="w-4 h-4" />
+            <span>ইউনিয়ন ও পোর্টাল সেটিংস (Union Settings)</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Tab 1: Balance Approval Queue (CRITICAL BUSINESS LOGIC) */}
+      {activeTab === 'balance' && (
+        <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-base font-bold text-slate-800">
+                ম্যানুয়াল ব্যালেন্স রিচার্জের অপেক্ষমাণ তালিকা
+              </h3>
+              <p className="text-xs text-slate-500">
+                নাগরিকদের প্রেরিত bKash/Nagad/Rocket TrxID যাচাই করে অনুমোদন (Approve) বাটনে চাপুন। অনুমোদন করার সাথে সাথে ইউজারের ওয়ালেটে ব্যালেন্স জমা হবে।
+              </p>
+            </div>
+            <span className="text-xs bg-emerald-50 text-emerald-800 font-bold px-3 py-1 rounded-full border border-emerald-200">
+              মোট আবেদন: {toBengaliNumber(balanceRequests.length)}
+            </span>
+          </div>
+
+          {balanceRequests.length === 0 ? (
+            <div className="text-center py-12 text-slate-400 text-xs">
+              কোনো ব্যালেন্স রিচার্জের রিকোয়েস্ট পাওয়া যায়নি।
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b border-slate-200">
+                  <tr>
+                    <th className="py-3 px-3">তারিখ ও সময়</th>
+                    <th className="py-3 px-3">নাগরিকের তথ্য</th>
+                    <th className="py-3 px-3">মাধ্যম</th>
+                    <th className="py-3 px-3">প্রেরক নম্বর</th>
+                    <th className="py-3 px-3">টাকার পরিমাণ</th>
+                    <th className="py-3 px-3">TrxID</th>
+                    <th className="py-3 px-3">বর্তমান অবস্থা</th>
+                    <th className="py-3 px-3 text-right">কার্যক্রম (Action)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {balanceRequests.map((req) => {
+                    const isPending = req.status === 'Pending';
+                    const isProcessing = processingId === req.id;
+                    return (
+                      <tr key={req.id} className="hover:bg-slate-50/80">
+                        <td className="py-3 px-3 text-slate-500 font-medium whitespace-nowrap">
+                          {formatBengaliDate(req.requestedAt)}
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className="font-bold text-slate-800 block">{req.userName}</span>
+                          <span className="text-[10px] text-slate-500">{req.userEmail}</span>
+                        </td>
+                        <td className="py-3 px-3 font-semibold text-slate-700">
+                          {req.method}
+                        </td>
+                        <td className="py-3 px-3 font-mono text-slate-600">
+                          {req.senderNumber}
+                        </td>
+                        <td className="py-3 px-3 font-extrabold text-sm text-emerald-800">
+                          {formatCurrencyBn(req.amount)}
+                        </td>
+                        <td className="py-3 px-3 font-mono font-bold text-slate-800 uppercase tracking-wide bg-slate-50 rounded">
+                          {req.trxId}
+                        </td>
+                        <td className="py-3 px-3">
+                          {req.status === 'Approved' ? (
+                            <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[10px]">
+                              <CheckCircle className="w-3 h-3" />
+                              <span>অনুমোদিত</span>
+                            </span>
+                          ) : req.status === 'Pending' ? (
+                            <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full text-[10px]">
+                              <Clock className="w-3 h-3" />
+                              <span>অপেক্ষমাণ</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded-full text-[10px]">
+                              <XCircle className="w-3 h-3" />
+                              <span>বাতিল</span>
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-3 text-right whitespace-nowrap">
+                          {isPending ? (
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => handleApproveBalance(req)}
+                                disabled={isProcessing}
+                                className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-xs transition flex items-center gap-1 disabled:opacity-50"
+                                title="ব্যবহারকারীর ওয়ালেটে ব্যালেন্স জমা করুন"
+                              >
+                                <CheckCheck className="w-3.5 h-3.5" />
+                                <span>{isProcessing ? 'যোগ হচ্ছে...' : 'অনুমোদন (Approve)'}</span>
+                              </button>
+                              <button
+                                onClick={() => handleRejectBalance(req)}
+                                disabled={isProcessing}
+                                className="cursor-pointer bg-red-100 hover:bg-red-200 text-red-800 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition"
+                                title="বাতিল করুন"
+                              >
+                                বাতিল
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-[11px] text-slate-400 italic">
+                              {req.reviewedBy ? `যাচাইকারী: ${req.reviewedBy}` : 'সম্পন্ন'}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab 2: Certificate Applications Management */}
+      {activeTab === 'certificates' && (
+        <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="নাম বা ট্র্যাকিং নম্বর দিয়ে খুঁজুন..."
+                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-slate-400" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none"
+              >
+                <option value="all">সকল অবস্থা</option>
+                <option value="Pending">অপেক্ষমাণ</option>
+                <option value="Approved">অনুমোদিত</option>
+                <option value="Rejected">বাতিল</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-left">
+              <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b border-slate-200">
+                <tr>
+                  <th className="py-2.5 px-3">ট্র্যাকিং আইডি</th>
+                  <th className="py-2.5 px-3">সনদের ধরণ</th>
+                  <th className="py-2.5 px-3">আবেদনকারী</th>
+                  <th className="py-2.5 px-3">গ্রাম ও ওয়ার্ড</th>
+                  <th className="py-2.5 px-3">সরকারি ফি</th>
+                  <th className="py-2.5 px-3">তারিখ</th>
+                  <th className="py-2.5 px-3">স্ট্যাটাস</th>
+                  <th className="py-2.5 px-3 text-right">সনদ দেখুন</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredApps.map((app) => (
+                  <tr key={app.id} className="hover:bg-slate-50/70">
+                    <td className="py-2.5 px-3 font-mono font-bold text-emerald-800">
+                      {app.trackingId}
+                    </td>
+                    <td className="py-2.5 px-3 font-semibold text-slate-800">
+                      {app.certificateTitleBn}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <span className="font-bold text-slate-800 block">{app.applicantNameBn}</span>
+                      <span className="text-[10px] text-slate-500">{app.mobile}</span>
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-600">
+                      {app.village}, ওয়ার্ড: {app.wardNo}
+                    </td>
+                    <td className="py-2.5 px-3 font-bold text-emerald-700">
+                      {formatCurrencyBn(app.fee)}
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-500">
+                      {formatBengaliDate(app.createdAt)}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <span className="bg-emerald-100 text-emerald-800 font-bold text-[10px] px-2 py-0.5 rounded-full">
+                        {app.status === 'Approved' ? 'অনুমোদিত' : app.status}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setEditingApp(app)}
+                          className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
+                          title="সনদের তথ্য সম্পাদন করুন"
+                        >
+                          <Edit3 className="w-3 h-3 text-emerald-700" />
+                          <span>সম্পাদন</span>
+                        </button>
+                        <button
+                          onClick={() => onViewCertificate(app)}
+                          className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2.5 py-1 rounded-lg text-xs transition inline-flex items-center gap-1"
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                          <span>প্রিন্ট</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 3: Dynamic Union & Header Settings Management */}
+      {activeTab === 'settings' && (
+        <UnionSettingsManager />
+      )}
+
+      {/* Edit Certificate Modal for Admin */}
+      {editingApp && (
+        <EditCertificateModal
+          application={editingApp}
+          onClose={() => setEditingApp(null)}
+          onSaveSuccess={(updated) => {
+            setApplications(prev => prev.map(a => a.id === updated.id ? updated : a));
+            setEditingApp(null);
+          }}
+          onViewCertificate={(updated) => {
+            setEditingApp(null);
+            onViewCertificate(updated);
+          }}
+        />
+      )}
+    </div>
+  );
+};
