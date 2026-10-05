@@ -88,7 +88,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [nidOrBirthReg, setNidOrBirthReg] = useState('');
   const [mobile, setMobile] = useState('');
   const [dob, setDob] = useState('');
-  const [occupation, setOccupation] = useState('কৃষি ও ব্যবসা');
 
   // Present Address Fields
   const [presentVillage, setPresentVillage] = useState('');
@@ -537,7 +536,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
         if (spouseName) appPayload.spouseName = spouseName;
         if (dob) appPayload.dob = dob;
-        if (occupation) appPayload.occupation = occupation;
         if (holdingNo) appPayload.holdingNo = holdingNo;
 
         if (selectedType === 'income' || selectedType === 'annual_income') {
@@ -1229,18 +1227,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? 'Occupation / Profession' : 'পেশা'}
-                </label>
-                <input
-                  type="text"
-                  value={occupation}
-                  onChange={(e) => setOccupation(e.target.value)}
-                  placeholder={language === 'en' ? 'Occupation (e.g. Agriculture, Business)' : 'পেশা (যেমন: ব্যবসা, কৃষি, চাকরি)'}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
