@@ -44,6 +44,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const application = currentApp || initialPropApp;
   const { settings } = useUnionSettings();
   const { currentUser, userProfile } = useAuth();
+  const isOperator = userProfile?.role === 'operator';
   const [printDateOverride, setPrintDateOverride] = useState<string | null>(null);
   const watermarkSrc = getActiveWatermarkSrc(settings.watermarkLogoUrl);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
@@ -78,6 +79,19 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
   const certMeta = CERTIFICATE_CATALOG[application.certificateType];
   const titleBn = application.certificateTitleBn || certMeta?.titleBn || 'প্রত্যয়ন পত্র';
+  const unionNameFallbackBn = isOperator ? '' : '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ';
+  const unionNameFallbackEn = isOperator ? '' : '12 NO. AMBARIYA UNION PARISHAD';
+  const postOfficeFallbackBn = isOperator ? '' : 'হালসা-৭০৩১';
+  const postOfficeFallbackEn = isOperator ? '' : 'Halsa-7031';
+  const upazilaFallbackBn = isOperator ? '' : 'মিরপুর';
+  const upazilaFallbackEn = isOperator ? '' : 'Mirpur';
+  const districtFallbackBn = isOperator ? '' : 'কুষ্টিয়া';
+  const districtFallbackEn = isOperator ? '' : 'Kushtia';
+  const chairmanFallbackBn = isOperator ? '' : 'মোঃ সাইফুদ্দিন মুকুল';
+  const chairmanFallbackEn = isOperator ? '' : 'Md. Saifuddin Mukul';
+  const officialEmailFallback = isOperator ? '' : 'udc.ambaria@gmail.com';
+  const mobileFallbackBn = isOperator ? '' : '০১৭৪১-১৮৫৭৬৫';
+  const mobileFallbackEn = isOperator ? '' : '01741-185765';
   const titleEn = application.certificateTitleEn || certMeta?.titleEn || 'Official Certificate';
 
   const isTableCertificate = application.certificateType === 'inheritance' || 
@@ -236,23 +250,23 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   // Address Resolution for Present and Permanent Addresses
   const presentVillage = application.presentVillage || application.village || '';
   const presentWard = application.presentWard || application.wardNo || '০১';
-  const presentPost = application.presentPost || application.postOffice || settings.postOffice || 'হালসা-৭০৩১';
+  const presentPost = application.presentPost || application.postOffice || settings.postOffice || postOfficeFallbackBn;
   const presentPostOffice = presentPost;
-  const presentUpazila = application.presentUpazila || settings.upazila || 'মিরপুর';
-  const presentDistrict = application.presentDistrict || settings.district || 'কুষ্টিয়া';
+  const presentUpazila = application.presentUpazila || settings.upazila || upazilaFallbackBn;
+  const presentDistrict = application.presentDistrict || settings.district || districtFallbackBn;
 
   const permanentVillage = application.permanentVillage || application.village || '';
   const permanentWard = application.permanentWard || application.wardNo || '০১';
-  const permanentPost = application.permanentPost || application.postOffice || settings.postOffice || 'হালসা-৭০৩১';
+  const permanentPost = application.permanentPost || application.postOffice || settings.postOffice || postOfficeFallbackBn;
   const permanentPostOffice = permanentPost;
-  const permanentUpazila = application.permanentUpazila || settings.upazila || 'মিরপুর';
-  const permanentDistrict = application.permanentDistrict || settings.district || 'কুষ্টিয়া';
+  const permanentUpazila = application.permanentUpazila || settings.upazila || upazilaFallbackBn;
+  const permanentDistrict = application.permanentDistrict || settings.district || districtFallbackBn;
 
   const presentVillageEn = application.presentVillageEn || application.presentVillage || application.villageEn || application.village || '';
   const presentWardEn = application.presentWard || application.wardNo || '01';
-  const presentPostEn = application.presentPostEn || application.presentPost || application.postOfficeEn || settings.postOfficeEn || settings.postOffice || 'Halsa-7031';
-  const presentUpazilaEn = application.presentUpazilaEn || settings.upazilaEn || settings.upazila || 'Mirpur';
-  const presentDistrictEn = application.presentDistrictEn || settings.districtEn || settings.district || 'Kushtia';
+  const presentPostEn = application.presentPostEn || application.presentPost || application.postOfficeEn || settings.postOfficeEn || settings.postOffice || postOfficeFallbackEn;
+  const presentUpazilaEn = application.presentUpazilaEn || settings.upazilaEn || settings.upazila || upazilaFallbackEn;
+  const presentDistrictEn = application.presentDistrictEn || settings.districtEn || settings.district || districtFallbackEn;
 
   const permanentVillageEn = application.permanentVillageEn || application.permanentVillage || application.villageEn || application.village || '';
   const permanentWardEn = application.permanentWard || application.wardNo || '01';
@@ -580,8 +594,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           </h4>
                           <h2 className="text-lg sm:text-2xl font-extrabold text-[#0d5c3a] tracking-tight mt-0.5">
                             {lang === 'en' 
-                              ? (settings.unionNameEn || settings.unionName || '12 NO. AMBARIYA UNION PARISHAD')
-                              : (settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ')}
+                              ? (settings.unionNameEn || settings.unionName || unionNameFallbackEn)
+                              : (settings.unionName || unionNameFallbackBn)}
                           </h2>
                           <p className="text-[11px] sm:text-xs font-semibold text-slate-800 mt-0.5">
                             {lang === 'en'
@@ -1076,11 +1090,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           Post Office: {settings.postOfficeEn || settings.postOffice || 'Halsa-7031'}, Upazila: {settings.upazilaEn || settings.upazila || 'Mirpur'}, District: {settings.districtEn || settings.district || 'Kushtia'}.
                         </p>
                         <div className={`flex flex-wrap items-center justify-center gap-x-2.5 gap-y-0.5 ${isUltraCompactTable ? 'mt-0 text-[9px]' : (isTableCertificate ? 'mt-0.5 text-[10px]' : 'mt-1 text-[11px]')} font-medium text-slate-700`}>
-                          <span>Chairman: <strong className="text-emerald-950 font-bold">{settings.chairmanNameEn || settings.chairmanName || 'Md. Saifuddin Mukul'}</strong></span>
+                          <span>Chairman: <strong className="text-emerald-950 font-bold">{settings.chairmanNameEn || settings.chairmanName || chairmanFallbackEn}</strong></span>
                           <span>•</span>
-                          <span>Email: <strong className="font-mono text-slate-800">{settings.officialEmail || 'udc.ambaria@gmail.com'}</strong></span>
+                          <span>Email: <strong className="font-mono text-slate-800">{settings.officialEmail || officialEmailFallback}</strong></span>
                           <span>•</span>
-                          <span>Mobile: <strong className="font-mono text-slate-900">{settings.mobileNumber || '01741-185765'}</strong></span>
+                          <span>Mobile: <strong className="font-mono text-slate-900">{settings.mobileNumber || mobileFallbackEn}</strong></span>
                         </div>
                       </>
                     ) : (
@@ -1095,11 +1109,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           ডাকঘর: {settings.postOffice || 'হালসা-৭০৩১'}, উপজেলা: {settings.upazila || 'মিরপুর'}, জেলা: {settings.district || 'কুষ্টিয়া'}।
                         </p>
                         <div className={`flex flex-wrap items-center justify-center gap-x-2.5 gap-y-0.5 ${isUltraCompactTable ? 'mt-0 text-[9px]' : (isTableCertificate ? 'mt-0.5 text-[10px]' : 'mt-1 text-[11px]')} font-medium text-slate-700`}>
-                          <span>চেয়ারম্যান: <strong className="text-emerald-950 font-bold">{settings.chairmanName || 'মোঃ সাইফুদ্দিন মুকুল'}</strong></span>
+                          <span>চেয়ারম্যান: <strong className="text-emerald-950 font-bold">{settings.chairmanName || chairmanFallbackBn}</strong></span>
                           <span>•</span>
                           <span>ইমেইল: <strong className="font-mono text-slate-800">{settings.officialEmail || 'udc.ambaria@gmail.com'}</strong></span>
                           <span>•</span>
-                          <span>মোবাইল: <strong className="font-mono text-slate-900">{settings.mobileNumber || '০১৭৪১-১৮৫৭৬৫'}</strong></span>
+                          <span>মোবাইল: <strong className="font-mono text-slate-900">{settings.mobileNumber || mobileFallbackBn}</strong></span>
                         </div>
                       </>
                     )}
@@ -1328,7 +1342,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
                               <div>গ্রাম/সড়ক: <b>{application.presentVillage || application.village}</b></div>
                               <div>ওয়ার্ড নং: <b>{toBengaliNumber(application.presentWard || application.wardNo)}</b> | ডাকঘর: <b>{application.presentPost || application.postOffice}</b></div>
-                              <div>উপজেলা: <b>{application.presentUpazila || settings.upazila || 'মিরপুর'}</b> | জেলা: <b>{application.presentDistrict || settings.district || 'কুষ্টিয়া'}</b></div>
+                              <div>উপজেলা: <b>{application.presentUpazila || settings.upazila || upazilaFallbackBn}</b> | জেলা: <b>{application.presentDistrict || settings.district || districtFallbackBn}</b></div>
                             </div>
                           </div>
 
@@ -1340,7 +1354,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
                               <div>গ্রাম/সড়ক: <b>{application.permanentVillage || application.village}</b></div>
                               <div>ওয়ার্ড নং: <b>{toBengaliNumber(application.permanentWard || application.wardNo)}</b> | ডাকঘর: <b>{application.permanentPost || application.postOffice}</b></div>
-                              <div>উপজেলা: <b>{application.permanentUpazila || settings.upazila || 'মিরপুর'}</b> | জেলা: <b>{application.permanentDistrict || settings.district || 'কুষ্টিয়া'}</b></div>
+                              <div>উপজেলা: <b>{application.permanentUpazila || settings.upazila || upazilaFallbackBn}</b> | জেলা: <b>{application.permanentDistrict || settings.district || upazilaFallbackBn}</b></div>
                             </div>
                           </div>
                         </div>
