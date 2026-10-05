@@ -1282,9 +1282,21 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
 
       {/* 8. Citizenship & Nationality Certificate (নাগরিকত্ব ও জাতীয়তা সনদ) */}
       {(type === 'citizenship' || type === 'nationality') && (
-        <p className={pClass}>
-          এই মর্মে <strong>{type === 'citizenship' ? 'নাগরিক সনদপত্র' : 'জাতীয়তা সনদপত্র'}</strong> প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। তিনি জন্মসূত্রে বাংলাদেশের একজন স্থায়ী নাগরিক ও অধিবাসী। তিনি সমাজ ও রাষ্ট্রের প্রতি অনুগত এবং তাহার আচরণ সন্তোষজনক। আমি তাহার জীবনের সার্বিক মঙ্গল কামনা করি।
-        </p>
+        <>
+          <p className={pClass}>
+            এই মর্মে <strong>{type === 'citizenship' ? 'নাগরিক সনদপত্র' : 'জাতীয়তা সনদপত্র'}</strong> প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। তিনি জন্মসূত্রে বাংলাদেশের একজন স্থায়ী নাগরিক ও অধিবাসী। তিনি সমাজ ও রাষ্ট্রের প্রতি অনুগত এবং তাহার আচরণ সন্তোষজনক।
+          </p>
+          {type === 'citizenship' && (
+            <p className={pClass} style={{ marginTop: '6px' }}>
+              আমি তাহার জীবনের সার্বিক মঙ্গল কামনা করি।
+            </p>
+          )}
+          {type === 'nationality' && (
+            <p className={pClass} style={{ marginTop: '6px' }}>
+              আমি তাহার জীবনের সার্বিক মঙ্গল কামনা করি।
+            </p>
+          )}
+        </>
       )}
 
       {/* 9. Unmarried & Married Certificate (অবিবাহিত ও বিবাহিত প্রত্যয়ন) */}
