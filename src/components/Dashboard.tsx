@@ -52,7 +52,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
     if (!currentUser) return;
 
     // Applications query
-    const appQuery = isStaff
+    // Primary admin can view all applications; citizens and operators only see their own records.
+    const appQuery = isAdmin
       ? collection(db, 'applications')
       : query(collection(db, 'applications'), where('userId', '==', currentUser.uid));
 
