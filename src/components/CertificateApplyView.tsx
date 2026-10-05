@@ -50,6 +50,37 @@ import { EditCertificateModal } from './EditCertificateModal';
 import { WarishApplicationForm } from './WarishApplicationForm';
 import { TradeLicenseApplicationForm } from './TradeLicenseApplicationForm';
 
+const GUARDIAN_SELECTOR_TYPES = new Set<CertificateType>([
+  'voter_area_transfer',
+  'new_voter',
+  'new_voter_affidavit',
+  'income',
+  'annual_income',
+  'monthly_income',
+  'character',
+  'unemployed',
+  'citizenship',
+  'nationality',
+  'unmarried',
+  'married',
+  'agriculture',
+  'freedom_fighter',
+  'landless',
+  'disabled',
+  'financial_insolvency',
+  'permanent_resident',
+  'not_rohingya',
+  'no_birth_certificate',
+  'nid_correction',
+  'infrastructure_permission',
+  'no_objection',
+  'childless',
+  'community',
+  'indigenous',
+  'general',
+  'miscellaneous'
+]);
+
 interface CertificateApplyViewProps {
   initialType?: CertificateType;
   onNavigate: (view: string, data?: any) => void;
@@ -238,6 +269,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
   // Family certificate guardian selector: Father or Husband.
   const [familyGuardianType, setFamilyGuardianType] = useState<'father' | 'husband'>('father');
+  const [guardianType, setGuardianType] = useState<'father' | 'husband'>('father');
 
   // NID Lookup & Duplicate Detection State (Crucial Firebase Logic)
   const [existingRecordFound, setExistingRecordFound] = useState<CertificateApplication | null>(null);
@@ -251,6 +283,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     if (data.fatherName) setFatherName(data.fatherName);
     if (data.motherName) setMotherName(data.motherName);
     if (data.spouseName) setSpouseName(data.spouseName);
+    if (data.guardianType === 'father' || data.guardianType === 'husband') {
+      setGuardianType(data.guardianType);
+    } else if (data.spouseName && !data.fatherName) {
+      setGuardianType('husband');
+    } else {
+      setGuardianType('father');
+    }
     if (data.familyGuardianType) {
       setFamilyGuardianType(data.familyGuardianType);
     } else if (data.spouseName && !data.fatherName) {
@@ -398,6 +437,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   }, [initialType]);
 
   const certMeta = CERTIFICATE_CATALOG[selectedType];
+  const needsGuardianSelector = GUARDIAN_SELECTOR_TYPES.has(selectedType);
   const currentBalance = userProfile?.balance ?? 0;
   const isBalanceSufficient = currentBalance >= 2.0;
 
@@ -547,6 +587,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         if (spouseName) appPayload.spouseName = spouseName;
         if (dob) appPayload.dob = dob;
         if (holdingNo) appPayload.holdingNo = holdingNo;
+        if (needsGuardianSelector) appPayload.guardianType = guardianType;
 
         if (selectedType === 'income' || selectedType === 'annual_income') {
           appPayload.annualIncome = Number(annualIncome) || 0;
@@ -1188,17 +1229,46 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 </div>
               )}
 
+              {needsGuardianSelector && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {language === 'en' ? 'Guardian Type' : 'অভিভাবক হিসেবে পিতা / স্বামী *'}
+                  </label>
+                  <select
+                    value={guardianType}
+                    onChange={(e) => setGuardianType(e.target.value as 'father' | 'husband')}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  >
+                    <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
+                    <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
+                  </select>
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? "Father's Name *" : 'পিতার নাম (বাংলায়)'}
+                  {language === 'en'
+                    ? (needsGuardianSelector ? (guardianType === 'father' ? "Father's Name *" : "Husband's Name *") : "Father's Name *")
+                    : (needsGuardianSelector ? (guardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *') : 'পিতার নাম (বাংলায়)')}
                 </label>
-                <input
-                  type="text"
-                  value={fatherName}
-                  onChange={(e) => setFatherName(e.target.value)}
-                  placeholder={language === 'en' ? "Father's Name" : 'পিতার নাম (বাংলা)'}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
+                {needsGuardianSelector ? (
+                  <input
+                    type="text"
+                    required
+                    value={guardianType === 'father' ? fatherName : spouseName}
+                    onChange={(e) => guardianType === 'father' ? setFatherName(e.target.value) : setSpouseName(e.target.value)}
+                    placeholder={guardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={fatherName}
+                    onChange={(e) => setFatherName(e.target.value)}
+                    placeholder={language === 'en' ? "Father's Name" : 'পিতার নাম (বাংলা)'}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                )}
               </div>
 
               <div>
@@ -1214,18 +1284,20 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? "Spouse's Name (if any)" : 'স্বামী / স্ত্রীর নাম (যদি থাকে)'}
-                </label>
-                <input
-                  type="text"
-                  value={spouseName}
-                  onChange={(e) => setSpouseName(e.target.value)}
-                  placeholder={language === 'en' ? "Spouse's Name" : 'স্বামী / স্ত্রীর নাম (বাংলা)'}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
+              {!needsGuardianSelector && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {language === 'en' ? "Spouse's Name (if any)" : 'স্বামী / স্ত্রীর নাম (যদি থাকে)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={spouseName}
+                    onChange={(e) => setSpouseName(e.target.value)}
+                    placeholder={language === 'en' ? "Spouse's Name" : 'স্বামী / স্ত্রীর নাম (বাংলা)'}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
