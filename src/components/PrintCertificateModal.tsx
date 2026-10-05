@@ -1473,7 +1473,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         className={`certificate-body-content text-slate-900 text-justify font-normal ${
                           isTableCertificate 
                             ? `${isUltraCompactTable ? 'space-y-0.5 my-0' : (isHighRowTable ? 'space-y-1 my-0.5' : 'space-y-1.5 my-1')} flex-1 flex flex-col justify-start` 
-                            : 'text-[16px] sm:text-[17.5px] space-y-4 my-auto flex-1 flex flex-col justify-center'
+                            : 'text-[16px] sm:text-[17.5px] space-y-4 mt-1 flex-1 flex flex-col justify-start'
                         }`}
                         style={{ 
                           fontFamily: "'Tiro Bangla', serif", 
@@ -1547,6 +1547,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                     <div className={isUltraCompactTable ? 'h-4' : (isHighRowTable ? 'h-6' : (isTableCertificate ? 'h-8' : 'h-10 sm:h-12'))}></div>
                     <div className="border-t-2 border-slate-900 pt-1 font-bold text-slate-950 text-xs">
                       {lang === 'en' ? 'Signature & Seal of Approving Authority' : 'অনুমোদনকারীর সীল ও স্বাক্ষর'}
+                    </div>
+                    <div
+                      className={isUltraCompactTable ? 'mx-auto mt-1 h-8 w-14' : (isHighRowTable ? 'mx-auto mt-1 h-10 w-16' : (isTableCertificate ? 'mx-auto mt-1.5 h-12 w-20' : 'mx-auto mt-1.5 h-16 w-24'))}
+                      title={lang === 'en' ? 'Space for official approval seal' : 'অনুমোদনকারীর অফিসিয়াল সীলের জন্য স্থান'}
+                    >
+                      <div className="h-full w-full rounded-md border border-dashed border-slate-300 bg-slate-50/40"></div>
                     </div>
                   </div>
                 </div>
