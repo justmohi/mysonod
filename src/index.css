@@ -176,7 +176,7 @@ select option {
 /* The reference forms use three compact desktop columns for their common and
    certificate-specific fields. */
 @media (min-width: 768px) {
-  .application-form .grid.md\\:grid-cols-2 {
+  .application-form [class~="md:grid-cols-2"] {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
@@ -212,10 +212,10 @@ select option {
 .application-form textarea,
 .application-form select {
   color: #0f172a !important;
-  background-color: #ffffff !important;
+  background-color: #c8f7f7 !important;
   -webkit-text-fill-color: #0f172a !important;
   caret-color: #0f172a !important;
-  border-color: #cbd5e1 !important;
+  border-color: rgba(8, 145, 178, 0.45) !important;
   box-shadow: none;
   opacity: 1 !important;
 }
