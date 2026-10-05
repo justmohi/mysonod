@@ -12,6 +12,27 @@
   font-family: 'Tiro Bangla', 'SolaimanLipi', 'Kalpurush', 'Hind Siliguri', serif;
 }
 
+/* Ensure typed form values are always readable on the light application form. */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #cbd5e1 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+select option {
+  color: #0f172a;
+  background: #ffffff;
+}
+
 .font-mono, code, pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
