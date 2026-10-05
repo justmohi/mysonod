@@ -50,14 +50,34 @@ service cloud.firestore {
       allow read: if isOwner(userId) || isStaff();
 
       allow create: if isSignedIn() && (
-        isAdmin() ||
         (
           isOwner(userId) &&
           request.resource.data.role == 'user'
+        ) ||
+        (
+          isPrimaryAdmin() &&
+          request.resource.data.role == 'operator'
+        ) ||
+        (
+          isPrimaryAdmin() &&
+          request.resource.data.role == 'admin'
         )
       );
 
-      allow update: if isAdmin() ||
+      allow update: if (
+        isAdmin() &&
+        (
+          request.resource.data.role == resource.data.role ||
+          (
+            isPrimaryAdmin() &&
+            (
+              request.resource.data.role == 'operator' ||
+              request.resource.data.role == 'admin' ||
+              request.resource.data.role == 'user'
+            )
+          )
+        )
+      ) ||
         (
           isOwner(userId) &&
           resource.data.role == 'user' &&
