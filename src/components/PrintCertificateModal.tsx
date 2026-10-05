@@ -262,7 +262,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
   // Dynamic fields for Bangladeshi legal / Sadhu Bhasha format
   const nameBn = application.applicantNameBn;
-  const nidBn = toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg || '—');
+  const nidBn = application.nidOrBirthReg
+    ? toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg)
+    : '';
   const fatherNameBn = (application as any).fatherNameBn || application.fatherName || '—';
   const motherNameBn = (application as any).motherNameBn || application.motherName || '—';
   const guardianNameBn = application.spouseName || (application as any).fatherNameBn || application.fatherName || '—';
