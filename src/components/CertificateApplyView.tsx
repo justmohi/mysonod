@@ -68,6 +68,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [loading, setLoading] = useState(false);
   const [insufficientBalanceAlert, setInsufficientBalanceAlert] = useState(false);
   const [submittedApp, setSubmittedApp] = useState<CertificateApplication | null>(null);
+  const [declarationAgreed, setDeclarationAgreed] = useState(false);
 
   // Sync selected certificate type when navigated directly from sidebar
   useEffect(() => {
@@ -419,6 +420,11 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
     if (!currentUser || !userProfile) {
       alert('আবেদন দাখিলের জন্য অনুগ্রহ করে লগইন করুন।');
+      return;
+    }
+
+    if (!declarationAgreed) {
+      alert('অনুগ্রহ করে অঙ্গীকারনামায় টিক চিহ্ন দিয়ে সম্মতি প্রদান করুন।');
       return;
     }
 
@@ -838,78 +844,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         </div>
       )}
 
-      {/* Page Header (Focused layout: No inline certificate tags/tabs) */}
-      <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <button
-                type="button"
-                onClick={() => onNavigate('dashboard')}
-                className="cursor-pointer text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:underline flex items-center gap-1"
-              >
-                <span>{language === 'en' ? '← Back to Services & Dashboard' : '← সকল সেবা ও ড্যাশবোর্ড'}</span>
-              </button>
-              <span className="text-slate-300">|</span>
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                {language === 'en' ? 'Online Application Form' : 'অনলাইন আবেদন ফরম'}
-              </span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 font-serif">
-              {language === 'en' ? `${certMeta.titleEn} (${certMeta.titleBn})` : `${certMeta.titleBn} (${certMeta.titleEn})`}
-            </h2>
-            <p className="text-xs md:text-sm text-slate-500 mt-1 max-w-2xl">
-              {certMeta.descriptionBn}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Language Selector Toggle */}
-            <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setLanguage('bn')}
-                className={`cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                  language === 'bn'
-                    ? 'bg-emerald-700 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="বাংলা ফরম ও সনদপত্র"
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>বাংলা (Bangla)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('en')}
-                className={`cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                  language === 'en'
-                    ? 'bg-emerald-700 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="English Form & Certificate"
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>English</span>
-              </button>
-            </div>
-
-            {/* Fixed Government Fee Badge */}
-            <div className="bg-emerald-50 border border-emerald-300 px-4 py-2 rounded-xl flex items-center gap-2.5 shadow-2xs">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-500 block uppercase font-bold">
-                  {language === 'en' ? 'Govt Fee' : 'সরকারি ফি'}
-                </span>
-                <span className="text-xs font-extrabold text-emerald-800">
-                  {language === 'en' ? 'BDT 2.00' : 'নির্ধারিত ফি: ৳ ২.০০'}
-                </span>
-              </div>
-            </div>
-          </div>
+      {/* Compact reference-style application title bar */}
+      <div className="application-titlebar">
+        <div className="application-titlebar__title">
+          <span>আবেদন &gt; {language === 'en' ? certMeta.titleEn : certMeta.titleBn}</span>
         </div>
+        <label className="application-titlebar__english">
+          <input
+            type="checkbox"
+            checked={language === 'en'}
+            onChange={(e) => setLanguage(e.target.checked ? 'en' : 'bn')}
+          />
+          <span>ইংরেজিতেও আবেদন করুন</span>
+        </label>
       </div>
 
       {/* Main Application Form */}
@@ -926,7 +873,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           }}
         />
       ) : (
-        <form onSubmit={handleSubmit} className="application-form bg-white rounded-2xl p-6 shadow-xs border border-slate-200 space-y-6">
+        <form onSubmit={handleSubmit} className="application-form space-y-5">
         {/* Clean Duplicate Copy / Previous Record Notice */}
         {existingRecordFound && (
           <div className="bg-emerald-50/95 border border-emerald-300 px-4 py-3.5 rounded-xl shadow-2xs animate-in fade-in flex flex-wrap items-center justify-between gap-3">
@@ -980,12 +927,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
         {/* Section 1: Applicant Basic Info */}
         <div>
-          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider pb-2 border-b border-slate-200 flex items-center gap-2">
+          <h3 className="application-section-heading text-sm font-bold text-slate-800 uppercase tracking-wider pb-2 border-b border-slate-200 flex items-center gap-2">
             <FileText className="w-4 h-4 text-emerald-600" />
             <span>{language === 'en' ? '1. Applicant Personal Information' : '১. আবেদনকারীর ব্যক্তিগত তথ্যাবলী'}</span>
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+          <div className="application-basic-grid grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 {language === 'en' ? 'Applicant Name (Bengali)' : 'আবেদনকারীর নাম (বাংলায়) *'}
@@ -2078,8 +2025,23 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           </div>
         )}
         
+        {/* Reference-style declaration / consent */}
+        <div className="application-declaration">
+          <label className="application-declaration__label">
+            <input
+              type="checkbox"
+              checked={declarationAgreed}
+              onChange={(e) => setDeclarationAgreed(e.target.checked)}
+            />
+            <span>
+              আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য। যেকোন সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে
+              সনদ/প্রত্যয়ন বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা হবে।
+            </span>
+          </label>
+        </div>
+
         {/* Automated Fee Deduction Summary Bar (Rule Enforced) */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+        <div className="application-fee-row bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
               isBalanceSufficient ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700'
@@ -2122,7 +2084,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>আবেদন দাখিল ও ২/- টাকা ফি প্রদান</span>
+                  <span>আবেদন দাখিল করুন</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
