@@ -953,8 +953,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
                       </div>
                       <div className="text-right">
-                        <div>{settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার'}</div>
-                        <div className="text-slate-500 font-mono">www.eprottoyon.gov.bd</div>
+                        <div>{settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ'}</div>
                       </div>
                     </div>
 
@@ -1083,11 +1082,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           <span>•</span>
                           <span>Mobile: <strong className="font-mono text-slate-900">{settings.mobileNumber || '01741-185765'}</strong></span>
                         </div>
-                        {!isUltraCompactTable && (
-                          <div className={`inline-block ${isTableCertificate ? 'mt-0.5 px-2 py-0 text-[9px]' : 'mt-1.5 px-3 py-0.5 text-[10px]'} rounded-full bg-emerald-100/80 border border-emerald-300 font-bold text-emerald-900 uppercase`}>
-                            UNION DIGITAL CENTER • E-PROTTOYON CITIZEN SERVICE PORTAL (www.eprottoyon.gov.bd)
-                          </div>
-                        )}
                       </>
                     ) : (
                       <>
@@ -1107,11 +1101,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           <span>•</span>
                           <span>মোবাইল: <strong className="font-mono text-slate-900">{settings.mobileNumber || '০১৭৪১-১৮৫৭৬৫'}</strong></span>
                         </div>
-                        {!isUltraCompactTable && (
-                          <div className={`inline-block ${isTableCertificate ? 'mt-0.5 px-2 py-0 text-[9px]' : 'mt-1.5 px-3 py-0.5 text-[10px]'} rounded-full bg-emerald-100/80 border border-emerald-300 font-bold text-emerald-900`}>
-                            ইউনিয়ন ডিজিটাল সেন্টার • ই-প্রত্যয়ন সেবা পোর্টাল (www.eprottoyon.gov.bd)
-                          </div>
-                        )}
                       </>
                     )}
                   </div>
