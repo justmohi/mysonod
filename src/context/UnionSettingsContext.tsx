@@ -26,8 +26,82 @@ const UnionSettingsContext = createContext<UnionSettingsContextType>({
   removeLogo: async () => {}
 });
 
-const MAX_UNION_LOGO_SIZE = 5 * 1024 * 1024; // 5 MB per logo file
+const MAX_UNION_LOGO_SIZE = 5 * 1024 * 1024; // hard safety limit
+const TARGET_UNION_LOGO_SIZE = 700 * 1024; // target for faster upload
+const MAX_LOGO_DIMENSION = 1200;
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+
+async function optimizeLogoFile(file: File): Promise<File> {
+  if (
+    file.size <= TARGET_UNION_LOGO_SIZE ||
+    file.type === 'image/svg+xml'
+  ) {
+    return file;
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+
+  try {
+    const image = new Image();
+
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error('ইমেজটি পড়া যায়নি।'));
+      image.src = objectUrl;
+    });
+
+    const scale = Math.min(
+      1,
+      MAX_LOGO_DIMENSION / Math.max(image.naturalWidth || image.width, image.naturalHeight || image.height)
+    );
+
+    const width = Math.max(1, Math.round((image.naturalWidth || image.width) * scale));
+    const height = Math.max(1, Math.round((image.naturalHeight || image.height) * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext('2d');
+    if (!context) {
+      return file;
+    }
+
+    context.clearRect(0, 0, width, height);
+    context.drawImage(image, 0, 0, width, height);
+
+    const qualities = [0.86, 0.78, 0.70, 0.62];
+    for (const quality of qualities) {
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, 'image/webp', quality)
+      );
+
+      if (blob && blob.size <= TARGET_UNION_LOGO_SIZE) {
+        const baseName = file.name.replace(/\.[^.]+$/, '') || 'union-logo';
+        return new File([blob], `${baseName}.webp`, {
+          type: 'image/webp',
+          lastModified: Date.now()
+        });
+      }
+    }
+
+    const finalBlob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, 'image/webp', 0.55)
+    );
+
+    if (finalBlob && finalBlob.size < file.size) {
+      const baseName = file.name.replace(/\.[^.]+$/, '') || 'union-logo';
+      return new File([finalBlob], `${baseName}.webp`, {
+        type: 'image/webp',
+        lastModified: Date.now()
+      });
+    }
+
+    return file;
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
 
 export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser, userProfile } = useAuth();
@@ -133,16 +207,25 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (file.size > MAX_UNION_LOGO_SIZE) {
       throw new Error(
-        'প্রতিটি ইউনিয়ন লোগো/জলছাপ ফাইলের সর্বোচ্চ সাইজ ৫ MB।'
+        'ইমেজ ফাইলটি ৫ MB-এর বেশি। ছোট সাইজের ফাইল আপলোড করুন।'
+      );
+    }
+
+    // Compress large raster images locally first so the Firebase upload is much faster.
+    const optimizedFile = await optimizeLogoFile(file);
+
+    if (optimizedFile.size > MAX_UNION_LOGO_SIZE) {
+      throw new Error(
+        'কমপ্রেস করার পরও ইমেজটি ৫ MB-এর বেশি। আরও ছোট ছবি ব্যবহার করুন।'
       );
     }
 
     const objectPath = `union_settings/${storageOwnerId}/${field}`;
     const storageRef = ref(storage, objectPath);
 
-    await uploadBytes(storageRef, file, {
-      contentType: file.type,
-      cacheControl: 'public,max-age=3600'
+    await uploadBytes(storageRef, optimizedFile, {
+      contentType: optimizedFile.type,
+      cacheControl: 'public,max-age=31536000,immutable'
     });
 
     const downloadUrl = await getDownloadURL(storageRef);
