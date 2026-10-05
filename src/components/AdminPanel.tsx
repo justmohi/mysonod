@@ -322,6 +322,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
           </div>
         </div>
 
+        {isOperator && (
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3">
+              <div className="text-[10px] font-semibold text-amber-700">এই মাসে সম্পন্ন</div>
+              <div className="mt-1 text-lg font-black text-amber-900">
+                {toBengaliNumber(userProfile?.billingMonthKey ? (userProfile.billingMonthCompletedCount || 0) : 0)} টি
+              </div>
+            </div>
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-3">
+              <div className="text-[10px] font-semibold text-emerald-700">প্রথম মাসের নিয়ম</div>
+              <div className="mt-1 text-[11px] font-bold text-emerald-900">
+                ১–১০০ ফ্রি • ১০১+ = ৳১
+              </div>
+            </div>
+            <div className="rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-3">
+              <div className="text-[10px] font-semibold text-violet-700">পরবর্তী মাস</div>
+              <div className="mt-1 text-[11px] font-bold text-violet-900">
+                প্রতি নতুন সনদ = ৳২
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tab Switcher */}
         <div className="flex gap-2 mt-6 border-b border-slate-200">
           {isAdmin && (
