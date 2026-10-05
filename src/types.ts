@@ -616,6 +616,7 @@ export interface CertificateApplication {
 
   sameNamePerson?: string;
   sameNameRelation?: string;
+  familyGuardianType?: 'father' | 'husband';
 
   correctionDetails?: string;
 
