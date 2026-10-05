@@ -614,6 +614,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           appPayload.constructionLocation = constructionLocation;
           appPayload.constructionPurpose = constructionPurpose;
         } else if (selectedType === 'same_name') {
+          appPayload.fatherName = sameNameGuardianType === 'father' ? fatherName.trim() : '';
+          appPayload.spouseName = sameNameGuardianType === 'husband' ? spouseName.trim() : '';
           appPayload.sameNamePerson = sameNamePerson;
           appPayload.sameNameRelation = sameNameRelation;
         } else if (selectedType === 'married') {
@@ -963,7 +965,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     type="text"
                     value={nidOrBirthReg}
                     onChange={(e) => setNidOrBirthReg(e.target.value)}
-                    placeholder="*"
+                    placeholder=""
                     className="same-name-input"
                   />
                 </div>
@@ -980,6 +982,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     <option value="father">পিতা</option>
                     <option value="husband">স্বামী</option>
                   </select>
+                  <input
+                    type="text"
+                    value={sameNameGuardianType === 'father' ? fatherName : spouseName}
+                    onChange={(e) => {
+                      if (sameNameGuardianType === 'father') {
+                        setFatherName(e.target.value);
+                      } else {
+                        setSpouseName(e.target.value);
+                      }
+                    }}
+                    placeholder={sameNameGuardianType === 'father' ? 'পিতার নাম' : 'স্বামীর নাম'}
+                    className="same-name-input mt-1.5"
+                  />
                 </div>
 
                 <div>
@@ -1034,6 +1049,34 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     value={presentPost}
                     onChange={(e) => handlePresentPostChange(e.target.value)}
                     placeholder="ডাকঘর *"
+                    className="same-name-input"
+                  />
+                </div>
+ 
+                <div>
+                  <label className="same-name-field-label">
+                    উপজেলা
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={presentUpazila}
+                    onChange={(e) => handlePresentUpazilaChange(e.target.value)}
+                    placeholder="উপজেলা *"
+                    className="same-name-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="same-name-field-label">
+                    জেলা
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={presentDistrict}
+                    onChange={(e) => handlePresentDistrictChange(e.target.value)}
+                    placeholder="জেলা *"
                     className="same-name-input"
                   />
                 </div>
