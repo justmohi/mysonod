@@ -470,6 +470,11 @@ export interface UserProfile {
   role: 'user' | 'operator' | 'admin';
   createdAt: string;
   updatedAt?: string;
+  // Operator billing fields
+  billingStartAt?: string;
+  billingMonthKey?: string;
+  billingMonthCompletedCount?: number;
+  billingTotalCompleted?: number;
 }
 
 export interface CertificateApplication {
@@ -636,6 +641,14 @@ export interface CertificateApplication {
   issuingOfficer?: string;
   createdAt: string;
   approvedAt?: string;
+  completedByUid?: string;
+  completedByEmail?: string;
+  completedAt?: string;
+  completionCharge?: number;
+  completionChargeType?: 'free' | 'month1_overage' | 'monthly';
+  printDate?: string;
+  latePrintFeeChargedAt?: string;
+  latePrintFee?: number;
 }
 
 export interface BalanceRequest {
@@ -656,7 +669,7 @@ export interface BalanceRequest {
 export interface Transaction {
   id: string;
   userId: string;
-  type: 'fee_deduction' | 'balance_topup' | 'welcome_bonus';
+  type: 'fee_deduction' | 'balance_topup' | 'welcome_bonus' | 'certificate_usage_fee' | 'late_print_fee';
   amount: number;
   balanceAfter: number;
   description: string;
