@@ -148,7 +148,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
 
             <div className="relative flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/12 ring-1 ring-white/20 backdrop-blur-sm">
-                <BdGovernmentSeal className="h-10 w-10" />
+                <MySonodMark className="h-10 w-10" />
               </div>
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-100/80">
