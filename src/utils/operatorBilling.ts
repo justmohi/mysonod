@@ -231,7 +231,7 @@ export const chargeLatePrintFee = async (
     if (liveApp.printDate || liveApp.latePrintFeeChargedAt) {
       result = {
         charged: false,
-        printDate: liveApp.printDate || now.toISOString(),
+        printDate: liveApp.printDate || '',
         fee: Number(liveApp.latePrintFee || 0),
         newBalance: Number(operator.balance || 0)
       };
@@ -241,7 +241,7 @@ export const chargeLatePrintFee = async (
     if (!liveApp.completedAt || !isAtLeastThreeMonthsOld(liveApp.completedAt, now)) {
       result = {
         charged: false,
-        printDate: now.toISOString(),
+        printDate: '',
         fee: 0,
         newBalance: Number(operator.balance || 0)
       };
@@ -251,7 +251,7 @@ export const chargeLatePrintFee = async (
     if (operator.role !== 'operator') {
       result = {
         charged: false,
-        printDate: now.toISOString(),
+        printDate: liveApp.printDate || '',
         fee: 0,
         newBalance: Number(operator.balance || 0)
       };
