@@ -111,11 +111,13 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'businessAddress', label: 'ব্যবসার ঠিকানা', section: 'certificate' },
   { key: 'businessCapital', label: 'ব্যবসার মূলধন', type: 'number', section: 'certificate' },
   { key: 'businessStartDate', label: 'ব্যবসা শুরুর তারিখ', type: 'date', section: 'certificate' },
+  { key: 'showCapitalOnPrint', label: 'সনদে মূলধন দেখাবেন', type: 'checkbox', section: 'certificate' },
   { key: 'fiscalYear', label: 'অর্থবছর', section: 'certificate' },
   { key: 'ownerName', label: 'মালিকের নাম', section: 'certificate' },
   { key: 'ownerFatherOrHusbandName', label: 'মালিকের পিতা / স্বামীর নাম', section: 'certificate' },
   { key: 'ownerMotherName', label: 'মালিকের মায়ের নাম', section: 'certificate' },
   { key: 'ownerNidOrBirth', label: 'মালিকের NID / জন্ম নিবন্ধন', section: 'certificate' },
+  { key: 'ownerPhotoUrl', label: 'মালিকের ছবির URL', type: 'textarea', section: 'certificate' },
   { key: 'tinNumber', label: 'TIN নম্বর', section: 'certificate' },
   { key: 'validityStart', label: 'কার্যকারিতা শুরুর তারিখ', type: 'date', section: 'certificate' },
   { key: 'validityEnd', label: 'কার্যকারিতা শেষের তারিখ', type: 'date', section: 'certificate' },
@@ -131,6 +133,7 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'deceasedFatherOrHusbandType', label: 'মৃত ব্যক্তির পিতা / স্বামী', section: 'certificate' },
   { key: 'deceasedFatherOrHusbandName', label: 'মৃত ব্যক্তির পিতা / স্বামীর নাম', section: 'certificate' },
   { key: 'applicantRelation', label: 'আবেদনকারীর সম্পর্ক', section: 'certificate' },
+  { key: 'deceasedPhotoUrl', label: 'মৃত ব্যক্তির ছবির URL', type: 'textarea', section: 'certificate' },
   { key: 'previousHusbandName', label: 'পূর্বের স্বামীর নাম', section: 'certificate' },
   { key: 'deathPersonName', label: 'মৃত্যু সনদের ব্যক্তির নাম', section: 'certificate' },
   { key: 'deathDate', label: 'মৃত্যুর তারিখ', type: 'date', section: 'certificate' },
@@ -177,6 +180,7 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'rohingyaVerificationRef', label: 'রোহিঙ্গা যাচাই রেফারেন্স', section: 'certificate' },
   { key: 'generalPurpose', label: 'সাধারণ উদ্দেশ্য', type: 'textarea', section: 'certificate' },
   { key: 'certificateDetails', label: 'সনদের বিস্তারিত', type: 'textarea', section: 'certificate' },
+  { key: 'attachmentUrls', label: 'সংযুক্ত ফাইলের URL (প্রতি লাইনে ১টি)', type: 'textarea', section: 'certificate' },
   { key: 'notes', label: 'অতিরিক্ত নোট', type: 'textarea', section: 'certificate' }
 ];
 
@@ -267,6 +271,13 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
         ...formData,
         heirs,
         familyMembers,
+        attachmentUrls:
+          typeof formData.attachmentUrls === 'string'
+            ? formData.attachmentUrls
+                .split(/\r?\n/)
+                .map((value: string) => value.trim())
+                .filter(Boolean)
+            : (formData.attachmentUrls || application.attachmentUrls || []),
         updatedAt: new Date().toISOString()
       };
 
