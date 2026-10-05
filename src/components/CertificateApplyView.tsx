@@ -24,6 +24,7 @@ import {
 import { toBengaliNumber, formatCurrencyBn, generateTrackingId, formatBengaliDate, cleanNidNumber } from '../utils/bengali';
 import { cleanDataForFirestore } from '../utils/firestore';
 import { clearCurrentApplicationData, setCurrentApplicationData } from '../utils/currentApplication';
+import { applyOperatorCompletionChargeInTransaction } from '../utils/operatorBilling';
 import { 
   FileText, 
   AlertTriangle, 
