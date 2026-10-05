@@ -52,7 +52,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
     if (!currentUser) return;
 
     // Applications query
-    const appQuery = isAdmin
+    const appQuery = isStaff
       ? collection(db, 'applications')
       : query(collection(db, 'applications'), where('userId', '==', currentUser.uid));
 
