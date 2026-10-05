@@ -947,6 +947,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               />
             </div>
 
+            {language === 'en' && (
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 {language === 'en' ? 'Applicant Name (English) *' : 'Applicant Name (English) *'}
@@ -960,6 +961,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
               />
             </div>
+
+            )}
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -1205,11 +1208,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           </div>
 
           {/* 2.2 Permanent Address Block */}
-          <div className={`p-4 rounded-xl border transition-all ${
-            sameAsPresent 
-              ? 'bg-emerald-50/40 border-emerald-200' 
-              : 'bg-slate-50/70 border-slate-200'
-          }`}>
+          {!sameAsPresent && (
+          <div className="p-4 rounded-xl border bg-slate-50/70 border-slate-200">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
                 <Home className="w-3.5 h-3.5 text-emerald-600" />
@@ -1326,6 +1326,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               />
             </div>
           </div>
+          )}
         </div>
 
         {/* Section 3: Certificate Type Specific Fields */}
