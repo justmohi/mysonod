@@ -272,6 +272,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
 
       const updatePayload: Record<string, any> = {
         ...formData,
+        userName: String(formData.applicantNameBn || '').trim(),
         heirs,
         familyMembers,
         attachmentUrls:
