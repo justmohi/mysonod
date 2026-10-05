@@ -153,9 +153,18 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Global/default union settings remain public-readable and admin-controlled.
     match /settings/{settingId} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // Each union operator gets an isolated settings workspace keyed by UID.
+    // Operators can only read/write their own union configuration.
+    // Admins can manage all union workspaces.
+    match /union_settings/{operatorId} {
+      allow read, write: if isAdmin() ||
+        (isOperator() && request.auth.uid == operatorId);
     }
 
     match /{document=**} {
