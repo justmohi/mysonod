@@ -919,8 +919,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                       </div>
                     </div>
 
-                    {/* Verification & Signatures Block Locked at Bottom */}
-                    <div className="seal-signature-container signature-grid shrink-0 pt-3 border-t border-slate-300 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[10px]">
+                    {/* Verification & Signatures Block — Application Copy keeps only Applicant + Verifier */}
+                    <div className="seal-signature-container signature-grid shrink-0 pt-3 border-t border-slate-300 grid grid-cols-2 gap-3 text-center text-[10px]">
                       {/* 1. Applicant */}
                       <div className="flex flex-col items-center justify-between min-h-[60px] p-1 bg-white/60 rounded border border-slate-200">
                         <div className="h-6"></div>
@@ -932,18 +932,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </span>
                       </div>
 
-                      {/* 2. Village Police */}
-                      <div className="flex flex-col items-center justify-between min-h-[60px] p-1 bg-white/60 rounded border border-slate-200">
-                        <div className="h-6"></div>
-                        <div className="w-full border-t border-slate-400 pt-0.5 font-bold text-slate-900">
-                          {lang === 'en' ? 'Village Police Signature' : 'গ্রাম পুলিশের স্বাক্ষর'}
-                        </div>
-                        <span className="text-[8.5px] text-slate-500">
-                          {lang === 'en' ? 'Ward Police / Dafadar' : 'সংশ্লিষ্ট ওয়ার্ড দফাদার/চৌকিদার'}
-                        </span>
-                      </div>
-
-                      {/* 3. Verifying Officer */}
+                      {/* 2. Verifying Officer */}
                       <div className="flex flex-col items-center justify-between min-h-[60px] p-1 bg-white/60 rounded border border-slate-200">
                         <div className="h-6"></div>
                         <div className="w-full border-t border-slate-400 pt-0.5 font-bold text-slate-900">
@@ -952,21 +941,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         <span className="text-[8.5px] text-slate-500">
                           {lang === 'en' ? 'Secretary / Admin Officer' : 'ইউপি সচিব / প্রশাসনিক কর্মকর্তা'}
                         </span>
-                      </div>
-
-                      {/* 4. Approving Authority / Chairman */}
-                      <div className="flex flex-col items-center justify-between min-h-[78px] p-1 bg-white/60 rounded border border-slate-200">
-                        <div className="h-6"></div>
-                        <div className="w-full border-t border-slate-400 pt-0.5 font-bold text-slate-900">
-                          {lang === 'en' ? 'Approving Authority Seal' : 'চেয়ারম্যানের স্বাক্ষর ও সীল'}
-                        </div>
-                        <span className="text-[8.5px] text-emerald-950 font-bold">
-                          {settings.chairmanName || (lang === 'en' ? 'Chairman' : 'চেয়ারম্যান')}
-                        </span>
-                        <div
-                          className="h-7 w-20 border border-dashed border-slate-300 rounded-sm bg-slate-50/40"
-                          title={lang === 'en' ? 'Space for Chairman official seal' : 'চেয়ারম্যানের অফিসিয়াল সীলের জন্য স্থান'}
-                        ></div>
                       </div>
                     </div>
 
