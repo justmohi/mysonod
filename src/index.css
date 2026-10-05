@@ -33,6 +33,171 @@ select option {
   background: #ffffff;
 }
 
+
+/* Reference-style citizen certificate application UI. */
+.application-titlebar {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 14px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background: #20a6a3;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+.application-titlebar__title {
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.application-titlebar__english {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.application-titlebar__english input,
+.application-declaration input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: #1e90ff;
+  cursor: pointer;
+}
+
+.application-form {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 14px 12px;
+  background: #ffffff;
+  border-radius: 8px;
+  color: #0f172a;
+}
+
+.application-form .application-section-heading {
+  display: none !important;
+}
+
+.application-basic-grid {
+  margin-top: 4px !important;
+  column-gap: 24px !important;
+  row-gap: 12px !important;
+}
+
+.application-form label {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+
+.application-form input:not([type="checkbox"]):not([type="radio"]),
+.application-form textarea,
+.application-form select {
+  min-height: 31px;
+  border-radius: 6px !important;
+  border: 1px solid rgba(8, 145, 178, 0.45) !important;
+  background: #c8f7f7 !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  caret-color: #111827 !important;
+  box-shadow: none !important;
+}
+
+.application-form input:not([type="checkbox"]):not([type="radio"])::placeholder,
+.application-form textarea::placeholder {
+  color: #4b7280 !important;
+  opacity: 0.75 !important;
+  -webkit-text-fill-color: #4b7280 !important;
+}
+
+.application-form input:not([type="checkbox"]):not([type="radio"]):focus,
+.application-form textarea:focus,
+.application-form select:focus {
+  border-color: #1e90ff !important;
+  box-shadow: 0 0 0 1px rgba(30, 144, 255, 0.18) !important;
+}
+
+.application-form .border-t.pt-6 {
+  border-top-color: #d5dee8 !important;
+  padding-top: 14px !important;
+  margin-top: 2px;
+}
+
+.application-form .bg-slate-50\/70,
+.application-form .bg-emerald-50\/40 {
+  background: #ffffff !important;
+  border-color: #d8e0e8 !important;
+  box-shadow: none !important;
+}
+
+.application-form .application-address-section,
+.application-form .application-address-block {
+  border-radius: 6px;
+}
+
+.application-form .application-fee-row {
+  margin-top: 4px;
+  background: #ffffff !important;
+  border-color: #d8e0e8 !important;
+  border-radius: 7px !important;
+}
+
+.application-declaration {
+  margin-top: 4px;
+  padding: 12px 16px;
+  background: #f9dfcf;
+  border: 1px solid #efc6ad;
+  border-radius: 2px;
+}
+
+.application-declaration__label {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px !important;
+  line-height: 1.5;
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+  text-align: left;
+}
+
+/* The reference forms use three compact desktop columns for their common and
+   certificate-specific fields. */
+@media (min-width: 768px) {
+  .application-form .grid.md\\:grid-cols-2 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .application-titlebar {
+    min-height: 52px;
+    padding: 7px 10px;
+    flex-wrap: wrap;
+  }
+
+  .application-titlebar__title,
+  .application-titlebar__english {
+    font-size: 12px;
+  }
+
+  .application-form {
+    padding: 4px 2px 10px;
+  }
+}
+
 /* Professional light application-form controls (eProttoyon-style readability). */
 .application-form {
   color: #0f172a;
