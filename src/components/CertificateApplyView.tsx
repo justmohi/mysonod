@@ -741,10 +741,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               <CheckCircle2 className="w-10 h-10" />
             </div>
             <h3 className="text-2xl font-bold text-slate-900 mb-1">
-              আবেদন সফল ও সনদ প্রস্তুত!
+              {submittedApp.status === 'Approved' ? 'সনদ প্রস্তুত!' : 'আবেদন সফলভাবে জমা হয়েছে!'}
             </h3>
             <p className="text-xs text-slate-500 mb-3">
-              স্বয়ংক্রিয়ভাবে ওয়ালেট থেকে ২.০০ টাকা সরকারি ফি কর্তন সম্পন্ন হয়েছে
+              {isOperator
+                ? `উদ্যোক্তা billing rule অনুযায়ী usage charge ৳${submittedApp.completionCharge ?? 0} কাটা হয়েছে।`
+                : 'সরকারি ফি হিসেবে ওয়ালেট থেকে ২.০০ টাকা কর্তন হয়েছে। এখন আবেদনটি ইউনিয়ন উদ্যোক্তার অনুমোদনের অপেক্ষায় আছে।'}
             </p>
 
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left space-y-2 mb-6 text-sm">
@@ -764,25 +766,31 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-600">অবস্থা:</span>
-                <span className="font-bold text-emerald-700 bg-emerald-200/70 px-2 py-0.5 rounded text-xs">
-                  অনুমোদিত (Approved)
+                <span className={`font-bold px-2 py-0.5 rounded text-xs ${
+                  submittedApp.status === 'Approved'
+                    ? 'text-emerald-700 bg-emerald-200/70'
+                    : 'text-amber-800 bg-amber-100'
+                }`}>
+                  {submittedApp.status === 'Approved' ? 'অনুমোদিত (Approved)' : 'অনুমোদনের অপেক্ষায় (Pending)'}
                 </span>
               </div>
             </div>
 
             <div className="flex gap-3 justify-center">
-              <button
-                type="button"
-                onClick={() => {
-                  const app = submittedApp;
-                  setSubmittedApp(null);
-                  onViewCertificate(app);
-                }}
-                className="cursor-pointer py-3 px-6 text-sm font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl transition shadow-lg flex items-center gap-2"
-              >
-                <Printer className="w-5 h-5" />
-                <span>সনদ দেখুন ও প্রিন্ট করুন</span>
-              </button>
+              {submittedApp.status === 'Approved' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const app = submittedApp;
+                    setSubmittedApp(null);
+                    onViewCertificate(app);
+                  }}
+                  className="cursor-pointer py-3 px-6 text-sm font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl transition shadow-lg flex items-center gap-2"
+                >
+                  <Printer className="w-5 h-5" />
+                  <span>সনদ দেখুন ও প্রিন্ট করুন</span>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => {
