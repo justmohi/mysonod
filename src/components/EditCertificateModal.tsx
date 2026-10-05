@@ -641,8 +641,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                         <th className="border border-blue-300 px-2 py-2 text-left">নাম</th>
                         <th className="border border-blue-300 px-2 py-2 text-left">সম্পর্ক</th>
                         <th className="border border-blue-300 px-2 py-2 text-left">ভোটার আইডি / জন্ম সনদ</th>
-                        <th className="border border-blue-300 px-2 py-2 text-left">জন্ম তারিখ</th>
-                        <th className="border border-blue-300 px-2 py-2 text-left">বয়স</th>
+                        <th className="border border-blue-300 px-2 py-2 text-center">জন্ম তারিখ</th>
                         <th className="border border-blue-300 px-2 py-2 text-left">মন্তব্য</th>
                         <th className="border border-blue-300 px-2 py-2 text-center">অ্যাকশন</th>
                       </tr>
@@ -651,24 +650,91 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                       {heirDrafts.map((item, index) => (
                         <tr key={index} className="odd:bg-white even:bg-slate-50">
                           <td className="border border-slate-300 px-2 py-1.5 text-center font-bold text-slate-600">{index + 1}</td>
-                          {(['name', 'relation', 'nidOrBirth', 'dob', 'age', 'remarks'] as const).map(field => (
-                            <td key={field} className="border border-slate-300 p-1">
-                              <input
-                                type={field === 'dob' ? 'date' : 'text'}
-                                value={item[field] || ''}
-                                onChange={e =>
-                                  setHeirDrafts(prev =>
-                                    prev.map((row, rowIndex) =>
-                                      rowIndex === index
-                                        ? { ...row, [field]: e.target.value }
-                                        : row
-                                    )
+                          <td className="border border-slate-300 p-1">
+                            <input
+                              type="text"
+                              value={item.name || ''}
+                              onChange={e =>
+                                setHeirDrafts(prev =>
+                                  prev.map((row, rowIndex) =>
+                                    rowIndex === index ? { ...row, name: e.target.value } : row
                                   )
-                                }
-                                className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20"
-                              />
-                            </td>
-                          ))}
+                                )
+                              }
+                              placeholder="ওয়ারিশের নাম"
+                              className="w-full rounded-md border border-cyan-300 bg-[#E0FFFF] px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-blue-500"
+                            />
+                          </td>
+                          <td className="border border-slate-300 p-1">
+                            <select
+                              value={item.relation || ''}
+                              onChange={e =>
+                                setHeirDrafts(prev =>
+                                  prev.map((row, rowIndex) =>
+                                    rowIndex === index ? { ...row, relation: e.target.value } : row
+                                  )
+                                )
+                              }
+                              className="w-full rounded-md border border-cyan-300 bg-[#E0FFFF] px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-blue-500"
+                            >
+                              <option value="">নির্বাচন করুন</option>
+                              <option value="স্ত্রী">স্ত্রী</option>
+                              <option value="স্বামী">স্বামী</option>
+                              <option value="পুত্র">পুত্র</option>
+                              <option value="কন্যা">কন্যা</option>
+                              <option value="পিতা">পিতা</option>
+                              <option value="মাতা">মাতা</option>
+                              <option value="ভাই">ভাই</option>
+                              <option value="বোন">বোন</option>
+                              <option value="পৌত্র">পৌত্র</option>
+                              <option value="পৌত্রী">পৌত্রী</option>
+                              <option value="অন্যান্য">অন্যান্য</option>
+                            </select>
+                          </td>
+                          <td className="border border-slate-300 p-1">
+                            <input
+                              type="text"
+                              value={item.nidOrBirth || ''}
+                              onChange={e =>
+                                setHeirDrafts(prev =>
+                                  prev.map((row, rowIndex) =>
+                                    rowIndex === index ? { ...row, nidOrBirth: e.target.value } : row
+                                  )
+                                )
+                              }
+                              placeholder="ভোটার আইডি / জন্ম সনদ"
+                              className="w-full rounded-md border border-cyan-300 bg-[#E0FFFF] px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-blue-500"
+                            />
+                          </td>
+                          <td className="border border-slate-300 p-1">
+                            <input
+                              type="date"
+                              value={item.dob || ''}
+                              onChange={e =>
+                                setHeirDrafts(prev =>
+                                  prev.map((row, rowIndex) =>
+                                    rowIndex === index ? { ...row, dob: e.target.value } : row
+                                  )
+                                )
+                              }
+                              className="w-full rounded-md border border-cyan-300 bg-[#E0FFFF] px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-blue-500"
+                            />
+                          </td>
+                          <td className="border border-slate-300 p-1">
+                            <input
+                              type="text"
+                              value={item.remarks || ''}
+                              onChange={e =>
+                                setHeirDrafts(prev =>
+                                  prev.map((row, rowIndex) =>
+                                    rowIndex === index ? { ...row, remarks: e.target.value } : row
+                                  )
+                                )
+                              }
+                              placeholder="মন্তব্য"
+                              className="w-full rounded-md border border-cyan-300 bg-[#E0FFFF] px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-blue-500"
+                            />
+                          </td>
                           <td className="border border-slate-300 px-1 text-center">
                             <button
                               type="button"
