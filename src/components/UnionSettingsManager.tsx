@@ -96,7 +96,15 @@ export const UnionSettingsManager: React.FC = () => {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3500);
     } catch (err: any) {
-      setErrorMessage(err.message || 'সেটিংস সংরক্ষণে সমস্যা হয়েছে');
+      const isPermissionError =
+        err?.code === 'permission-denied' ||
+        String(err?.message || '').toLowerCase().includes('missing or insufficient permissions');
+
+      setErrorMessage(
+        isPermissionError
+          ? 'Firebase Firestore Rules-এ এই উদ্যোক্তা workspace-এ লেখার অনুমতি নেই। Firebase Console → Firestore Database → Rules-এ latest firestore.rules Publish করুন।'
+          : (err.message || 'সেটিংস সংরক্ষণে সমস্যা হয়েছে')
+      );
     } finally {
       setIsSaving(false);
     }
