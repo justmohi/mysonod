@@ -1088,9 +1088,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   )}
 
                   {/* Certificate Content - Positioned Above Watermark with clean flow */}
-                  <div className="certificate-content relative z-10 h-full flex flex-col justify-between flex-1">
+                  <div className={`certificate-content relative z-10 h-full flex flex-col justify-between flex-1 ${!isTableCertificate ? 'main-certificate-content' : ''}`}>
                     {/* Central Content Section Wrapped in Flexible Auto-Spreading Container */}
-                    <div className="main-content-wrapper">
+                    <div className={`main-content-wrapper ${!isTableCertificate ? 'main-certificate-flow' : ''}`}>
 
                 {/* Header Layout:
                     - Top-Left: Government Emblem (Dynamic or Logo 1)
