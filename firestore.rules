@@ -116,7 +116,56 @@ service cloud.firestore {
           resource.data.userId == request.auth.uid &&
           request.resource.data.userId == resource.data.userId &&
           resource.data.status == 'Pending' &&
-          request.resource.data.status == 'Pending'
+          request.resource.data.status == 'Pending' &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'applicantNameBn', 'applicantNameEn',
+            'fatherName', 'fatherNameEn',
+            'motherName', 'motherNameEn',
+            'spouseName', 'spouseNameEn',
+            'gender', 'maritalStatus',
+            'nidOrBirthReg', 'mobile', 'email', 'dob', 'occupation',
+            'presentVillage', 'presentVillageEn',
+            'presentWard', 'presentPost', 'presentPostEn',
+            'presentUpazila', 'presentUpazilaEn',
+            'presentDistrict', 'presentDistrictEn',
+            'permanentVillage', 'permanentVillageEn',
+            'permanentWard', 'permanentPost', 'permanentPostEn',
+            'permanentUpazila', 'permanentUpazilaEn',
+            'permanentDistrict', 'permanentDistrictEn',
+            'village', 'villageEn', 'wardNo', 'postOffice', 'postOfficeEn',
+            'holdingNo',
+            'annualIncome', 'incomeSource', 'monthlyIncome',
+            'businessName', 'businessType', 'businessNature', 'businessAddress',
+            'businessCapital', 'businessStartDate', 'showCapitalOnPrint',
+            'fiscalYear', 'ownerName', 'ownerFatherOrHusbandName',
+            'ownerMotherName', 'ownerNidOrBirth', 'tinNumber', 'ownerPhotoUrl',
+            'validityStart', 'validityEnd', 'licenseFee', 'vatAmount',
+            'professionTax', 'tradeTax', 'totalAmount',
+            'heirs', 'familyMembers',
+            'deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber',
+            'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName',
+            'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName',
+            'deathPersonName', 'deathDate', 'deathPlace',
+            'nationality', 'communityName', 'religion',
+            'voterAreaOld', 'voterAreaNew', 'voterTransferReason',
+            'correctionField', 'correctionOldValue', 'correctionNewValue',
+            'correctionDetails',
+            'guardianName', 'guardianRelation', 'permissionPurpose',
+            'landDescription', 'landAmount',
+            'agricultureType', 'agricultureLand',
+            'freedomFighterName', 'freedomFighterRelation', 'freedomFighterNumber',
+            'disabilityType', 'disabilityDescription',
+            'unemploymentDuration',
+            'constructionType', 'constructionLocation', 'constructionPurpose',
+            'previousAddress', 'newAddress',
+            'sameNamePerson', 'sameNameRelation',
+            'marriageDate', 'spouseName2',
+            'orphanGuardian', 'miscellaneousDetails',
+            'organizationName', 'nocPurpose', 'insolvencyReason',
+            'childlessYears', 'reasonNoBirthCert', 'rohingyaVerificationRef',
+            'generalPurpose', 'certificateDetails', 'notes',
+            'attachmentUrls', 'updatedAt'
+          ])
         );
 
       allow delete: if isAdmin();
