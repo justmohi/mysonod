@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import type { CertificateApplication } from '../types';
 import { getCertificateCategory } from '../types';
 import { cleanDataForFirestore } from '../utils/firestore';
-import { toBengaliNumber } from '../utils/bengali';
-import { X, Save, AlertCircle, CheckCircle2, Edit3, Eye, Home, MapPin } from 'lucide-react';
+import {
+  X,
+  Save,
+  AlertCircle,
+  CheckCircle2,
+  Edit3,
+  Eye,
+  Home,
+  FileText,
+  User,
+  MapPin,
+  ListChecks
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface EditCertificateModalProps {
   application: CertificateApplication | null;
@@ -14,130 +26,274 @@ interface EditCertificateModalProps {
   onViewCertificate?: (app: CertificateApplication) => void;
 }
 
+type EditableField = {
+  key: string;
+  label: string;
+  type?: 'text' | 'number' | 'date' | 'email' | 'textarea' | 'select' | 'checkbox';
+  options?: Array<{ value: string; label: string }>;
+  section: 'personal' | 'present' | 'permanent' | 'certificate';
+};
+
+const EDITABLE_FIELDS: EditableField[] = [
+  // Personal
+  { key: 'applicantNameBn', label: 'আবেদনকারীর নাম (বাংলায়)', section: 'personal' },
+  { key: 'applicantNameEn', label: 'আবেদনকারীর নাম (ইংরেজিতে)', section: 'personal' },
+  { key: 'fatherName', label: 'পিতার নাম', section: 'personal' },
+  { key: 'fatherNameEn', label: 'পিতার নাম (ইংরেজিতে)', section: 'personal' },
+  { key: 'motherName', label: 'মাতার নাম', section: 'personal' },
+  { key: 'motherNameEn', label: 'মাতার নাম (ইংরেজিতে)', section: 'personal' },
+  { key: 'spouseName', label: 'স্বামী / স্ত্রীর নাম', section: 'personal' },
+  { key: 'spouseNameEn', label: 'স্বামী / স্ত্রীর নাম (ইংরেজিতে)', section: 'personal' },
+  {
+    key: 'gender',
+    label: 'লিঙ্গ',
+    type: 'select',
+    options: [
+      { value: 'male', label: 'পুরুষ' },
+      { value: 'female', label: 'মহিলা' },
+      { value: 'other', label: 'অন্যান্য' }
+    ],
+    section: 'personal'
+  },
+  {
+    key: 'maritalStatus',
+    label: 'বৈবাহিক অবস্থা',
+    type: 'select',
+    options: [
+      { value: 'বিবাহিত', label: 'বিবাহিত' },
+      { value: 'অবিবাহিত', label: 'অবিবাহিত' },
+      { value: 'বিধবা', label: 'বিধবা' },
+      { value: 'বিপত্নীক', label: 'বিপত্নীক' }
+    ],
+    section: 'personal'
+  },
+  { key: 'nidOrBirthReg', label: 'এনআইডি / জন্ম নিবন্ধন নম্বর', section: 'personal' },
+  { key: 'mobile', label: 'মোবাইল নম্বর', section: 'personal' },
+  { key: 'email', label: 'ইমেইল', type: 'email', section: 'personal' },
+  { key: 'dob', label: 'জন্ম তারিখ', type: 'date', section: 'personal' },
+  { key: 'occupation', label: 'পেশা', section: 'personal' },
+
+  // Present address
+  { key: 'presentVillage', label: 'বর্তমান গ্রাম / মহল্লা', section: 'present' },
+  { key: 'presentVillageEn', label: 'বর্তমান গ্রাম / মহল্লা (ইংরেজিতে)', section: 'present' },
+  { key: 'presentWard', label: 'বর্তমান ওয়ার্ড', section: 'present' },
+  { key: 'presentPost', label: 'বর্তমান ডাকঘর', section: 'present' },
+  { key: 'presentPostEn', label: 'বর্তমান ডাকঘর (ইংরেজিতে)', section: 'present' },
+  { key: 'presentUpazila', label: 'বর্তমান উপজেলা', section: 'present' },
+  { key: 'presentUpazilaEn', label: 'বর্তমান উপজেলা (ইংরেজিতে)', section: 'present' },
+  { key: 'presentDistrict', label: 'বর্তমান জেলা', section: 'present' },
+  { key: 'presentDistrictEn', label: 'বর্তমান জেলা (ইংরেজিতে)', section: 'present' },
+
+  // Permanent / legacy address
+  { key: 'permanentVillage', label: 'স্থায়ী গ্রাম / মহল্লা', section: 'permanent' },
+  { key: 'permanentVillageEn', label: 'স্থায়ী গ্রাম / মহল্লা (ইংরেজিতে)', section: 'permanent' },
+  { key: 'permanentWard', label: 'স্থায়ী ওয়ার্ড', section: 'permanent' },
+  { key: 'permanentPost', label: 'স্থায়ী ডাকঘর', section: 'permanent' },
+  { key: 'permanentPostEn', label: 'স্থায়ী ডাকঘর (ইংরেজিতে)', section: 'permanent' },
+  { key: 'permanentUpazila', label: 'স্থায়ী উপজেলা', section: 'permanent' },
+  { key: 'permanentUpazilaEn', label: 'স্থায়ী উপজেলা (ইংরেজিতে)', section: 'permanent' },
+  { key: 'permanentDistrict', label: 'স্থায়ী জেলা', section: 'permanent' },
+  { key: 'permanentDistrictEn', label: 'স্থায়ী জেলা (ইংরেজিতে)', section: 'permanent' },
+  { key: 'village', label: 'গ্রাম / মহল্লা (Legacy)', section: 'permanent' },
+  { key: 'villageEn', label: 'গ্রাম / মহল্লা (Legacy, English)', section: 'permanent' },
+  { key: 'wardNo', label: 'ওয়ার্ড নং (Legacy)', section: 'permanent' },
+  { key: 'postOffice', label: 'ডাকঘর (Legacy)', section: 'permanent' },
+  { key: 'postOfficeEn', label: 'ডাকঘর (Legacy, English)', section: 'permanent' },
+  { key: 'holdingNo', label: 'হোল্ডিং নং', section: 'permanent' },
+
+  // Certificate-specific entered data
+  { key: 'annualIncome', label: 'বাৎসরিক আয় (টাকা)', type: 'number', section: 'certificate' },
+  { key: 'incomeSource', label: 'আয়ের উৎস', section: 'certificate' },
+  { key: 'monthlyIncome', label: 'মাসিক আয় (টাকা)', type: 'number', section: 'certificate' },
+  { key: 'businessName', label: 'প্রতিষ্ঠানের নাম', section: 'certificate' },
+  { key: 'businessType', label: 'ব্যবসার ধরণ', section: 'certificate' },
+  { key: 'businessNature', label: 'ব্যবসার প্রকৃতি', section: 'certificate' },
+  { key: 'businessAddress', label: 'ব্যবসার ঠিকানা', section: 'certificate' },
+  { key: 'businessCapital', label: 'ব্যবসার মূলধন', type: 'number', section: 'certificate' },
+  { key: 'businessStartDate', label: 'ব্যবসা শুরুর তারিখ', type: 'date', section: 'certificate' },
+  { key: 'fiscalYear', label: 'অর্থবছর', section: 'certificate' },
+  { key: 'ownerName', label: 'মালিকের নাম', section: 'certificate' },
+  { key: 'ownerFatherOrHusbandName', label: 'মালিকের পিতা / স্বামীর নাম', section: 'certificate' },
+  { key: 'ownerMotherName', label: 'মালিকের মায়ের নাম', section: 'certificate' },
+  { key: 'ownerNidOrBirth', label: 'মালিকের NID / জন্ম নিবন্ধন', section: 'certificate' },
+  { key: 'tinNumber', label: 'TIN নম্বর', section: 'certificate' },
+  { key: 'validityStart', label: 'কার্যকারিতা শুরুর তারিখ', type: 'date', section: 'certificate' },
+  { key: 'validityEnd', label: 'কার্যকারিতা শেষের তারিখ', type: 'date', section: 'certificate' },
+  { key: 'licenseFee', label: 'লাইসেন্স ফি', type: 'number', section: 'certificate' },
+  { key: 'vatAmount', label: 'VAT', type: 'number', section: 'certificate' },
+  { key: 'professionTax', label: 'পেশা কর', type: 'number', section: 'certificate' },
+  { key: 'tradeTax', label: 'ট্রেড কর', type: 'number', section: 'certificate' },
+  { key: 'totalAmount', label: 'মোট টাকা', type: 'number', section: 'certificate' },
+  { key: 'deceasedPersonName', label: 'মৃত ব্যক্তির নাম', section: 'certificate' },
+  { key: 'deceasedDate', label: 'মৃত্যুর তারিখ', type: 'date', section: 'certificate' },
+  { key: 'deceasedIdType', label: 'মৃত ব্যক্তির ID-এর ধরণ', section: 'certificate' },
+  { key: 'deceasedIdNumber', label: 'মৃত ব্যক্তির ID নম্বর', section: 'certificate' },
+  { key: 'deceasedFatherOrHusbandType', label: 'মৃত ব্যক্তির পিতা / স্বামী', section: 'certificate' },
+  { key: 'deceasedFatherOrHusbandName', label: 'মৃত ব্যক্তির পিতা / স্বামীর নাম', section: 'certificate' },
+  { key: 'applicantRelation', label: 'আবেদনকারীর সম্পর্ক', section: 'certificate' },
+  { key: 'previousHusbandName', label: 'পূর্বের স্বামীর নাম', section: 'certificate' },
+  { key: 'deathPersonName', label: 'মৃত্যু সনদের ব্যক্তির নাম', section: 'certificate' },
+  { key: 'deathDate', label: 'মৃত্যুর তারিখ', type: 'date', section: 'certificate' },
+  { key: 'deathPlace', label: 'মৃত্যুর স্থান', section: 'certificate' },
+  { key: 'nationality', label: 'জাতীয়তা', section: 'certificate' },
+  { key: 'communityName', label: 'সম্প্রদায়ের নাম', section: 'certificate' },
+  { key: 'religion', label: 'ধর্ম', section: 'certificate' },
+  { key: 'voterAreaOld', label: 'পুরাতন ভোটার এলাকা', section: 'certificate' },
+  { key: 'voterAreaNew', label: 'নতুন ভোটার এলাকা', section: 'certificate' },
+  { key: 'voterTransferReason', label: 'ভোটার এলাকা পরিবর্তনের কারণ', type: 'textarea', section: 'certificate' },
+  { key: 'correctionField', label: 'সংশোধনের ফিল্ড', section: 'certificate' },
+  { key: 'correctionOldValue', label: 'পুরাতন তথ্য', section: 'certificate' },
+  { key: 'correctionNewValue', label: 'নতুন তথ্য', section: 'certificate' },
+  { key: 'correctionDetails', label: 'সংশোধনের বিস্তারিত', type: 'textarea', section: 'certificate' },
+  { key: 'guardianName', label: 'অভিভাবকের নাম', section: 'certificate' },
+  { key: 'guardianRelation', label: 'অভিভাবকের সম্পর্ক', section: 'certificate' },
+  { key: 'permissionPurpose', label: 'অনুমতির উদ্দেশ্য', type: 'textarea', section: 'certificate' },
+  { key: 'landDescription', label: 'জমির বিবরণ', type: 'textarea', section: 'certificate' },
+  { key: 'landAmount', label: 'জমির পরিমাণ', section: 'certificate' },
+  { key: 'agricultureType', label: 'কৃষির ধরণ', section: 'certificate' },
+  { key: 'agricultureLand', label: 'কৃষি জমির পরিমাণ', section: 'certificate' },
+  { key: 'freedomFighterName', label: 'মুক্তিযোদ্ধার নাম', section: 'certificate' },
+  { key: 'freedomFighterRelation', label: 'মুক্তিযোদ্ধার সাথে সম্পর্ক', section: 'certificate' },
+  { key: 'freedomFighterNumber', label: 'মুক্তিযোদ্ধা নম্বর', section: 'certificate' },
+  { key: 'disabilityType', label: 'প্রতিবন্ধিতার ধরণ', section: 'certificate' },
+  { key: 'disabilityDescription', label: 'প্রতিবন্ধিতার বিবরণ', type: 'textarea', section: 'certificate' },
+  { key: 'unemploymentDuration', label: 'বেকারত্বের সময়কাল', section: 'certificate' },
+  { key: 'constructionType', label: 'নির্মাণের ধরণ', section: 'certificate' },
+  { key: 'constructionLocation', label: 'নির্মাণের স্থান', section: 'certificate' },
+  { key: 'constructionPurpose', label: 'নির্মাণের উদ্দেশ্য', type: 'textarea', section: 'certificate' },
+  { key: 'previousAddress', label: 'পূর্বের ঠিকানা', type: 'textarea', section: 'certificate' },
+  { key: 'newAddress', label: 'নতুন ঠিকানা', type: 'textarea', section: 'certificate' },
+  { key: 'sameNamePerson', label: 'একই নামের ব্যক্তির নাম', section: 'certificate' },
+  { key: 'sameNameRelation', label: 'একই নামের ব্যক্তির সম্পর্ক', section: 'certificate' },
+  { key: 'marriageDate', label: 'বিবাহের তারিখ', type: 'date', section: 'certificate' },
+  { key: 'spouseName2', label: 'দ্বিতীয় স্বামী / স্ত্রীর নাম', section: 'certificate' },
+  { key: 'orphanGuardian', label: 'এতিমের অভিভাবক', section: 'certificate' },
+  { key: 'miscellaneousDetails', label: 'বিবিধ বিস্তারিত', type: 'textarea', section: 'certificate' },
+  { key: 'organizationName', label: 'প্রতিষ্ঠানের নাম', section: 'certificate' },
+  { key: 'nocPurpose', label: 'অনাপত্তির উদ্দেশ্য', type: 'textarea', section: 'certificate' },
+  { key: 'insolvencyReason', label: 'আর্থিক অস্বচ্ছলতার কারণ', type: 'textarea', section: 'certificate' },
+  { key: 'childlessYears', label: 'নিঃসন্তান হওয়ার সময়কাল', section: 'certificate' },
+  { key: 'reasonNoBirthCert', label: 'জন্মসনদ না থাকার কারণ', type: 'textarea', section: 'certificate' },
+  { key: 'rohingyaVerificationRef', label: 'রোহিঙ্গা যাচাই রেফারেন্স', section: 'certificate' },
+  { key: 'generalPurpose', label: 'সাধারণ উদ্দেশ্য', type: 'textarea', section: 'certificate' },
+  { key: 'certificateDetails', label: 'সনদের বিস্তারিত', type: 'textarea', section: 'certificate' },
+  { key: 'notes', label: 'অতিরিক্ত নোট', type: 'textarea', section: 'certificate' }
+];
+
+const readValue = (app: CertificateApplication, key: string) => {
+  const value = (app as unknown as Record<string, unknown>)[key];
+  return value ?? '';
+};
+
+const isNumericField = (field: EditableField) => field.type === 'number';
+
 export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
   application,
   onClose,
   onSaveSuccess,
   onViewCertificate
 }) => {
+  const { currentUser, userProfile, isStaff } = useAuth();
+
   if (!application) return null;
 
-  const [applicantNameBn, setApplicantNameBn] = useState(application.applicantNameBn || '');
-  const [applicantNameEn, setApplicantNameEn] = useState(application.applicantNameEn || '');
-  const [fatherName, setFatherName] = useState(application.fatherName || '');
-  const [motherName, setMotherName] = useState(application.motherName || '');
-  const [spouseName, setSpouseName] = useState(application.spouseName || '');
-  const [gender, setGender] = useState<'male' | 'female' | 'other'>(application.gender || 'male');
-  const [maritalStatus, setMaritalStatus] = useState(application.maritalStatus || 'বিবাহিত');
-  const [nidOrBirthReg, setNidOrBirthReg] = useState(application.nidOrBirthReg || '');
-  const [mobile, setMobile] = useState(application.mobile || '');
-  const [dob, setDob] = useState(application.dob || '');
+  const [formData, setFormData] = useState<Record<string, any>>(() => {
+    const base: Record<string, any> = {};
+    for (const field of EDITABLE_FIELDS) {
+      base[field.key] = readValue(application, field.key);
+    }
+    return base;
+  });
 
-  // Present Address
-  const [presentVillage, setPresentVillage] = useState(application.presentVillage || application.village || '');
-  const [presentWard, setPresentWard] = useState(application.presentWard || application.wardNo || '০১');
-  const [presentPost, setPresentPost] = useState(application.presentPost || application.postOffice || 'হালসা-৭০৩১');
-  const [presentUpazila, setPresentUpazila] = useState(application.presentUpazila || 'মিরপুর');
-  const [presentDistrict, setPresentDistrict] = useState(application.presentDistrict || 'কুষ্টিয়া');
-
-  // Permanent Address
-  const isInitiallySame = !application.permanentVillage || (
-    application.presentVillage === application.permanentVillage && 
-    application.presentWard === application.permanentWard
+  const [heirsJson, setHeirsJson] = useState(
+    JSON.stringify(application.heirs || [], null, 2)
   );
-  const [sameAsPresent, setSameAsPresent] = useState(isInitiallySame);
-  const [permanentVillage, setPermanentVillage] = useState(application.permanentVillage || application.village || '');
-  const [permanentWard, setPermanentWard] = useState(application.permanentWard || application.wardNo || '০১');
-  const [permanentPost, setPermanentPost] = useState(application.permanentPost || application.postOffice || 'হালসা-৭০৩১');
-  const [permanentUpazila, setPermanentUpazila] = useState(application.permanentUpazila || 'মিরপুর');
-  const [permanentDistrict, setPermanentDistrict] = useState(application.permanentDistrict || 'কুষ্টিয়া');
-
-  const [village, setVillage] = useState(application.village || '');
-  const [wardNo, setWardNo] = useState(application.wardNo || '');
-  const [postOffice, setPostOffice] = useState(application.postOffice || 'হালসা-৭০৩১');
-  const [holdingNo, setHoldingNo] = useState(application.holdingNo || '');
-
-  // Specifics
-  const [annualIncome, setAnnualIncome] = useState<number | string>(application.annualIncome ?? 180000);
-  const [incomeSource, setIncomeSource] = useState(application.incomeSource || 'ব্যবসা ও কৃষি');
-  const [businessName, setBusinessName] = useState(application.businessName || '');
-  const [businessType, setBusinessType] = useState(application.businessType || '');
-  const [businessAddress, setBusinessAddress] = useState(application.businessAddress || '');
-  const [businessCapital, setBusinessCapital] = useState<number | string>(application.businessCapital ?? 500000);
-  const [deceasedPersonName, setDeceasedPersonName] = useState(application.deceasedPersonName || '');
-  const [previousHusbandName, setPreviousHusbandName] = useState(application.previousHusbandName || '');
-
+  const [familyMembersJson, setFamilyMembersJson] = useState(
+    JSON.stringify(application.familyMembers || [], null, 2)
+  );
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const sections = useMemo(
+    () => ({
+      personal: EDITABLE_FIELDS.filter(f => f.section === 'personal'),
+      present: EDITABLE_FIELDS.filter(f => f.section === 'present'),
+      permanent: EDITABLE_FIELDS.filter(f => f.section === 'permanent'),
+      certificate: EDITABLE_FIELDS.filter(f => f.section === 'certificate')
+    }),
+    []
+  );
+
+  const canEdit = Boolean(
+    currentUser &&
+    userProfile &&
+    (isStaff || (application.userId === currentUser.uid && application.status === 'Pending'))
+  );
+
+  const updateField = (key: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: value
+    }));
+    setErrorMsg(null);
+    setSuccessMsg(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!canEdit) {
+      setErrorMsg('এই আবেদনের তথ্য সম্পাদনের অনুমতি আপনার নেই।');
+      return;
+    }
+
     setSaving(true);
     setErrorMsg(null);
     setSuccessMsg(null);
 
     try {
-      const permVill = (sameAsPresent ? presentVillage : permanentVillage).trim();
-      const permWrd = (sameAsPresent ? presentWard : permanentWard).trim();
-      const permPst = (sameAsPresent ? presentPost : permanentPost).trim();
-      const permUpz = (sameAsPresent ? presentUpazila : permanentUpazila).trim() || 'মিরপুর';
-      const permDst = (sameAsPresent ? presentDistrict : permanentDistrict).trim() || 'কুষ্টিয়া';
+      let heirs: unknown;
+      let familyMembers: unknown;
+
+      try {
+        heirs = heirsJson.trim() ? JSON.parse(heirsJson) : [];
+        familyMembers = familyMembersJson.trim() ? JSON.parse(familyMembersJson) : [];
+      } catch {
+        throw new Error('ওয়ারিশ / পারিবারিক সদস্যের JSON তথ্যের ফরম্যাট সঠিক নয়।');
+      }
 
       const updatePayload: Record<string, any> = {
-        applicantNameBn: applicantNameBn.trim(),
-        applicantNameEn: applicantNameEn.trim() || applicantNameBn.trim(),
-        userName: applicantNameBn.trim(),
-        fatherName: fatherName.trim(),
-        motherName: motherName.trim(),
-        gender,
-        maritalStatus,
-        nidOrBirthReg: nidOrBirthReg.trim(),
-        mobile: mobile.trim(),
-        // Present Address
-        presentVillage: presentVillage.trim(),
-        presentVillageEn: presentVillage.trim(),
-        presentWard: presentWard.trim(),
-        presentPost: presentPost.trim(),
-        presentPostEn: presentPost.trim(),
-        presentUpazila: presentUpazila.trim() || 'মিরপুর',
-        presentUpazilaEn: 'Mirpur',
-        presentDistrict: presentDistrict.trim() || 'কুষ্টিয়া',
-        presentDistrictEn: 'Kushtia',
-        // Permanent Address
-        permanentVillage: permVill,
-        permanentVillageEn: permVill,
-        permanentWard: permWrd,
-        permanentPost: permPst,
-        permanentPostEn: permPst,
-        permanentUpazila: permUpz,
-        permanentUpazilaEn: 'Mirpur',
-        permanentDistrict: permDst,
-        permanentDistrictEn: 'Kushtia',
-        // Legacy
-        village: permVill,
-        wardNo: permWrd,
-        postOffice: permPst,
+        ...formData,
+        heirs,
+        familyMembers,
         updatedAt: new Date().toISOString()
       };
 
-      if (spouseName.trim()) updatePayload.spouseName = spouseName.trim();
-      if (dob) updatePayload.dob = dob;
-      if (holdingNo.trim()) updatePayload.holdingNo = holdingNo.trim();
-
-      if (application.certificateType === 'income') {
-        updatePayload.annualIncome = Number(annualIncome) || 0;
-        updatePayload.incomeSource = incomeSource.trim() || 'ব্যবসা ও কৃষি';
-      } else if (application.certificateType === 'trade_license') {
-        if (businessName.trim()) updatePayload.businessName = businessName.trim();
-        if (businessType.trim()) updatePayload.businessType = businessType.trim();
-        if (businessAddress.trim()) updatePayload.businessAddress = businessAddress.trim();
-        if (businessCapital) updatePayload.businessCapital = Number(businessCapital) || 0;
-      } else if (application.certificateType === 'inheritance') {
-        if (deceasedPersonName.trim()) updatePayload.deceasedPersonName = deceasedPersonName.trim();
-      } else if (application.certificateType === 'non_remarriage') {
-        if (previousHusbandName.trim()) updatePayload.previousHusbandName = previousHusbandName.trim();
-      }
+      // Keep system-controlled fields immutable.
+      delete updatePayload.id;
+      delete updatePayload.trackingId;
+      delete updatePayload.userId;
+      delete updatePayload.userEmail;
+      delete updatePayload.certificateType;
+      delete updatePayload.certificateTitleBn;
+      delete updatePayload.certificateTitleEn;
+      delete updatePayload.language;
+      delete updatePayload.fee;
+      delete updatePayload.status;
+      delete updatePayload.rejectionReason;
+      delete updatePayload.issuingOfficer;
+      delete updatePayload.createdAt;
+      delete updatePayload.approvedAt;
+      delete updatePayload.completedByUid;
+      delete updatePayload.completedByEmail;
+      delete updatePayload.completedAt;
+      delete updatePayload.completionCharge;
+      delete updatePayload.completionChargeType;
+      delete updatePayload.billingMonthKey;
+      delete updatePayload.printDate;
+      delete updatePayload.latePrintFee;
+      delete updatePayload.latePrintFeeChargedAt;
 
       const cleaned = cleanDataForFirestore(updatePayload);
       const appDocRef = doc(db, 'applications', application.id);
@@ -148,517 +304,255 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
         ...cleaned
       } as CertificateApplication;
 
-      setSuccessMsg('সনদের তথ্য সফলভাবে আপডেট করা হয়েছে এবং নতুন লেআউট জেনারেট করা হয়েছে!');
+      setSuccessMsg('সনদের আবেদন-সংক্রান্ত সকল তথ্য সফলভাবে আপডেট হয়েছে।');
       onSaveSuccess(updatedFullApp);
     } catch (err: any) {
       console.error('Error updating certificate:', err);
-      handleFirestoreError(err, OperationType.UPDATE, `applications/${application.id}`);
+      handleFirestoreError(
+        err,
+        OperationType.UPDATE,
+        `applications/${application.id}`
+      );
       setErrorMsg(err.message || 'আপডেট করতে ব্যর্থ হয়েছে। পুনরায় চেষ্টা করুন।');
     } finally {
       setSaving(false);
     }
   };
 
+  const renderField = (field: EditableField) => {
+    const value = formData[field.key] ?? '';
+
+    return (
+      <div key={field.key}>
+        <label className="mb-1 block text-[11px] font-bold text-slate-700">
+          {field.label}
+        </label>
+
+        {field.type === 'textarea' ? (
+          <textarea
+            value={value}
+            onChange={e => updateField(field.key, e.target.value)}
+            rows={3}
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+          />
+        ) : field.type === 'select' ? (
+          <select
+            value={value}
+            onChange={e => updateField(field.key, e.target.value)}
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+          >
+            {(field.options || []).map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        ) : field.type === 'checkbox' ? (
+          <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
+            <input
+              type="checkbox"
+              checked={Boolean(value)}
+              onChange={e => updateField(field.key, e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-emerald-700"
+            />
+            <span>{field.label}</span>
+          </label>
+        ) : (
+          <input
+            type={field.type || (isNumericField(field) ? 'number' : 'text')}
+            value={value}
+            onChange={e => {
+              const nextValue =
+                field.type === 'number'
+                  ? e.target.value === '' ? '' : Number(e.target.value)
+                  : e.target.value;
+              updateField(field.key, nextValue);
+            }}
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+          />
+        )}
+      </div>
+    );
+  };
+
+  const renderSection = (
+    title: string,
+    icon: React.ReactNode,
+    fields: EditableField[],
+    columns = 'grid-cols-1 sm:grid-cols-2'
+  ) => (
+    <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+      <div className="mb-4 flex items-center gap-2 border-b border-slate-200 pb-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
+          {icon}
+        </div>
+        <h4 className="text-sm font-extrabold text-slate-900">{title}</h4>
+      </div>
+      <div className={`grid gap-3 ${columns}`}>
+        {fields.map(renderField)}
+      </div>
+    </section>
+  );
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-xs flex justify-center p-3 sm:p-6 animate-in fade-in">
-      <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl my-auto overflow-hidden border border-slate-200">
-        
-        {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-800 to-teal-800 text-white px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
-              <Edit3 className="w-5 h-5 text-emerald-200" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-3 backdrop-blur-sm">
+      <div className="relative flex max-h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
+        <div className="flex items-center justify-between bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-800 px-5 py-4 text-white">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+              <Edit3 className="h-5 w-5 text-emerald-200" />
             </div>
             <div>
-              <h3 className="text-base font-bold">সনদ সম্পাদন করুন (Edit Certificate)</h3>
-              <p className="text-xs text-emerald-200">
-                স্মারক নং: <span className="font-mono">{application.trackingId}</span> • {application.certificateTitleBn}
+              <h3 className="text-base font-extrabold">আবেদন তথ্য সম্পাদনা</h3>
+              <p className="text-[11px] text-emerald-100">
+                {application.certificateTitleBn} • {application.trackingId}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="cursor-pointer p-1.5 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition"
+            className="rounded-xl p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
+            aria-label="বন্ধ করুন"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+        <div className="border-b border-slate-200 bg-amber-50 px-5 py-3 text-xs text-amber-900">
+          আবেদন করার সময় দেওয়া ব্যক্তিগত, ঠিকানা ও সনদ-নির্দিষ্ট তথ্য পরিবর্তন করা যাবে। ট্র্যাকিং নম্বর, আবেদনকারী account, fee, status ও billing metadata নিরাপত্তার জন্য পরিবর্তন করা যাবে না।
+        </div>
+
+        <form onSubmit={handleSubmit} className="max-h-[calc(94vh-145px)] overflow-y-auto p-4 sm:p-5">
+          {!canEdit && (
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>এই আবেদনের তথ্য সম্পাদনের অনুমতি আপনার নেই।</span>
+            </div>
+          )}
+
           {errorMsg && (
-            <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs flex items-center justify-between">
+            <div className="mb-4 flex items-start justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-800">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                 <span className="font-medium">{successMsg}</span>
               </div>
-              {onViewCertificate && (
+              {onViewCertificate && application.status === 'Approved' && isStaff && (
                 <button
                   type="button"
-                  onClick={() => onViewCertificate({ ...application, applicantNameBn, nidOrBirthReg })}
-                  className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] px-3 py-1 rounded-lg flex items-center gap-1 transition shadow-xs"
+                  onClick={() => onViewCertificate({ ...application, ...formData, heirs: application.heirs, familyMembers: application.familyMembers })}
+                  className="inline-flex items-center gap-1 rounded-lg bg-emerald-700 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-emerald-800"
                 >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>আপডেটেড সনদ দেখুন</span>
+                  <Eye className="h-3.5 w-3.5" />
+                  আপডেটেড সনদ দেখুন
                 </button>
               )}
             </div>
           )}
 
-          {/* Section: Applicant Personal Info */}
-          <div>
-            <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 border-b border-emerald-100 pb-1">
-              ১. ব্যক্তিগত তথ্য
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  আবেদনকারীর নাম (বাংলায়) *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={applicantNameBn}
-                  onChange={(e) => setApplicantNameBn(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  আবেদনকারীর নাম (ইংরেজিতে)
-                </label>
-                <input
-                  type="text"
-                  value={applicantNameEn}
-                  onChange={(e) => setApplicantNameEn(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  পিতার নাম *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={fatherName}
-                  onChange={(e) => setFatherName(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  মাতার নাম *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={motherName}
-                  onChange={(e) => setMotherName(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  স্বামী / স্ত্রীর নাম (ঐচ্ছিক)
-                </label>
-                <input
-                  type="text"
-                  value={spouseName}
-                  onChange={(e) => setSpouseName(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">লিঙ্গ *</label>
-                  <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value as any)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                  >
-                    <option value="male">পুরুষ</option>
-                    <option value="female">মহিলা</option>
-                    <option value="other">অন্যান্য</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">বৈবাহিক অবস্থা</label>
-                  <select
-                    value={maritalStatus}
-                    onChange={(e) => setMaritalStatus(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                  >
-                    <option value="বিবাহিত">বিবাহিত</option>
-                    <option value="অবিবাহিত">অবিবাহিত</option>
-                    <option value="বিধবা">বিধবা</option>
-                    <option value="বিপত্নীক">বিপত্নীক</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  এনআইডি / জন্ম নিবন্ধন নম্বর *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={nidOrBirthReg}
-                  onChange={(e) => setNidOrBirthReg(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  মোবাইল নম্বর *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  জন্ম তারিখ
-                </label>
-                <input
-                  type="date"
-                  value={dob}
-                  onChange={(e) => setDob(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Section: Address (Present & Permanent) */}
           <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-1">
-              <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
-                <Home className="w-3.5 h-3.5 text-emerald-600" />
-                <span>২. বর্তমান ও স্থায়ী ঠিকানা</span>
-              </h4>
+            {renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal)}
+            {renderSection('২. বর্তমান ঠিকানা', <MapPin className="h-4 w-4" />, sections.present)}
+            {renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
+            {renderSection('৪. সনদ-নির্দিষ্ট সকল তথ্য', <FileText className="h-4 w-4" />, sections.certificate)}
 
-              <label className="cursor-pointer inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-md border border-emerald-300 transition text-[11px] font-semibold text-emerald-900 select-none">
-                <input
-                  type="checkbox"
-                  checked={sameAsPresent}
-                  onChange={(e) => {
-                    const checked = e.target.checked;
-                    setSameAsPresent(checked);
-                    if (checked) {
-                      setPermanentVillage(presentVillage);
-                      setPermanentWard(presentWard);
-                      setPermanentPost(presentPost);
-                      setPermanentUpazila(presentUpazila);
-                      setPermanentDistrict(presentDistrict);
-                    }
-                  }}
-                  className="w-3.5 h-3.5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"
-                />
-                <span>বর্তমান ঠিকানাই স্থায়ী ঠিকানা (একই)</span>
-              </label>
-            </div>
+            {(application.certificateType === 'inheritance' ||
+              application.certificateType === 'succession' ||
+              application.certificateType === 'family') && (
+              <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+                <div className="mb-3 flex items-center gap-2 border-b border-slate-200 pb-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+                    <ListChecks className="h-4 w-4" />
+                  </div>
+                  <h4 className="text-sm font-extrabold text-slate-900">৫. তালিকাভুক্ত সদস্য / ওয়ারিশ তথ্য</h4>
+                </div>
 
-            {/* Present Address */}
-            <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-200">
-              <span className="text-[11px] font-bold text-emerald-800 block mb-2">
-                বর্তমান ঠিকানা:
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">গ্রাম / মহল্লা *</label>
-                  <input
-                    type="text"
-                    required
-                    value={presentVillage}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setPresentVillage(v);
-                      setVillage(v);
-                      if (sameAsPresent) setPermanentVillage(v);
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
+                <div className="space-y-3">
+                  {application.certificateType !== 'family' && (
+                    <div>
+                      <label className="mb-1 block text-[11px] font-bold text-slate-700">
+                        ওয়ারিশ তালিকা (JSON)
+                      </label>
+                      <textarea
+                        value={heirsJson}
+                        onChange={e => setHeirsJson(e.target.value)}
+                        rows={8}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-[11px] leading-5 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </div>
+                  )}
+
+                  {application.certificateType === 'family' && (
+                    <div>
+                      <label className="mb-1 block text-[11px] font-bold text-slate-700">
+                        পরিবারের সদস্য তালিকা (JSON)
+                      </label>
+                      <textarea
+                        value={familyMembersJson}
+                        onChange={e => setFamilyMembersJson(e.target.value)}
+                        rows={8}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-[11px] leading-5 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </div>
+                  )}
+
+                  <p className="text-[10px] leading-5 text-slate-500">
+                    JSON তালিকার প্রতিটি item-এর field নাম অপরিবর্তিত রাখুন; শুধু value পরিবর্তন করুন। উদাহরণ: <code>{'name, relation, age, nidOrBirth, dob, remarks'}</code>
+                  </p>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">ওয়ার্ড নং *</label>
-                  <input
-                    type="text"
-                    required
-                    value={presentWard}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setPresentWard(v);
-                      setWardNo(v);
-                      if (sameAsPresent) setPermanentWard(v);
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">ডাকঘর *</label>
-                  <input
-                    type="text"
-                    required
-                    value={presentPost}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setPresentPost(v);
-                      setPostOffice(v);
-                      if (sameAsPresent) setPermanentPost(v);
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">উপজেলা *</label>
-                  <input
-                    type="text"
-                    required
-                    value={presentUpazila}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setPresentUpazila(v);
-                      if (sameAsPresent) setPermanentUpazila(v);
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">জেলা *</label>
-                  <input
-                    type="text"
-                    required
-                    value={presentDistrict}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setPresentDistrict(v);
-                      if (sameAsPresent) setPermanentDistrict(v);
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
-                </div>
+              </section>
+            )}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <FileText className="h-4 w-4 text-emerald-700" />
+                <span className="text-sm font-extrabold text-slate-900">সিস্টেম তথ্য</span>
               </div>
-            </div>
-
-            {/* Permanent Address */}
-            <div className={`p-3 rounded-xl border transition-all ${
-              sameAsPresent ? 'bg-emerald-50/30 border-emerald-200' : 'bg-slate-50/70 border-slate-200'
-            }`}>
-              <span className="text-[11px] font-bold text-emerald-800 block mb-2">
-                স্থায়ী ঠিকানা: {sameAsPresent && <span className="text-[10px] text-emerald-600 font-normal">(বর্তমান ঠিকানার অনুরূপ)</span>}
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">গ্রাম / মহল্লা *</label>
-                  <input
-                    type="text"
-                    required
-                    disabled={sameAsPresent}
-                    value={sameAsPresent ? presentVillage : permanentVillage}
-                    onChange={(e) => setPermanentVillage(e.target.value)}
-                    className={`w-full px-2.5 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-emerald-500 ${
-                      sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-white border-slate-300'
-                    }`}
-                  />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <div className="text-[10px] text-slate-400">Tracking ID</div>
+                  <div className="mt-1 font-mono font-bold text-slate-800">{application.trackingId}</div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">ওয়ার্ড নং *</label>
-                  <input
-                    type="text"
-                    required
-                    disabled={sameAsPresent}
-                    value={sameAsPresent ? presentWard : permanentWard}
-                    onChange={(e) => setPermanentWard(e.target.value)}
-                    className={`w-full px-2.5 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-emerald-500 ${
-                      sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-white border-slate-300'
-                    }`}
-                  />
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <div className="text-[10px] text-slate-400">Status</div>
+                  <div className="mt-1 font-bold text-slate-800">{application.status}</div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">ডাকঘর *</label>
-                  <input
-                    type="text"
-                    required
-                    disabled={sameAsPresent}
-                    value={sameAsPresent ? presentPost : permanentPost}
-                    onChange={(e) => setPermanentPost(e.target.value)}
-                    className={`w-full px-2.5 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-emerald-500 ${
-                      sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-white border-slate-300'
-                    }`}
-                  />
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <div className="text-[10px] text-slate-400">Fee</div>
+                  <div className="mt-1 font-bold text-slate-800">৳ {application.fee}</div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">উপজেলা *</label>
-                  <input
-                    type="text"
-                    required
-                    disabled={sameAsPresent}
-                    value={sameAsPresent ? presentUpazila : permanentUpazila}
-                    onChange={(e) => setPermanentUpazila(e.target.value)}
-                    className={`w-full px-2.5 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-emerald-500 ${
-                      sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-white border-slate-300'
-                    }`}
-                  />
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <div className="text-[10px] text-slate-400">Certificate</div>
+                  <div className="mt-1 font-bold text-slate-800">{getCertificateCategory(application.certificateType)}</div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">জেলা *</label>
-                  <input
-                    type="text"
-                    required
-                    disabled={sameAsPresent}
-                    value={sameAsPresent ? presentDistrict : permanentDistrict}
-                    onChange={(e) => setPermanentDistrict(e.target.value)}
-                    className={`w-full px-2.5 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-emerald-500 ${
-                      sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-white border-slate-300'
-                    }`}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-2.5 pt-2 border-t border-slate-200/60 max-w-xs">
-                <label className="block text-[11px] font-semibold text-slate-700 mb-0.5">হোল্ডিং নং</label>
-                <input
-                  type="text"
-                  value={holdingNo}
-                  onChange={(e) => setHoldingNo(e.target.value)}
-                  className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
-                />
               </div>
             </div>
           </div>
 
-          {/* Section: Specific Details for Certificate Type */}
-          {application.certificateType === 'income' && (
-            <div>
-              <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 border-b border-emerald-100 pb-1">
-                ৩. বার্ষিক আয় সংক্রান্ত তথ্য
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">বার্ষিক আয় (টাকায়) *</label>
-                  <input
-                    type="number"
-                    value={annualIncome}
-                    onChange={(e) => setAnnualIncome(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">আয়ের প্রধান উৎস *</label>
-                  <input
-                    type="text"
-                    value={incomeSource}
-                    onChange={(e) => setIncomeSource(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {application.certificateType === 'trade_license' && (
-            <div>
-              <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 border-b border-emerald-100 pb-1">
-                ৩. ব্যবসার তথ্য
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">প্রতিষ্ঠানের নাম</label>
-                  <input
-                    type="text"
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">ব্যবসার ধরণ</label>
-                  <input
-                    type="text"
-                    value={businessType}
-                    onChange={(e) => setBusinessType(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">প্রতিষ্ঠানের ঠিকানা</label>
-                  <input
-                    type="text"
-                    value={businessAddress}
-                    onChange={(e) => setBusinessAddress(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">মূলধন (টাকায়)</label>
-                  <input
-                    type="number"
-                    value={businessCapital}
-                    onChange={(e) => setBusinessCapital(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {getCertificateCategory(application.certificateType) === 'deceased' && (
-            <div>
-              <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 border-b border-emerald-100 pb-1">
-                ৩. ওয়ারিশ সংক্রান্ত তথ্য
-              </h4>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত ব্যক্তির নাম</label>
-                <input
-                  type="text"
-                  value={deceasedPersonName}
-                  onChange={(e) => setDeceasedPersonName(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Footer Controls */}
-          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <div className="sticky bottom-0 mt-5 flex items-center justify-end gap-3 border-t border-slate-200 bg-white pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition"
+              className="rounded-xl bg-slate-100 px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-200"
             >
               বাতিল
             </button>
             <button
               type="submit"
-              disabled={saving}
-              className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-md disabled:opacity-50"
+              disabled={saving || !canEdit}
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-xs font-extrabold text-white shadow-md transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Save className="w-4 h-4" />
-              <span>{saving ? 'সংরক্ষণ হচ্ছে...' : 'পরিবর্তন সংরক্ষণ করুন'}</span>
+              <Save className="h-4 w-4" />
+              {saving ? 'সংরক্ষণ হচ্ছে...' : 'সব পরিবর্তন সংরক্ষণ করুন'}
             </button>
           </div>
         </form>
-
       </div>
     </div>
   );
