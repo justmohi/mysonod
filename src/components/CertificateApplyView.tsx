@@ -208,6 +208,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [sameNamePerson, setSameNamePerson] = useState('');
   const [sameNameRelation, setSameNameRelation] = useState('নিজের নাম');
   const [sameNameField, setSameNameField] = useState('নিজের নাম');
+  const [sameNameGuardianType, setSameNameGuardianType] = useState<'father' | 'husband'>('father');
   const [sameNameDeceased, setSameNameDeceased] = useState(false);
 
   const handleSameNameAdd = () => {
@@ -972,11 +973,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     পিতা / স্বামী বেছে নিন
                   </label>
                   <select
-                    value={sameNameField === 'স্বামীর নাম' ? 'husband' : 'father'}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setSameNameField(value === 'husband' ? 'স্বামীর নাম' : 'পিতার নাম');
-                    }}
+                    value={sameNameGuardianType}
+                    onChange={(e) => setSameNameGuardianType(e.target.value as 'father' | 'husband')}
                     className="same-name-input same-name-select"
                   >
                     <option value="father">পিতা</option>
