@@ -236,6 +236,9 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     { name: '', relation: 'স্ত্রী', age: '' }
   ]);
 
+  // Family certificate guardian selector: Father or Husband.
+  const [familyGuardianType, setFamilyGuardianType] = useState<'father' | 'husband'>('father');
+
   // NID Lookup & Duplicate Detection State (Crucial Firebase Logic)
   const [existingRecordFound, setExistingRecordFound] = useState<CertificateApplication | null>(null);
   const [checkingNid, setCheckingNid] = useState(false);
@@ -248,6 +251,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     if (data.fatherName) setFatherName(data.fatherName);
     if (data.motherName) setMotherName(data.motherName);
     if (data.spouseName) setSpouseName(data.spouseName);
+    if (data.familyGuardianType) {
+      setFamilyGuardianType(data.familyGuardianType);
+    } else if (data.spouseName && !data.fatherName) {
+      setFamilyGuardianType('husband');
+    } else {
+      setFamilyGuardianType('father');
+    }
     if (data.gender) setGender(data.gender);
     if (data.maritalStatus) setMaritalStatus(data.maritalStatus);
     if (data.dob) setDob(data.dob);
@@ -616,6 +626,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           appPayload.spouseName = sameNameGuardianType === 'husband' ? spouseName.trim() : '';
           appPayload.sameNamePerson = sameNamePerson;
           appPayload.sameNameRelation = sameNameRelation;
+        } else if (selectedType === 'family') {
+          appPayload.familyGuardianType = familyGuardianType;
         } else if (selectedType === 'married') {
           appPayload.marriageDate = marriageDate;
           appPayload.spouseName2 = spouseName2;
@@ -1571,7 +1583,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="bg-purple-50/50 p-4 rounded-xl border border-purple-100">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-purple-950 uppercase tracking-wider">
-                ৩. পরিবারের সদস্যদের তালিকা
+                ৩. পারিবারিক সনদের তথ্য
               </h3>
               <button
                 type="button"
@@ -1582,16 +1594,49 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 <span>সদস্য যোগ করুন</span>
               </button>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 bg-white p-3 rounded-lg border border-purple-200">
+              <div>
+                <label className="block text-xs font-bold text-purple-950 mb-1">অভিভাবক হিসেবে পিতা / স্বামী *</label>
+                <select
+                  value={familyGuardianType}
+                  onChange={(e) => setFamilyGuardianType(e.target.value as 'father' | 'husband')}
+                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                >
+                  <option value="father">পিতা</option>
+                  <option value="husband">স্বামী</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-purple-950 mb-1">
+                  {familyGuardianType === 'father' ? 'পিতার নাম *' : 'স্বামীর নাম *'}
+                </label>
+                <input
+                  type="text"
+                  value={familyGuardianType === 'father' ? fatherName : spouseName}
+                  onChange={(e) => {
+                    if (familyGuardianType === 'father') {
+                      setFatherName(e.target.value);
+                    } else {
+                      setSpouseName(e.target.value);
+                    }
+                  }}
+                  placeholder={familyGuardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
+                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               {familyMembers.map((member, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-white p-2.5 rounded-lg border border-purple-200">
+                <div key={idx} className="flex flex-wrap md:flex-nowrap items-center gap-2 bg-white p-2.5 rounded-lg border border-purple-200">
                   <span className="text-xs font-bold text-slate-500 w-5">{toBengaliNumber(idx + 1)}.</span>
                   <input
                     type="text"
                     placeholder="সদস্যের নাম"
                     value={member.name}
                     onChange={(e) => updateFamilyRow(idx, 'name', e.target.value)}
-                    className="flex-1 px-2 py-1 text-xs border border-slate-300 rounded"
+                    className="flex-1 min-w-[140px] px-2 py-1 text-xs border border-slate-300 rounded"
                   />
                   <input
                     type="text"
@@ -1612,6 +1657,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                       type="button"
                       onClick={() => removeFamilyRow(idx)}
                       className="cursor-pointer text-red-500 hover:text-red-700 p-1"
+                      aria-label="সদস্য মুছুন"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
