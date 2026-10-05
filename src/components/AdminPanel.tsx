@@ -606,6 +606,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                         {app.status === 'Pending' && (
                           <>
                             <button
+                              onClick={() => setEditingApp(app)}
+                              className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2.5 py-1 rounded-lg text-[11px] transition inline-flex items-center gap-1"
+                              title="আবেদনের সকল তথ্য সম্পাদনা করুন"
+                            >
+                              <Edit3 className="w-3 h-3 text-emerald-700" />
+                              <span>তথ্য সম্পাদনা</span>
+                            </button>
+                            <button
                               onClick={() => handleApproveApplication(app)}
                               disabled={processingId === app.id}
                               className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition disabled:opacity-50"
