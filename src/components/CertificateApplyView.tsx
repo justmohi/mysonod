@@ -925,7 +925,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           }}
         />
       ) : (
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200 space-y-6">
+        <form onSubmit={handleSubmit} className="application-form bg-white rounded-2xl p-6 shadow-xs border border-slate-200 space-y-6">
         {/* Clean Duplicate Copy / Previous Record Notice */}
         {existingRecordFound && (
           <div className="bg-emerald-50/95 border border-emerald-300 px-4 py-3.5 rounded-xl shadow-2xs animate-in fade-in flex flex-wrap items-center justify-between gap-3">
