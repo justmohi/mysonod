@@ -94,79 +94,93 @@ export interface OperatorChargeResult {
   newBalance: number;
 };
 
-export const chargeOperatorForCompletion = async (
+export const applyOperatorCompletionChargeInTransaction = async (
+  transaction: FirestoreTransaction,
   operatorUid: string,
   applicationId: string,
   applicationTitle: string,
   now = new Date()
 ): Promise<OperatorChargeResult> => {
   const userDocRef = doc(db, 'users', operatorUid);
-  const txId = `tx_certificate_usage_${Date.now()}_${Math.random()
-    .toString(36)
-    .substring(2, 8)}`;
-  const txDocRef = doc(db, 'transactions', txId);
+  const userSnap = await transaction.get(userDocRef);
 
+  if (!userSnap.exists()) {
+    throw new Error('উদ্যোক্তার প্রোফাইল পাওয়া যায়নি।');
+  }
+
+  const operator = userSnap.data() as UserProfile;
+  if (operator.role !== 'operator') {
+    throw new Error('এই billing rule শুধু ইউনিয়ন উদ্যোক্তার জন্য প্রযোজ্য।');
+  }
+
+  const pricing = getOperatorCompletionCharge(operator, now);
+  const currentBalance = Number(operator.balance || 0);
+
+  if (currentBalance < pricing.charge) {
+    throw new Error(
+      `উদ্যোক্তার ব্যালেন্সে পর্যাপ্ত টাকা নেই। এই সনদের usage charge ৳${pricing.charge}।`
+    );
+  }
+
+  const newBalance = Number(
+    (currentBalance - pricing.charge).toFixed(2)
+  );
+
+  transaction.update(userDocRef, {
+    balance: newBalance,
+    billingStartAt: pricing.billingStartAt,
+    billingMonthKey: pricing.monthKey,
+    billingMonthCompletedCount: pricing.completedCount,
+    billingTotalCompleted:
+      Number(operator.billingTotalCompleted || 0) + 1,
+    updatedAt: now.toISOString()
+  });
+
+  const txId = `tx_certificate_usage_${applicationId}`;
+  const txDocRef = doc(db, 'transactions', txId);
+  const billingTx: Transaction = {
+    id: txId,
+    userId: operatorUid,
+    type: 'certificate_usage_fee',
+    amount: pricing.charge,
+    balanceAfter: newBalance,
+    description:
+      pricing.chargeType === 'free'
+        ? `সনদ সম্পন্ন #${pricing.completedCount} — প্রথম ১০০টি ফ্রি`
+        : pricing.chargeType === 'month1_overage'
+          ? `প্রথম মাসের ১০০টি ফ্রি সীমার পর সনদ #${pricing.completedCount} — ৳১ usage charge`
+          : `মাসিক সনদ usage charge — ${applicationTitle}`,
+    referenceId: applicationId,
+    createdAt: now.toISOString()
+  };
+
+  transaction.set(txDocRef, billingTx);
+
+  return {
+    charge: pricing.charge,
+    monthKey: pricing.monthKey,
+    completedCount: pricing.completedCount,
+    chargeType: pricing.chargeType,
+    newBalance
+  };
+};
+
+export const chargeOperatorForCompletion = async (
+  operatorUid: string,
+  applicationId: string,
+  applicationTitle: string,
+  now = new Date()
+): Promise<OperatorChargeResult> => {
   let result: OperatorChargeResult | null = null;
 
-  await runTransaction(db, async (transaction: FirestoreTransaction) => {
-    const userSnap = await transaction.get(userDocRef);
-    if (!userSnap.exists()) {
-      throw new Error('উদ্যোক্তার প্রোফাইল পাওয়া যায়নি।');
-    }
-
-    const operator = userSnap.data() as UserProfile;
-    if (operator.role !== 'operator') {
-      throw new Error('এই billing rule শুধু ইউনিয়ন উদ্যোক্তার জন্য প্রযোজ্য।');
-    }
-
-    const pricing = getOperatorCompletionCharge(operator, now);
-    const currentBalance = Number(operator.balance || 0);
-
-    if (currentBalance < pricing.charge) {
-      throw new Error(
-        `উদ্যোক্তার ব্যালেন্সে পর্যাপ্ত টাকা নেই। এই সনদের usage charge ৳${pricing.charge}।`
-      );
-    }
-
-    const newBalance = Number(
-      (currentBalance - pricing.charge).toFixed(2)
+  await runTransaction(db, async (transaction) => {
+    result = await applyOperatorCompletionChargeInTransaction(
+      transaction,
+      operatorUid,
+      applicationId,
+      applicationTitle,
+      now
     );
-
-    transaction.update(userDocRef, {
-      balance: newBalance,
-      billingStartAt: pricing.billingStartAt,
-      billingMonthKey: pricing.monthKey,
-      billingMonthCompletedCount: pricing.completedCount,
-      billingTotalCompleted:
-        Number(operator.billingTotalCompleted || 0) + 1,
-      updatedAt: now.toISOString()
-    });
-
-    const billingTx: Transaction = {
-      id: txId,
-      userId: operatorUid,
-      type: 'certificate_usage_fee',
-      amount: pricing.charge,
-      balanceAfter: newBalance,
-      description:
-        pricing.chargeType === 'free'
-          ? `সনদ সম্পন্ন #${pricing.completedCount} — প্রথম ১০০টি ফ্রি`
-          : pricing.chargeType === 'month1_overage'
-            ? `প্রথম মাসের ১০০টি ফ্রি সীমার পর সনদ #${pricing.completedCount} — ৳১ usage charge`
-            : `মাসিক সনদ usage charge — ${applicationTitle}`,
-      referenceId: applicationId,
-      createdAt: now.toISOString()
-    };
-
-    transaction.set(txDocRef, billingTx);
-
-    result = {
-      charge: pricing.charge,
-      monthKey: pricing.monthKey,
-      completedCount: pricing.completedCount,
-      chargeType: pricing.chargeType,
-      newBalance
-    };
   });
 
   if (!result) {
