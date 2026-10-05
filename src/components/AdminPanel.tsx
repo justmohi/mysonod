@@ -562,14 +562,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                             </button>
                           </>
                         )}
-                        {app.status === 'Approved' && <button
-                          onClick={() => setEditingApp(app)}
-                          className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
-                          title="সনদের তথ্য সম্পাদন করুন"
-                        >
-                          <Edit3 className="w-3 h-3 text-emerald-700" />
-                          <span>সম্পাদন</span>
-                        </button>
+                        {app.status === 'Approved' && (
+                          <button
+                            onClick={() => setEditingApp(app)}
+                            className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
+                            title="সনদের তথ্য সম্পাদন করুন"
+                          >
+                            <Edit3 className="w-3 h-3 text-emerald-700" />
+                            <span>সম্পাদন</span>
+                          </button>
+                        )}
                         {app.status === 'Approved' && (
                           <button
                             onClick={() => onViewCertificate(app)}
