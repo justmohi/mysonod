@@ -184,6 +184,116 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'notes', label: 'অতিরিক্ত নোট', type: 'textarea', section: 'certificate' }
 ];
 
+const CERTIFICATE_EDIT_KEYS: Record<string, string[]> = {
+  income: ['annualIncome', 'incomeSource'],
+  annual_income: ['annualIncome', 'incomeSource'],
+  monthly_income: ['monthlyIncome', 'incomeSource'],
+  trade_license: [
+    'businessName', 'businessType', 'businessNature', 'businessAddress',
+    'businessCapital', 'businessStartDate', 'showCapitalOnPrint',
+    'ownerName', 'ownerFatherOrHusbandName', 'ownerMotherName',
+    'ownerNidOrBirth', 'ownerPhotoUrl', 'tinNumber',
+    'validityStart', 'validityEnd', 'licenseFee', 'vatAmount',
+    'professionTax', 'tradeTax', 'totalAmount'
+  ],
+  inheritance: ['deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName'],
+  succession: ['deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName'],
+  family: [],
+  non_remarriage: ['previousHusbandName'],
+  widow: ['previousHusbandName'],
+  death: ['deathPersonName', 'deathDate', 'deathPlace'],
+  nationality: ['nationality', 'religion'],
+  citizenship: ['nationality', 'religion'],
+  community: ['communityName'],
+  indigenous: ['communityName'],
+  voter_area_transfer: ['voterAreaOld', 'voterAreaNew', 'voterTransferReason'],
+  nid_correction: ['correctionField', 'correctionOldValue', 'correctionNewValue', 'correctionDetails'],
+  guardian_permission: ['guardianName', 'guardianRelation', 'permissionPurpose'],
+  landless: ['landDescription', 'landAmount'],
+  agriculture: ['agricultureType', 'agricultureLand'],
+  freedom_fighter: ['freedomFighterName', 'freedomFighterRelation', 'freedomFighterNumber'],
+  disabled: ['disabilityType', 'disabilityDescription'],
+  unemployed: ['unemploymentDuration'],
+  infrastructure_permission: ['constructionType', 'constructionLocation', 'constructionPurpose'],
+  same_name: ['sameNamePerson', 'sameNameRelation'],
+  married: ['marriageDate', 'spouseName2'],
+  orphan: ['orphanGuardian'],
+  permanent_resident: ['generalPurpose', 'certificateDetails'],
+  character: ['generalPurpose'],
+  not_rohingya: ['generalPurpose', 'rohingyaVerificationRef'],
+  no_birth_certificate: ['generalPurpose', 'reasonNoBirthCert'],
+  financial_insolvency: ['generalPurpose', 'insolvencyReason', 'certificateDetails'],
+  no_objection: ['organizationName', 'nocPurpose', 'generalPurpose'],
+  childless: ['childlessYears', 'generalPurpose'],
+  new_voter: ['previousAddress', 'generalPurpose'],
+  new_voter_affidavit: ['previousAddress', 'generalPurpose'],
+  general: ['generalPurpose', 'certificateDetails'],
+  miscellaneous: ['miscellaneousDetails']
+};
+
+const COMMON_EDIT_KEYS = [
+  'applicantNameBn',
+  'applicantNameEn',
+  'fatherName',
+  'fatherNameEn',
+  'motherName',
+  'motherNameEn',
+  'spouseName',
+  'spouseNameEn',
+  'nidOrBirthReg',
+  'email',
+  'dob',
+  'occupation'
+];
+
+const PRESENT_EDIT_KEYS = [
+  'presentVillage',
+  'presentVillageEn',
+  'presentWard',
+  'presentPost',
+  'presentPostEn',
+  'presentUpazila',
+  'presentUpazilaEn',
+  'presentDistrict',
+  'presentDistrictEn'
+];
+
+const PERMANENT_EDIT_KEYS = [
+  'permanentVillage',
+  'permanentVillageEn',
+  'permanentWard',
+  'permanentPost',
+  'permanentPostEn',
+  'permanentUpazila',
+  'permanentUpazilaEn',
+  'permanentDistrict',
+  'permanentDistrictEn',
+  'village',
+  'villageEn',
+  'wardNo',
+  'postOffice',
+  'postOfficeEn',
+  'holdingNo'
+];
+
+function getRelevantEditFields(application: CertificateApplication): EditableField[] {
+  const allowed = new Set<string>([
+    ...COMMON_EDIT_KEYS,
+    ...PRESENT_EDIT_KEYS,
+    ...(application.certificateType === 'same_name'
+      ? []
+      : PERMANENT_EDIT_KEYS),
+    ...(CERTIFICATE_EDIT_KEYS[application.certificateType] || [])
+  ]);
+
+  return EDITABLE_FIELDS.filter(field => {
+    if (!allowed.has(field.key)) return false;
+    const value = readValue(application, field.key);
+    if (Array.isArray(value)) return value.length > 0;
+    return String(value ?? '').trim() !== '';
+  });
+}
+
 const readValue = (app: CertificateApplication, key: string) => {
   const value = (app as unknown as Record<string, unknown>)[key];
   if (key === 'attachmentUrls' && Array.isArray(value)) {
@@ -206,7 +316,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
 
   const [formData, setFormData] = useState<Record<string, any>>(() => {
     const base: Record<string, any> = {};
-    for (const field of EDITABLE_FIELDS) {
+    for (const field of getRelevantEditFields(application)) {
       base[field.key] = readValue(application, field.key);
     }
     return base;
@@ -222,15 +332,15 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const sections = useMemo(
-    () => ({
-      personal: EDITABLE_FIELDS.filter(f => f.section === 'personal'),
-      present: EDITABLE_FIELDS.filter(f => f.section === 'present'),
-      permanent: EDITABLE_FIELDS.filter(f => f.section === 'permanent'),
-      certificate: EDITABLE_FIELDS.filter(f => f.section === 'certificate')
-    }),
-    []
-  );
+  const sections = useMemo(() => {
+    const relevant = getRelevantEditFields(application);
+    return {
+      personal: relevant.filter(f => f.section === 'personal'),
+      present: relevant.filter(f => f.section === 'present'),
+      permanent: relevant.filter(f => f.section === 'permanent'),
+      certificate: relevant.filter(f => f.section === 'certificate')
+    };
+  }, [application]);
 
   const canEdit = Boolean(
     currentUser &&
@@ -270,9 +380,12 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
         throw new Error('ওয়ারিশ / পারিবারিক সদস্যের JSON তথ্যের ফরম্যাট সঠিক নয়।');
       }
 
+      const allowedKeys = new Set(getRelevantEditFields(application).map(field => field.key));
       const updatePayload: Record<string, any> = {
-        ...formData,
-        userName: String(formData.applicantNameBn || '').trim(),
+        ...Object.fromEntries(
+          Object.entries(formData).filter(([key]) => allowedKeys.has(key))
+        ),
+        userName: String(formData.applicantNameBn || application.applicantNameBn || '').trim(),
         heirs,
         familyMembers,
         attachmentUrls:
