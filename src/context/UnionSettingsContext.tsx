@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { deleteField, doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { useAuth } from './AuthContext';
 import type { UnionSettings } from '../types';
@@ -183,7 +183,17 @@ export const UnionSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         ? doc(db, 'union_settings', currentUser!.uid)
         : doc(db, 'settings', 'unionInfo');
 
-      await setDoc(docRef, updatedPayload, { merge: true });
+      // Keep large logo/base64 payloads out of Firestore. Firestore documents are limited
+      // to 1 MiB; logos are cached locally and served from the operator's local workspace.
+      // Remove any legacy oversized logo fields from existing documents.
+      const firestorePayload = {
+        ...updatedPayload,
+        govtLogoUrl: deleteField(),
+        unionLogoUrl: deleteField(),
+        watermarkLogoUrl: deleteField()
+      };
+
+      await setDoc(docRef, firestorePayload, { merge: true });
     } catch (error) {
       handleFirestoreError(
         error,
