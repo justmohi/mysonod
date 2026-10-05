@@ -23,6 +23,11 @@ export const db: Firestore = getFirestore(app, firebaseConfig.firestoreDatabaseI
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
+// Separate Firebase Auth instance used only by the primary admin to create operator accounts.
+// It does not replace the currently signed-in admin session.
+const operatorAccountApp = initializeApp(firebaseConfig, 'operator-account-creator');
+export const operatorAuth = getAuth(operatorAccountApp);
+
 export enum OperationType {
   CREATE = 'create',
   UPDATE = 'update',
@@ -81,6 +86,17 @@ export async function testConnection(): Promise<boolean> {
     }
     return false;
   }
+}
+
+export async function createOperatorAuthAccount(email: string, password: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const credential = await createUserWithEmailAndPassword(
+    operatorAuth,
+    normalizedEmail,
+    password
+  );
+  await signOut(operatorAuth).catch(() => undefined);
+  return credential.user;
 }
 
 export { 

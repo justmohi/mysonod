@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { db, handleFirestoreError, OperationType } from '../firebase';
+import { useAuth, PRIMARY_ADMIN_EMAIL } from '../context/AuthContext';
+import { db, handleFirestoreError, OperationType, createOperatorAuthAccount } from '../firebase';
 import { 
   collection, 
   onSnapshot, 
   doc, 
-  updateDoc, 
+  updateDoc,
+  setDoc, 
   runTransaction,
   getDoc 
 } from 'firebase/firestore';
@@ -38,28 +39,36 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNavigate }) => {
-  const { currentUser, userProfile, isAdmin, toggleAdminMode } = useAuth();
+  const { currentUser, userProfile, isAdmin, isOperator, isPrimaryAdmin, toggleAdminMode } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'balance' | 'certificates' | 'settings'>('balance');
+  const [activeTab, setActiveTab] = useState<'balance' | 'certificates' | 'settings' | 'operators'>(isAdmin ? 'balance' : 'certificates');
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequest[]>([]);
   const [applications, setApplications] = useState<CertificateApplication[]>([]);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'Pending' | 'Approved' | 'Rejected'>('all');
   const [editingApp, setEditingApp] = useState<CertificateApplication | null>(null);
+  const [operatorName, setOperatorName] = useState('');
+  const [operatorEmail, setOperatorEmail] = useState('');
+  const [operatorPassword, setOperatorPassword] = useState('');
+  const [creatingOperator, setCreatingOperator] = useState(false);
 
   // Listen to all balance requests (Admin view)
   useEffect(() => {
-    const unsubReqs = onSnapshot(collection(db, 'balance_requests'), (snapshot) => {
+    let unsubReqs: (() => void) | null = null;
+
+    if (isAdmin) {
+      unsubReqs = onSnapshot(collection(db, 'balance_requests'), (snapshot) => {
       const list: BalanceRequest[] = [];
       snapshot.forEach(docSnap => {
         list.push(docSnap.data() as BalanceRequest);
       });
       list.sort((a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime());
       setBalanceRequests(list);
-    }, (err) => {
-      handleFirestoreError(err, OperationType.GET, 'balance_requests');
-    });
+      }, (err) => {
+        handleFirestoreError(err, OperationType.GET, 'balance_requests');
+      });
+    }
 
     const unsubApps = onSnapshot(collection(db, 'applications'), (snapshot) => {
       const list: CertificateApplication[] = [];
@@ -73,10 +82,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
     });
 
     return () => {
-      unsubReqs();
+      if (unsubReqs) unsubReqs();
       unsubApps();
     };
-  }, []);
+  }, [isAdmin]);
 
   // Admin approves balance request -> Adds requested amount directly to user's wallet
   const handleApproveBalance = async (request: BalanceRequest) => {
@@ -152,16 +161,78 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
     }
   };
 
-  // Admin approves certificate application
+  // Admin/operator approves certificate application
   const handleApproveApplication = async (app: CertificateApplication) => {
+    if (!isAdmin && !isOperator) return;
+    setProcessingId(app.id);
     try {
+      const nowIso = new Date().toISOString();
       await updateDoc(doc(db, 'applications', app.id), cleanDataForFirestore({
         status: 'Approved',
-        approvedAt: new Date().toISOString(),
-        issuingOfficer: userProfile?.name || 'চেয়ারম্যান, ১২ নং আমবাড়ীয়া ইউপি'
+        approvedAt: nowIso,
+        issuingOfficer: userProfile?.name || 'ইউনিয়ন উদ্যোক্তা'
       }));
     } catch (err: any) {
       handleFirestoreError(err, OperationType.UPDATE, `applications/${app.id}`);
+      alert(`অনুমোদন ব্যর্থ হয়েছে: ${err.message}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleRejectApplication = async (app: CertificateApplication) => {
+    if (!isAdmin && !isOperator) return;
+    const reason = prompt('বাতিলের কারণ লিখুন:', 'তথ্য যাচাই প্রয়োজন / অসম্পূর্ণ আবেদন');
+    if (reason === null) return;
+    setProcessingId(app.id);
+    try {
+      await updateDoc(doc(db, 'applications', app.id), cleanDataForFirestore({
+        status: 'Rejected',
+        rejectionReason: reason || 'আবেদন বাতিল করা হয়েছে'
+      }));
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, `applications/${app.id}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleCreateOperator = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isPrimaryAdmin) return;
+    if (!operatorName.trim() || !operatorEmail.trim() || operatorPassword.length < 6) {
+      alert('উদ্যোক্তার নাম, ইমেইল এবং কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন।');
+      return;
+    }
+
+    setCreatingOperator(true);
+    try {
+      const authUser = await createOperatorAuthAccount(operatorEmail, operatorPassword);
+      const nowIso = new Date().toISOString();
+      const profile = {
+        id: authUser.uid,
+        name: operatorName.trim(),
+        email: operatorEmail.trim().toLowerCase(),
+        phone: '',
+        balance: 0,
+        role: 'operator' as const,
+        createdAt: nowIso,
+        updatedAt: nowIso,
+        createdBy: currentUser?.email || 'mohistudio95@gmail.com'
+      };
+
+      await setDoc(doc(db, 'users', authUser.uid), cleanDataForFirestore(profile));
+      alert(`উদ্যোক্তা অ্যাকাউন্ট তৈরি হয়েছে।\\n\\nইমেইল: ${profile.email}\\nপ্রাথমিক পাসওয়ার্ড: ${operatorPassword}`);
+      setOperatorName('');
+      setOperatorEmail('');
+      setOperatorPassword('');
+    } catch (err: any) {
+      const msg = err?.code === 'auth/email-already-in-use'
+        ? 'এই ইমেইল দিয়ে ইতোমধ্যে অ্যাকাউন্ট আছে।'
+        : err?.message || 'উদ্যোক্তা অ্যাকাউন্ট তৈরি করা যায়নি।';
+      alert(msg);
+    } finally {
+      setCreatingOperator(false);
     }
   };
 
@@ -197,24 +268,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             </div>
           </div>
 
-          {/* Quick Admin Toggle for Test Evaluation */}
+          {/* Primary-admin preview toggle; operators only see their role. */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={toggleAdminMode}
-              className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border shadow-xs ${
-                isAdmin
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-600'
-                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>{isAdmin ? 'এডমিন মোড সক্রিয় (সুইচ করুন)' : 'এডমিন হিসেবে মোড চালু করুন'}</span>
-            </button>
+            {isPrimaryAdmin ? (
+              <button
+                onClick={toggleAdminMode}
+                className="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border shadow-xs bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-600"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>{isAdmin ? 'এডমিন মোড সক্রিয়' : 'এডমিন মোড চালু করুন'}</span>
+              </button>
+            ) : (
+              <span className="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                {isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'স্টাফ'}
+              </span>
+            )}
           </div>
         </div>
 
         {/* Tab Switcher */}
         <div className="flex gap-2 mt-6 border-b border-slate-200">
+          {isAdmin && (
           <button
             onClick={() => setActiveTab('balance')}
             className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
@@ -231,6 +305,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
               </span>
             )}
           </button>
+          )}
 
           <button
             onClick={() => setActiveTab('certificates')}
@@ -244,6 +319,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             <span>সকল প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
           </button>
 
+          {isAdmin && (
           <button
             onClick={() => setActiveTab('settings')}
             className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
@@ -255,11 +331,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             <Building2 className="w-4 h-4" />
             <span>ইউনিয়ন ও পোর্টাল সেটিংস (Union Settings)</span>
           </button>
+          )}
+
+          {isPrimaryAdmin && (
+            <button
+              onClick={() => setActiveTab('operators')}
+              className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
+                activeTab === 'operators'
+                  ? 'border-amber-600 text-amber-800 bg-amber-50 rounded-t-lg'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <UserCheck className="w-4 h-4" />
+              <span>উদ্যোক্তা অ্যাকাউন্ট</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Tab 1: Balance Approval Queue (CRITICAL BUSINESS LOGIC) */}
-      {activeTab === 'balance' && (
+      {/* Tab 1: Balance Approval Queue */}
+      {isAdmin && activeTab === 'balance' && (
         <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -374,7 +465,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
         </div>
       )}
 
-      {/* Tab 2: Certificate Applications Management */}
+      {/* Certificate Applications Management */}
       {activeTab === 'certificates' && (
         <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -441,13 +532,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                       {formatBengaliDate(app.createdAt)}
                     </td>
                     <td className="py-2.5 px-3">
-                      <span className="bg-emerald-100 text-emerald-800 font-bold text-[10px] px-2 py-0.5 rounded-full">
-                        {app.status === 'Approved' ? 'অনুমোদিত' : app.status}
+                      <span className={`font-bold text-[10px] px-2 py-0.5 rounded-full ${
+                        app.status === 'Approved'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : app.status === 'Pending'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-red-100 text-red-800'
+                      }`}>
+                        {app.status === 'Approved' ? 'অনুমোদিত' : app.status === 'Pending' ? 'অপেক্ষমাণ' : 'বাতিল'}
                       </span>
                     </td>
                     <td className="py-2.5 px-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
+                        {app.status === 'Pending' && (
+                          <>
+                            <button
+                              onClick={() => handleApproveApplication(app)}
+                              disabled={processingId === app.id}
+                              className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition disabled:opacity-50"
+                            >
+                              {processingId === app.id ? '...' : 'অনুমোদন'}
+                            </button>
+                            <button
+                              onClick={() => handleRejectApplication(app)}
+                              disabled={processingId === app.id}
+                              className="cursor-pointer bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 font-bold px-2.5 py-1 rounded-lg text-[11px] transition disabled:opacity-50"
+                            >
+                              বাতিল
+                            </button>
+                          </>
+                        )}
+                        {app.status === 'Approved' && <button
                           onClick={() => setEditingApp(app)}
                           className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
                           title="সনদের তথ্য সম্পাদন করুন"
@@ -455,13 +570,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                           <Edit3 className="w-3 h-3 text-emerald-700" />
                           <span>সম্পাদন</span>
                         </button>
-                        <button
-                          onClick={() => onViewCertificate(app)}
-                          className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2.5 py-1 rounded-lg text-xs transition inline-flex items-center gap-1"
-                        >
-                          <Printer className="w-3.5 h-3.5" />
-                          <span>প্রিন্ট</span>
-                        </button>
+                        {app.status === 'Approved' && (
+                          <button
+                            onClick={() => onViewCertificate(app)}
+                            className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2.5 py-1 rounded-lg text-xs transition inline-flex items-center gap-1"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                            <span>প্রিন্ট</span>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -473,8 +590,55 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
       )}
 
       {/* Tab 3: Dynamic Union & Header Settings Management */}
-      {activeTab === 'settings' && (
+      {isAdmin && activeTab === 'settings' && (
         <UnionSettingsManager />
+      )}
+
+      {/* Primary-admin-only operator account management */}
+      {isPrimaryAdmin && activeTab === 'operators' && (
+        <div className="max-w-2xl bg-white rounded-2xl p-6 shadow-xs border border-slate-200">
+          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <UserCheck className="w-5 h-5 text-amber-600" />
+            নতুন ইউনিয়ন উদ্যোক্তা অ্যাকাউন্ট
+          </h3>
+          <p className="text-xs text-slate-500 mt-1">
+            শুধু {PRIMARY_ADMIN_EMAIL} অ্যাকাউন্ট থেকেই উদ্যোক্তার লগইন তৈরি করা যাবে।
+          </p>
+
+          <form onSubmit={handleCreateOperator} className="mt-5 space-y-4">
+            <input
+              required
+              value={operatorName}
+              onChange={e => setOperatorName(e.target.value)}
+              placeholder="উদ্যোক্তার পূর্ণ নাম"
+              className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <input
+              required
+              type="email"
+              value={operatorEmail}
+              onChange={e => setOperatorEmail(e.target.value)}
+              placeholder="উদ্যোক্তার ইমেইল"
+              className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <input
+              required
+              minLength={6}
+              type="password"
+              value={operatorPassword}
+              onChange={e => setOperatorPassword(e.target.value)}
+              placeholder="প্রাথমিক পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
+              className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <button
+              type="submit"
+              disabled={creatingOperator}
+              className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition disabled:opacity-60"
+            >
+              {creatingOperator ? 'অ্যাকাউন্ট তৈরি হচ্ছে...' : 'উদ্যোক্তা অ্যাকাউন্ট তৈরি করুন'}
+            </button>
+          </form>
+        </div>
       )}
 
       {/* Edit Certificate Modal for Admin */}

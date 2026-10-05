@@ -16,8 +16,9 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
-  const { login, signup, loginWithGoogle } = useAuth();
+  const { login, loginOperator, signup, loginWithGoogle } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isOperatorLogin, setIsOperatorLogin] = useState(false);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +36,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
     setLoading(true);
 
     try {
-      if (isSignUp) {
+      if (isOperatorLogin) {
+        await loginOperator(email, password);
+      } else if (isSignUp) {
         if (!name.trim()) throw new Error('দয়া করে আপনার পূর্ণ নাম লিখুন');
         if (password.length < 6) throw new Error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
         await signup(name, email, password, phone);
@@ -76,39 +79,66 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
           <p className="text-xs text-emerald-100 font-medium mt-1">
             ১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার
           </p>
+          <div className="mt-3 inline-flex items-center rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold text-emerald-50">
+            {isOperatorLogin ? 'ইউনিয়ন উদ্যোক্তা লগইন' : 'নাগরিক সেবা লগইন'}
+          </div>
           <p className="text-[11px] text-emerald-200/90 font-normal mt-0.5">
             মিরপুর, কুষ্টিয়া
           </p>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Login mode switcher */}
         <div className="flex border-b border-gray-200 bg-gray-50/50">
           <button
             type="button"
-            onClick={() => { setIsSignUp(false); setError(null); }}
-            className={`flex-1 py-3 text-xs sm:text-sm font-semibold text-center transition cursor-pointer flex items-center justify-center gap-2 ${
-              !isSignUp 
-                ? 'text-emerald-800 border-b-2 border-[#006a4e] bg-white font-bold' 
-                : 'text-gray-500 hover:text-gray-800'
+            onClick={() => {
+              setIsOperatorLogin(false);
+              setIsSignUp(false);
+              setError(null);
+            }}
+            className={`flex-1 py-3 text-xs sm:text-sm font-semibold text-center transition cursor-pointer ${
+              !isOperatorLogin ? 'text-emerald-800 border-b-2 border-[#006a4e] bg-white font-bold' : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <LogIn className="w-4 h-4 text-[#006a4e]" />
-            <span>লগইন (Sign In)</span>
+            নাগরিক লগইন
           </button>
           <button
             type="button"
-            onClick={() => { setIsSignUp(true); setError(null); }}
-            className={`flex-1 py-3 text-xs sm:text-sm font-semibold text-center transition cursor-pointer flex items-center justify-center gap-2 ${
-              isSignUp 
-                ? 'text-emerald-800 border-b-2 border-[#006a4e] bg-white font-bold' 
-                : 'text-gray-500 hover:text-gray-800'
+            onClick={() => {
+              setIsOperatorLogin(true);
+              setIsSignUp(false);
+              setError(null);
+            }}
+            className={`flex-1 py-3 text-xs sm:text-sm font-semibold text-center transition cursor-pointer ${
+              isOperatorLogin ? 'text-amber-800 border-b-2 border-amber-500 bg-white font-bold' : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <UserPlus className="w-4 h-4 text-[#006a4e]" />
-            <span>নতুন নিবন্ধন (Sign Up)</span>
+            উদ্যোক্তা লগইন
           </button>
         </div>
 
+        {!isOperatorLogin && (
+          <div className="flex border-b border-gray-200 bg-white">
+            <button
+              type="button"
+              onClick={() => { setIsSignUp(false); setError(null); }}
+              className={`flex-1 py-2.5 text-xs font-semibold text-center transition cursor-pointer ${
+                !isSignUp ? 'text-emerald-800 font-bold' : 'text-gray-500 hover:text-gray-800'
+              }`}
+            >
+              লগইন
+            </button>
+            <button
+              type="button"
+              onClick={() => { setIsSignUp(true); setError(null); }}
+              className={`flex-1 py-2.5 text-xs font-semibold text-center transition cursor-pointer ${
+                isSignUp ? 'text-emerald-800 font-bold' : 'text-gray-500 hover:text-gray-800'
+              }`}
+            >
+              নতুন নিবন্ধন
+            </button>
+          </div>
+        )}
         {/* Form Body */}
         <div className="p-6">
           {error && (
@@ -119,7 +149,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && (
+            {isSignUp && !isOperatorLogin && (
               <>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
@@ -201,13 +231,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
               ) : (
                 <>
                   {isSignUp ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
-                  <span>পোটালে প্রবেশ করুন</span>
+                  <span>{isOperatorLogin ? 'উদ্যোক্তা লগইন করুন' : (isSignUp ? 'একাউন্ট তৈরি করুন' : 'পোর্টালে প্রবেশ করুন')}</span>
                 </>
               )}
             </button>
           </form>
 
-          {/* Google Sign-in */}
+          {/* Google Sign-in: citizens only */}
+          {!isOperatorLogin && (
           <div className="mt-4 pt-4 border-t border-gray-200">
             <button
               type="button"
@@ -224,6 +255,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
               <span>Google দিয়ে সরাসরি সাইন ইন</span>
             </button>
           </div>
+          )}
         </div>
 
         {/* Footer Security / Government Notice */}

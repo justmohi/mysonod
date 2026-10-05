@@ -1,75 +1,163 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
     function isSignedIn() {
       return request.auth != null;
+    }
+
+    function isPrimaryAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email == 'mohistudio95@gmail.com';
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        isPrimaryAdmin() ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isOperator() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'operator';
+    }
+
+    function isStaff() {
+      return isAdmin() || isOperator();
     }
 
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // Admin lookup or authorized admin email
-    function isAdmin() {
-      return isSignedIn() && (
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
-        request.auth.token.email == 'mohistudio95@gmail.com' ||
-        request.auth.token.email == 'mmd173675@gmail.com'
-      );
-    }
-
-    // Test connection check
     match /test/connection {
       allow read: if true;
     }
 
-    // Admins registry
+    // Only the primary admin should control the admin registry.
     match /admins/{adminId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
+      allow read: if isStaff();
+      allow write: if isPrimaryAdmin();
     }
 
-    // User profiles & wallet
+    // User profiles.
+    // Public registration can only create a normal citizen profile.
+    // Operators can never change their own role from the client.
     match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow create: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow read: if isOwner(userId) || isStaff();
+
+      allow create: if isSignedIn() && (
+        (
+          isOwner(userId) &&
+          request.resource.data.role == 'user'
+        ) ||
+        (
+          isPrimaryAdmin() &&
+          request.resource.data.role == 'operator'
+        ) ||
+        (
+          isPrimaryAdmin() &&
+          request.resource.data.role == 'admin'
+        )
+      );
+
+      allow update: if (
+        isAdmin() &&
+        (
+          request.resource.data.role == resource.data.role ||
+          (
+            isPrimaryAdmin() &&
+            (
+              request.resource.data.role == 'operator' ||
+              request.resource.data.role == 'admin' ||
+              request.resource.data.role == 'user'
+            )
+          )
+        )
+      ) ||
+        (
+          isOwner(userId) &&
+          resource.data.role == 'user' &&
+          request.resource.data.role == 'user'
+        ) ||
+        (
+          isOwner(userId) &&
+          resource.data.role == 'operator' &&
+          request.resource.data.role == 'operator'
+        );
+
       allow delete: if isAdmin();
     }
 
-    // Applications collection
+    // Certificate applications.
+    // Citizens create and edit their own applications only while Pending.
+    // Staff can review and approve/reject applications.
     match /applications/{applicationId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin());
-      allow update: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow read: if isStaff() ||
+        (
+          isSignedIn() &&
+          resource.data.userId == request.auth.uid
+        );
+
+      allow create: if isSignedIn() && (
+        isStaff() ||
+        (
+          request.resource.data.userId == request.auth.uid &&
+          request.resource.data.status == 'Pending'
+        )
+      );
+
+      allow update: if isStaff() ||
+        (
+          isSignedIn() &&
+          resource.data.userId == request.auth.uid &&
+          request.resource.data.userId == resource.data.userId &&
+          resource.data.status == 'Pending' &&
+          request.resource.data.status == 'Pending'
+        );
+
       allow delete: if isAdmin();
     }
 
-    // Balance Requests collection
     match /balance_requests/{requestId} {
-      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin());
-      allow update: if isSignedIn() && isAdmin();
-      allow delete: if isAdmin();
-    }
+      allow read: if isSignedIn() &&
+        (
+          resource.data.userId == request.auth.uid ||
+          isAdmin()
+        );
 
-    // Transactions collection
-    match /transactions/{transactionId} {
-      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() &&
+        request.resource.data.userId == request.auth.uid;
+
       allow update: if isAdmin();
       allow delete: if isAdmin();
     }
 
-    // Settings collection (Public read for portal & certificate branding, Admin write)
+    match /transactions/{transactionId} {
+      allow read: if isSignedIn() &&
+        (
+          resource.data.userId == request.auth.uid ||
+          isAdmin()
+        );
+
+      allow create: if isSignedIn() &&
+        (
+          request.resource.data.userId == request.auth.uid ||
+          isAdmin()
+        );
+
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
     match /settings/{settingId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Fallback default deny
     match /{document=**} {
       allow read, write: if false;
     }

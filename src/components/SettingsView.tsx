@@ -22,7 +22,7 @@ import { UnionSettingsManager } from './UnionSettingsManager';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 
 export const SettingsView: React.FC = () => {
-  const { currentUser, userProfile, isAdmin, toggleAdminMode, logout } = useAuth();
+  const { currentUser, userProfile, isAdmin, isOperator, toggleAdminMode, logout } = useAuth();
   const { settings } = useUnionSettings();
 
   const [activeTab, setActiveTab] = useState<'profile' | 'union_settings'>(isAdmin ? 'union_settings' : 'profile');
@@ -82,7 +82,7 @@ export const SettingsView: React.FC = () => {
           ) : (
             <div className="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border bg-emerald-50 text-emerald-800 border-emerald-300">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>ভূমিকা: সাধারণ সেবাগ্রহীতা (User)</span>
+              <span>{isOperator ? 'ভূমিকা: ইউনিয়ন উদ্যোক্তা (Operator)' : 'ভূমিকা: সাধারণ সেবাগ্রহীতা (User)'}</span>
             </div>
           )}
         </div>

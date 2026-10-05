@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import type { CertificateApplication } from '../types';
@@ -21,6 +22,7 @@ interface CertificateVerificationViewProps {
 export const CertificateVerificationView: React.FC<CertificateVerificationViewProps> = ({
   onViewCertificate
 }) => {
+  const { isStaff } = useAuth();
   const [trackingInput, setTrackingInput] = useState('');
   const [searched, setSearched] = useState(false);
   const [foundApp, setFoundApp] = useState<CertificateApplication | null>(null);
@@ -47,7 +49,8 @@ export const CertificateVerificationView: React.FC<CertificateVerificationViewPr
     try {
       const q = query(
         collection(db, 'applications'),
-        where('trackingId', '==', trackingId.trim())
+        where('trackingId', '==', trackingId.trim()),
+        where('status', '==', 'Approved')
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
@@ -170,15 +173,21 @@ export const CertificateVerificationView: React.FC<CertificateVerificationViewPr
                 </div>
               </div>
 
-              {/* View full printable certificate button */}
+              {/* Printable certificate access is staff-only */}
               <div className="flex justify-end pt-3 border-t border-slate-100">
-                <button
-                  onClick={() => onViewCertificate(foundApp)}
-                  className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-xs"
-                >
-                  <Printer className="w-4 h-4" />
-                  <span>সম্পূর্ণ মূল সনদপত্র দেখুন ও প্রিন্ট করুন</span>
-                </button>
+                {isStaff ? (
+                  <button
+                    onClick={() => onViewCertificate(foundApp)}
+                    className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-xs"
+                  >
+                    <Printer className="w-4 h-4" />
+                    <span>সম্পূর্ণ মূল সনদপত্র দেখুন ও প্রিন্ট করুন</span>
+                  </button>
+                ) : (
+                  <div className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5">
+                    সনদটি অনুমোদিত। মূল প্রিন্ট কপি ইউনিয়ন উদ্যোক্তা অফিস থেকে সংগ্রহ করুন।
+                  </div>
+                )}
               </div>
             </div>
           ) : (

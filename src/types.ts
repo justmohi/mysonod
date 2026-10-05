@@ -467,7 +467,7 @@ export interface UserProfile {
   email: string;
   phone?: string;
   balance: number;
-  role: 'user' | 'admin';
+  role: 'user' | 'operator' | 'admin';
   createdAt: string;
   updatedAt?: string;
 }
