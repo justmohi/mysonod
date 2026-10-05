@@ -45,7 +45,10 @@ export const UnionSettingsManager: React.FC = () => {
   };
 
   // Convert uploaded image file to Base64 and persist in localStorage + state + context
-  const handleFileUpload = (field: 'govtLogoUrl' | 'unionLogoUrl' | 'watermarkLogoUrl', file: File | null) => {
+  const handleFileUpload = (
+    field: 'govtLogoUrl' | 'unionLogoUrl' | 'watermarkLogoUrl',
+    file: File | null
+  ) => {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
@@ -54,77 +57,45 @@ export const UnionSettingsManager: React.FC = () => {
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const base64Data = e.target?.result as string;
-      if (base64Data) {
-        // Instantly update local form state for real-time live preview thumbnail update
-        setFormState(prev => ({
-          ...prev,
-          [field]: base64Data
-        }));
+      if (!base64Data) return;
 
-        // Dedicated localStorage keys for browser resilience across page refresh
-        try {
-          const storageKeyMap = {
-            govtLogoUrl: 'custom_govt_logo_base64',
-            unionLogoUrl: 'custom_union_logo_base64',
-            watermarkLogoUrl: 'custom_watermark_logo_base64'
-          };
-          localStorage.setItem(storageKeyMap[field], base64Data);
-          if (field === 'watermarkLogoUrl') {
-            localStorage.setItem('savedWatermarkLogo', base64Data);
-          }
+      setFormState(prev => ({
+        ...prev,
+        [field]: base64Data
+      }));
 
-          const cachedStr = localStorage.getItem('union_settings_cache_v1');
-          const cached = cachedStr ? JSON.parse(cachedStr) : {};
-          cached[field] = base64Data;
-          localStorage.setItem('union_settings_cache_v1', JSON.stringify(cached));
-        } catch (err) {
-          console.warn('LocalStorage save error:', err);
-        }
-
-        // Proactively link to context so all 38 certificates immediately bind to it
-        updateSettings({ [field]: base64Data }, userProfile?.name || 'এডমিন কর্মকর্তা');
-
+      try {
+        await updateSettings({ [field]: base64Data }, userProfile?.name || 'ইউনিয়ন উদ্যোক্তা');
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
+      } catch (err: any) {
+        setErrorMessage(err.message || 'লোগো সংরক্ষণ করা যায়নি');
       }
     };
+
     reader.onerror = () => {
       setErrorMessage('ইমেজ ফাইলটি পড়তে সমস্যা হয়েছে। দয়া করে অন্য ফাইল নির্বাচন করুন।');
     };
+
     reader.readAsDataURL(file);
   };
 
-  // Reset uploaded logo back to original official vector fallback
-  const handleResetLogo = (field: 'govtLogoUrl' | 'unionLogoUrl' | 'watermarkLogoUrl') => {
+  // Reset uploaded logo back to the default official/vector fallback
+  const handleResetLogo = async (
+    field: 'govtLogoUrl' | 'unionLogoUrl' | 'watermarkLogoUrl'
+  ) => {
     setFormState(prev => ({
       ...prev,
       [field]: ''
     }));
 
     try {
-      const storageKeyMap = {
-        govtLogoUrl: 'custom_govt_logo_base64',
-        unionLogoUrl: 'custom_union_logo_base64',
-        watermarkLogoUrl: 'custom_watermark_logo_base64'
-      };
-      localStorage.removeItem(storageKeyMap[field]);
-      if (field === 'watermarkLogoUrl') {
-        localStorage.removeItem('savedWatermarkLogo');
-      }
-
-      const cachedStr = localStorage.getItem('union_settings_cache_v1');
-      if (cachedStr) {
-        const cached = JSON.parse(cachedStr);
-        cached[field] = '';
-        localStorage.setItem('union_settings_cache_v1', JSON.stringify(cached));
-      }
-    } catch (err) {
-      console.warn('LocalStorage error on logo reset:', err);
+      await updateSettings({ [field]: '' }, userProfile?.name || 'ইউনিয়ন উদ্যোক্তা');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'লোগো রিসেট করা যায়নি');
     }
-
-    updateSettings({ [field]: '' }, userProfile?.name || 'এডমিন কর্মকর্তা');
   };
 
   const handleSave = async (e: React.FormEvent) => {
