@@ -45,6 +45,16 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'spouseName', label: 'স্বামী / স্ত্রীর নাম', section: 'personal' },
   { key: 'spouseNameEn', label: 'স্বামী / স্ত্রীর নাম (ইংরেজিতে)', section: 'personal' },
   {
+    key: 'guardianType',
+    label: 'অভিভাবক হিসেবে পিতা / স্বামী',
+    type: 'select',
+    options: [
+      { value: 'father', label: 'পিতা' },
+      { value: 'husband', label: 'স্বামী' }
+    ],
+    section: 'certificate'
+  },
+  {
     key: 'familyGuardianType',
     label: 'পারিবারিক সনদে অভিভাবক',
     type: 'select',
@@ -193,6 +203,37 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'notes', label: 'অতিরিক্ত নোট', type: 'textarea', section: 'certificate' }
 ];
 
+const GUARDIAN_SELECTOR_EDIT_TYPES = new Set<string>([
+  'voter_area_transfer',
+  'new_voter',
+  'new_voter_affidavit',
+  'income',
+  'annual_income',
+  'monthly_income',
+  'character',
+  'unemployed',
+  'citizenship',
+  'nationality',
+  'unmarried',
+  'married',
+  'agriculture',
+  'freedom_fighter',
+  'landless',
+  'disabled',
+  'financial_insolvency',
+  'permanent_resident',
+  'not_rohingya',
+  'no_birth_certificate',
+  'nid_correction',
+  'infrastructure_permission',
+  'no_objection',
+  'childless',
+  'community',
+  'indigenous',
+  'general',
+  'miscellaneous'
+]);
+
 const CERTIFICATE_EDIT_KEYS: Record<string, string[]> = {
   income: ['annualIncome', 'incomeSource'],
   annual_income: ['annualIncome', 'incomeSource'],
@@ -287,6 +328,7 @@ const PERMANENT_EDIT_KEYS = [
 function getRelevantEditFields(application: CertificateApplication): EditableField[] {
   const allowed = new Set<string>([
     ...COMMON_EDIT_KEYS,
+    ...(GUARDIAN_SELECTOR_EDIT_TYPES.has(application.certificateType) ? ['guardianType'] : []),
     ...PRESENT_EDIT_KEYS,
     ...(application.certificateType === 'same_name'
       ? []
@@ -304,6 +346,9 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
 
 const readValue = (app: CertificateApplication, key: string) => {
   let value = (app as unknown as Record<string, unknown>)[key];
+  if (key === 'guardianType' && !value) {
+    value = app.fatherName ? 'father' : (app.spouseName ? 'husband' : 'father');
+  }
   if (key === 'familyGuardianType' && !value) {
     value = app.fatherName ? 'father' : (app.spouseName ? 'husband' : 'father');
   }
