@@ -224,7 +224,7 @@ export const SettingsView: React.FC = () => {
             </div>
             <div>
               <span className="text-slate-400 block font-semibold">সরকারি সেবা ফি:</span>
-              <span className="font-bold text-emerald-800">২.০০ টাকা (ই-প্রত্যয়ন সনদ)</span>
+              <span className="font-bold text-emerald-800">২.০০ টাকা (MySonod সনদ)</span>
             </div>
             <div>
               <span className="text-slate-400 block font-semibold">যোগাযোগ ও হেল্পলাইন:</span>
@@ -233,7 +233,7 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-[11px] text-emerald-900 mt-4 leading-relaxed">
-            <strong className="block mb-1 text-emerald-950 font-bold">ই-প্রত্যয়ন নির্দেশিকা:</strong>
+            <strong className="block mb-1 text-emerald-950 font-bold">MySonod নির্দেশিকা:</strong>
             ডিজিটাল বাংলাদেশ থেকে স্মার্ট বাংলাদেশ বিনির্মাণে ইউনিয়ন পরিষদের সকল সনদপত্র এখন অনলাইনে স্বয়ংক্রিয়ভাবে ডাউনলোড ও কিউআর কোডের মাধ্যমে সত্যতা নিশ্চিত করা যায়।
           </div>
         </div>
