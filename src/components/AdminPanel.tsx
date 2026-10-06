@@ -385,7 +385,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             <span>সকল প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
           </button>
 
-          {isStaff && (
+          {isAdmin && (
           <button
             onClick={() => setActiveTab('settings')}
             className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
@@ -666,7 +666,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
       )}
 
       {/* Tab 3: Dynamic Union & Header Settings Management */}
-      {isStaff && activeTab === 'settings' && (
+      {isAdmin && activeTab === 'settings' && (
         <UnionSettingsManager />
       )}
 
