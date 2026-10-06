@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import type { CertificateApplication } from '../types';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import type { CertificateApplication, PublicVerificationRecord } from '../types';
+import { DynamicCertificateBody } from './CertificateTemplateEngine';
 import { toBengaliNumber, formatCurrencyBn, formatBengaliDate } from '../utils/bengali';
 import { 
   Search, 
@@ -26,6 +27,7 @@ export const CertificateVerificationView: React.FC<CertificateVerificationViewPr
   const [trackingInput, setTrackingInput] = useState('');
   const [searched, setSearched] = useState(false);
   const [foundApp, setFoundApp] = useState<CertificateApplication | null>(null);
+  const [foundVerification, setFoundVerification] = useState<PublicVerificationRecord | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Check URL hash if opened via QR scan (#verify?id=...)
@@ -45,18 +47,30 @@ export const CertificateVerificationView: React.FC<CertificateVerificationViewPr
     setLoading(true);
     setSearched(true);
     setFoundApp(null);
+    setFoundVerification(null);
 
     try {
-      const q = query(
-        collection(db, 'applications'),
-        where('trackingId', '==', trackingId.trim()),
-        where('status', '==', 'Approved')
-      );
-      const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        setFoundApp(snapshot.docs[0].data() as CertificateApplication);
-      } else {
-        setFoundApp(null);
+      const publicRef = doc(db, 'public_verifications', trackingId.trim());
+      const publicSnap = await getDoc(publicRef);
+
+      if (publicSnap.exists()) {
+        const record = publicSnap.data() as PublicVerificationRecord;
+        if (record.status === 'Verified') {
+          setFoundVerification(record);
+          setFoundApp(record.application as CertificateApplication);
+        }
+      }
+
+      if (!publicSnap.exists() && isStaff) {
+        const q = query(
+          collection(db, 'applications'),
+          where('trackingId', '==', trackingId.trim()),
+          where('status', '==', 'Approved')
+        );
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          setFoundApp(snapshot.docs[0].data() as CertificateApplication);
+        }
       }
     } catch (err: any) {
       console.error(err);
@@ -172,6 +186,58 @@ export const CertificateVerificationView: React.FC<CertificateVerificationViewPr
                   <span className="font-semibold text-slate-800">{foundApp.village}, ওয়ার্ড: {toBengaliNumber(foundApp.wardNo)}, ডাকঘর: {foundApp.postOffice}</span>
                 </div>
               </div>
+
+              {foundVerification && (
+                <div className="mt-5 p-4 rounded-2xl border-2 border-emerald-200 bg-[#FCFBF7]">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-emerald-200">
+                    <div>
+                      <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">
+                        Public Certificate Verification
+                      </div>
+                      <h4 className="text-base sm:text-lg font-black text-emerald-950 mt-0.5">
+                        {foundVerification.unionSettings.unionName || 'ইউনিয়ন পরিষদ'}
+                      </h4>
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 rounded-full px-2.5 py-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      QR Verified
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4 text-[10px]">
+                    <div className="bg-white rounded-lg border border-slate-200 p-2">
+                      <span className="text-slate-500 block">ইউনিয়ন</span>
+                      <strong>{foundVerification.unionSettings.unionName || '—'}</strong>
+                    </div>
+                    <div className="bg-white rounded-lg border border-slate-200 p-2">
+                      <span className="text-slate-500 block">চেয়ারম্যান</span>
+                      <strong>{foundVerification.unionSettings.chairmanName || '—'}</strong>
+                    </div>
+                    <div className="bg-white rounded-lg border border-slate-200 p-2">
+                      <span className="text-slate-500 block">উপজেলা</span>
+                      <strong>{foundVerification.unionSettings.upazila || '—'}</strong>
+                    </div>
+                    <div className="bg-white rounded-lg border border-slate-200 p-2">
+                      <span className="text-slate-500 block">জেলা</span>
+                      <strong>{foundVerification.unionSettings.district || '—'}</strong>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-slate-200 bg-white p-3">
+                    <div className="text-center mb-3">
+                      <h5 className="text-lg font-extrabold text-emerald-950">{foundApp.certificateTitleBn}</h5>
+                      <div className="text-[10px] text-slate-500 font-mono mt-1">
+                        {foundApp.trackingId}
+                      </div>
+                    </div>
+                    <DynamicCertificateBody
+                      application={foundApp}
+                      lang="bn"
+                      settings={foundVerification.unionSettings}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Printable certificate access is staff-only */}
               <div className="flex justify-end pt-3 border-t border-slate-100">
