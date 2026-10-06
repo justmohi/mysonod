@@ -215,7 +215,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-400/30 text-xs text-emerald-200 mb-2">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>ই-প্রত্যয়ন ইউনিয়ন ডিজিটাল সেন্টার পোর্টাল</span>
+              <span>MySonod ইউনিয়ন ডিজিটাল সেন্টার পোর্টাল</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
               স্বাগতম, {userProfile?.name || 'সম্মানিত নাগরিক'}!
@@ -294,7 +294,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
               {toBengaliNumber(applications.length)} টি
             </div>
             <span className="text-[11px] text-blue-600 mt-1 block">
-              ই-প্রত্যয়ন পোর্টালের মাধ্যমে
+              MySonod পোর্টালের মাধ্যমে
             </span>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-100 shadow-xs">
