@@ -330,7 +330,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
               <span>মাসিক আবেদন ও সরকারি ফি এনালিটিক্স (Monthly Analytics Bar Chart)</span>
             </h3>
             <p className="text-xs text-slate-500">
-              মাসভিত্তিক প্রত্যয়ন পত্র আবেদন সংখ্যা ও পরিশোধিত ফি (Chart.js চালিত)
+              মাসভিত্তিক প্রত্যয়ন পত্র আবেদন সংখ্যা ও পরিশোধিত ফি
             </p>
           </div>
 
