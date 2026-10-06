@@ -123,7 +123,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
       // Create/update the public verification record before any certificate
       // print so the QR code works without login.
       if ((target === 'certificate' || target === 'both') && application.status === 'Approved') {
-        await ensurePublicVerification(application, settings);
+        // Public QR snapshot must never block the actual certificate print.
+        // If its Firestore write is denied, printing should still continue.
+        ensurePublicVerification(application, settings).catch((error) => {
+          console.error('Public verification snapshot could not be saved:', error);
+        });
       }
 
       // A certificate printed 3+ calendar months after completion incurs
@@ -173,7 +177,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
       // Create/update the public verification record before generating a
       // certificate PDF so its QR is immediately usable without login.
       if (target === 'certificate' && application.status === 'Approved') {
-        await ensurePublicVerification(application, settings);
+        // Do not block PDF generation on the optional public QR snapshot write.
+        ensurePublicVerification(application, settings).catch((error) => {
+          console.error('Public verification snapshot could not be saved:', error);
+        });
       }
 
       if (
