@@ -587,6 +587,24 @@ select option {
     display: none !important;
   }
 
+  /* Remove the live application UI from the print flow. The print modal is
+     mounted as the last direct child of #app-shell; keeping the dashboard,
+     header, sidebar and main area in normal layout creates blank physical
+     sheets before the certificate. */
+  #app-shell {
+    display: block !important;
+    width: 210mm !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  #app-shell > :not(#print-modal-root) {
+    display: none !important;
+  }
+
   /* Neutralize the screen-only modal wrappers. They are fixed, padded,
      centered and overflow-scrolling on screen, but must not participate in
      paginated print layout. */
