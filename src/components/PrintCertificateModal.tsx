@@ -673,8 +673,17 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
                       </div>
 
-                      {/* Metadata Bar — directly below the green header divider. */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 p-2 rounded-lg bg-emerald-50/80 border border-emerald-300 text-xs">
+                      {/* Certificate-specific application title badge — placed below the header divider. */}
+                      <div className="text-center">
+                        <div className="inline-block mt-2 px-3 py-1 rounded-md bg-[#0d5c3a] text-white font-bold text-xs sm:text-sm tracking-wide shadow-xs">
+                          {lang === 'en'
+                            ? `Application Form for ${titleEn}`
+                            : applicationFormTitleBn}
+                        </div>
+                      </div>
+
+                      {/* Metadata Bar */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-emerald-50/80 border border-emerald-300 text-xs">
                         <div>
                           <span className="text-[10px] text-slate-500 font-bold block">
                             {lang === 'en' ? 'Application Type:' : 'আবেদনের ধরন:'}
@@ -702,15 +711,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           }`}>
                             {application.status === 'Approved' ? (lang === 'en' ? 'Approved' : 'অনুমোদিত') : application.status === 'Rejected' ? (lang === 'en' ? 'Rejected' : 'বাতিল') : (lang === 'en' ? 'Pending' : 'পর্যালোচনাধীন')}
                           </span>
-                        </div>
-                      </div>
-
-                      {/* Certificate-specific application title badge — now below the metadata bar. */}
-                      <div className="text-center">
-                        <div className="inline-block mt-2 px-3 py-1 rounded-md bg-[#0d5c3a] text-white font-bold text-xs sm:text-sm tracking-wide shadow-xs">
-                          {lang === 'en'
-                            ? `Application Form for ${titleEn}`
-                            : applicationFormTitleBn}
                         </div>
                       </div>
 
