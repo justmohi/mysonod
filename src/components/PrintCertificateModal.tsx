@@ -76,6 +76,16 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
     }
   }, [application, verifyUrl]);
 
+  // Make the public verification snapshot available as soon as an approved
+  // certificate is opened, including certificates created before this feature.
+  useEffect(() => {
+    if (application?.status === 'Approved') {
+      ensurePublicVerification(application, settings).catch((error) => {
+        console.error('Public verification snapshot could not be created:', error);
+      });
+    }
+  }, [application?.trackingId, application?.status, settings.updatedAt, settings.unionName]);
+
   if (!application) return null;
 
   const certMeta = CERTIFICATE_CATALOG[application.certificateType];
