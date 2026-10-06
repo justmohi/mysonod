@@ -25,7 +25,7 @@ export const SettingsView: React.FC = () => {
   const { currentUser, userProfile, isAdmin, isOperator, toggleAdminMode, logout } = useAuth();
   const { settings } = useUnionSettings();
 
-  const [activeTab, setActiveTab] = useState<'profile' | 'union_settings'>(isAdmin ? 'union_settings' : 'profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'union_settings'>((isAdmin || isOperator) ? 'union_settings' : 'profile');
   const [name, setName] = useState(userProfile?.name || '');
   const [phone, setPhone] = useState(userProfile?.phone || '');
   const [savedMsg, setSavedMsg] = useState(false);
@@ -87,8 +87,8 @@ export const SettingsView: React.FC = () => {
           )}
         </div>
 
-        {/* Admin Tab Switcher */}
-        {isAdmin && (
+        {/* Union / Profile Tab Switcher for Staff */}
+        {isStaff && (
           <div className="flex gap-2 mt-6 border-b border-slate-200">
             <button
               onClick={() => setActiveTab('union_settings')}
@@ -99,7 +99,7 @@ export const SettingsView: React.FC = () => {
               }`}
             >
               <Building2 className="w-4 h-4" />
-              <span>ইউনিয়ন ও পোর্টাল সেটিংস (Union Settings)</span>
+              <span>{isOperator ? 'আমার ইউনিয়ন তথ্য' : 'ইউনিয়ন ও পোর্টাল সেটিংস'}</span>
             </button>
 
             <button
@@ -111,13 +111,13 @@ export const SettingsView: React.FC = () => {
               }`}
             >
               <User className="w-4 h-4" />
-              <span>ব্যক্তিগত প্রোফাইল (Personal Profile)</span>
+              <span>ব্যক্তিগত প্রোফাইল</span>
             </button>
           </div>
         )}
       </div>
 
-      {isAdmin && activeTab === 'union_settings' ? (
+      {isStaff && activeTab === 'union_settings' ? (
         <UnionSettingsManager />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
