@@ -22,7 +22,7 @@ import { UnionSettingsManager } from './UnionSettingsManager';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 
 export const SettingsView: React.FC = () => {
-  const { currentUser, userProfile, isAdmin, isOperator, toggleAdminMode, logout } = useAuth();
+  const { currentUser, userProfile, isAdmin, isOperator, isStaff, toggleAdminMode, logout } = useAuth();
   const { settings } = useUnionSettings();
 
   const [activeTab, setActiveTab] = useState<'profile' | 'union_settings'>((isAdmin || isOperator) ? 'union_settings' : 'profile');
@@ -67,7 +67,9 @@ export const SettingsView: React.FC = () => {
             <p className="text-xs text-slate-500 mt-1">
               {isAdmin 
                 ? 'ইউনিয়ন পরিষদের প্রাতিষ্ঠানিক তথ্য, সনদ হেডার এবং ব্যক্তিগত প্রোফাইল নিয়ন্ত্রণ' 
-                : 'আপনার ব্যক্তিগত তথ্য হালনাগাদ ও ইউনিয়ন পরিষদ সেবা সংক্রান্ত তথ্যাবলী'}
+                : isOperator
+                  ? 'আপনার ইউনিয়নের নাম, ঠিকানা, চেয়ারম্যান, যোগাযোগ ও সনদ হেডার তথ্য ব্যবস্থাপনা'
+                  : 'আপনার ব্যক্তিগত তথ্য হালনাগাদ ও ইউনিয়ন পরিষদ সেবা সংক্রান্ত তথ্যাবলী'}
             </p>
           </div>
 
