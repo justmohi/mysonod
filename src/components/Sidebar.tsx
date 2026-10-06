@@ -224,6 +224,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>লেনদেন হিস্ট্রি (Transactions)</span>
           </button>
 
+          {/* My Union Information */}
+          {isOperator && (
+            <button
+              onClick={() => { onNavigate('settings'); onCloseMobile(); }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition font-medium cursor-pointer ${
+                currentView === 'settings'
+                  ? 'bg-emerald-600/50 text-white font-semibold shadow-xs border border-emerald-500/40'
+                  : 'text-emerald-100/90 hover:bg-emerald-800/50 hover:text-white'
+              }`}
+            >
+              <Building className="w-4 h-4 text-amber-300" />
+              <span>আমার ইউনিয়নের তথ্যসমূহ</span>
+            </button>
+          )}
+
           {/* Office Forwarding & Admin Approvals (Exclusive to Admin: mohistudio95@gmail.com) */}
           {isStaff && (
             <button
