@@ -477,6 +477,19 @@ export interface UserProfile {
   billingTotalCompleted?: number;
 }
 
+export interface PublicVerificationRecord {
+  trackingId: string;
+  status: 'Verified';
+  certificateType: CertificateType;
+  certificateTitleBn: string;
+  certificateTitleEn?: string;
+  application: Partial<CertificateApplication>;
+  unionSettings: UnionSettings;
+  issuedAt?: string;
+  verifiedAt: string;
+  updatedAt: string;
+}
+
 export interface CertificateApplication {
   id: string;
   trackingId: string;
