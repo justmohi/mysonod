@@ -354,7 +354,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               <span className="bg-emerald-600 text-white font-bold text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
                 <FileCheck className="w-3.5 h-3.5" />
-                <span>{lang === 'en' ? 'Digital Certificate & Application Viewer' : 'অফিসিয়াল ই-প্রত্যয়ন ও আবেদনপত্র ভিউয়ার'}</span>
+                <span>{lang === 'en' ? 'Digital Certificate & Application Viewer' : 'অফিসিয়াল MySonod ও আবেদনপত্র ভিউয়ার'}</span>
               </span>
               <span className="text-xs text-slate-300 font-mono bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
                 {application.trackingId}
@@ -996,7 +996,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           <img src={qrDataUrl} alt="QR" className="w-10 h-10 border border-slate-300 rounded p-0.5 bg-white shrink-0" />
                         )}
                         <div>
-                          <strong className="block text-slate-900 font-bold">ই-প্রত্যয়ন পোর্টাল ট্র্যাকিং</strong>
+                          <strong className="block text-slate-900 font-bold">MySonod পোর্টাল ট্র্যাকিং</strong>
                           <span className="font-mono text-emerald-900 font-bold">{application.trackingId}</span>
                         </div>
                       </div>
@@ -1545,7 +1545,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                 {/* Bottom Bar:
                     - Left Box: QR Code + Digital Verification URL block
                     - Center Notice (Red Text Box): "বিঃদ্রঃ তথ্য গোপন বা ভুল দিলে আবেদনকারী দায়ী থাকিবেন এবং এই সনদপত্রটি আইনগতভাবে বাতিল বলিয়া গণ্য হইবে।"
-                    - Right Footer: "ই-প্রত্যয়ন পোর্টাল | স্মারক: EP-2026-AMB-27643"
+                    - Right Footer: "MySonod পোর্টাল | স্মারক: MS-2026-AMB-27643"
                 */}
                 <div className={`certificate-footer shrink-0 ${isUltraCompactTable ? 'mt-1 pt-1' : (isTableCertificate ? 'mt-1.5 pt-1.5' : 'mt-3.5 pt-2.5')} border-t border-emerald-900/30 flex flex-wrap items-center justify-between gap-3`}>
                   {/* Left Box: QR Code + Digital Verification URL block */}
@@ -1583,7 +1583,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   {/* Right Footer */}
                   <div className="text-right text-[10px] text-slate-700 space-y-0.5 shrink-0">
                     <div>
-                      {lang === 'en' ? 'e-Prottoyon Portal | Memo: ' : 'ই-প্রত্যয়ন পোর্টাল | স্মারক: '}
+                      {lang === 'en' ? 'MySonod Portal | Memo: ' : 'MySonod পোর্টাল | স্মারক: '}
                     </div>
                     <div className="font-mono font-bold text-emerald-900 text-[10.5px]">
                       {application.trackingId}
