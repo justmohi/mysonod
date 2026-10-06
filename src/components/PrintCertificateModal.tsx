@@ -1000,9 +1000,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           <span className="font-mono text-emerald-900 font-bold">{application.trackingId}</span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div>{settings.unionName || unionNameFallbackBn}</div>
-                      </div>
+
                     </div>
 
                     </div>
