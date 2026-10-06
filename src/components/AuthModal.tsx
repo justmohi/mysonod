@@ -154,7 +154,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
                 <div className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-100/80">
                   mysonod
                 </div>
-                <div className="text-lg font-bold">ই-প্রত্যয়ন পোর্টাল</div>
+                <div className="text-lg font-bold">MySonod পোর্টাল</div>
               </div>
             </div>
 
@@ -204,7 +204,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
                 </div>
                 <div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-100/80">MYSONOD</div>
-                  <div className="text-base font-bold">ই-প্রত্যয়ন পোর্টাল</div>
+                  <div className="text-base font-bold">MySonod পোর্টাল</div>
                 </div>
               </div>
 
