@@ -129,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] bg-emerald-800 text-emerald-200 px-1.5 py-0.5 rounded-full font-bold">
-                  {(Object.keys(CERTIFICATE_CATALOG) as CertificateType[]).length}টি
+                  {new Set(Object.values(CERTIFICATE_CATALOG).map(cert => cert.titleBn)).size}টি
                 </span>
                 {isApplyMenuOpen ? (
                   <ChevronDown className="w-4 h-4 text-emerald-300" />
@@ -161,6 +161,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       const c = CERTIFICATE_CATALOG[type];
                       return c.titleBn.toLowerCase().includes(sidebarSearch.toLowerCase()) ||
                              c.titleEn.toLowerCase().includes(sidebarSearch.toLowerCase());
+                    })
+                    .filter((type, index, list) => {
+                      const c = CERTIFICATE_CATALOG[type];
+                      return list.findIndex((candidate) => {
+                        const candidateCert = CERTIFICATE_CATALOG[candidate];
+                        return candidateCert.titleBn === c.titleBn &&
+                               candidateCert.titleEn === c.titleEn;
+                      }) === index;
                     })
                     .map((type) => {
                       const cert = CERTIFICATE_CATALOG[type];
