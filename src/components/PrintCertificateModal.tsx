@@ -25,6 +25,7 @@ import { useUnionSettings } from '../context/UnionSettingsContext';
 import { useAuth } from '../context/AuthContext';
 import { chargeLatePrintFee } from '../utils/operatorBilling';
 import { useCurrentApplication, getCurrentApplicationData } from '../utils/currentApplication';
+import { ensurePublicVerification } from '../utils/publicVerification';
 import { DynamicApplicationFormDetails, DynamicCertificateBody } from './CertificateTemplateEngine';
 
 interface PrintCertificateModalProps {
@@ -109,6 +110,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
   const handlePrint = async (target: 'application' | 'certificate' | 'both' = 'certificate') => {
     try {
+      // Create/update the public verification record before any certificate
+      // print so the QR code works without login.
+      if ((target === 'certificate' || target === 'both') && application.status === 'Approved') {
+        await ensurePublicVerification(application, settings);
+      }
+
       // A certificate printed 3+ calendar months after completion incurs
       // a one-time 2 BDT operator reprint fee. The actual print date then
       // becomes the certificate issue date.
@@ -153,6 +160,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
     setPdfGeneratingTarget(target);
 
     try {
+      // Create/update the public verification record before generating a
+      // certificate PDF so its QR is immediately usable without login.
+      if (target === 'certificate' && application.status === 'Approved') {
+        await ensurePublicVerification(application, settings);
+      }
+
       if (
         target === 'certificate' &&
         currentUser &&
