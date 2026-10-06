@@ -343,8 +343,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const incomeAmountBn = formatCurrencyBn(application.monthlyIncome || application.annualIncome || 0);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-xs flex justify-center p-2 sm:p-4">
-      <div className="relative w-full max-w-4xl bg-[#FCFBF7] rounded-2xl shadow-2xl my-auto overflow-hidden animate-in fade-in zoom-in-95">
+    <div id="print-modal-root" className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-xs flex justify-center p-2 sm:p-4">
+      <div id="print-modal-shell" className="relative w-full max-w-4xl bg-[#FCFBF7] rounded-2xl shadow-2xl my-auto overflow-hidden animate-in fade-in zoom-in-95">
         
         {/* Top Control Bar (Hidden during print) */}
         <div className="no-print bg-slate-900 text-white border-b border-slate-800">
