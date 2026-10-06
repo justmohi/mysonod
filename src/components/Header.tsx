@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
         </div>
         <div className="relative overflow-hidden w-full whitespace-nowrap">
           <div className="notice-ticker inline-block text-emerald-900 font-medium">
-            📢 ই-প্রত্যয়ন পোর্টালে স্বাগতম! নাগরিকত্ব, চারিত্রিক, ওয়ারিশ, পারিবারিক ও আয়ের সনদ এবং ট্রেড লাইসেন্সের সরকারি ফি মাত্র ২/- (দুই) টাকা। আবেদন দাখিলের পূর্বে প্রয়োজনীয় ওয়ালেট ব্যালেন্স নিশ্চিত করুন। জরুরি প্রয়োজনে ০১৯৩১৩৭৯৪৯৭ বা ইউনিয়ন ডিজিটাল সেন্টারে যোগাযোগ করুন।
+            📢 MySonod পোর্টালে স্বাগতম! নাগরিকত্ব, চারিত্রিক, ওয়ারিশ, পারিবারিক ও আয়ের সনদ এবং ট্রেড লাইসেন্সের সরকারি ফি মাত্র ২/- (দুই) টাকা। আবেদন দাখিলের পূর্বে প্রয়োজনীয় ওয়ালেট ব্যালেন্স নিশ্চিত করুন। জরুরি প্রয়োজনে ০১৯৩১৩৭৯৪৯৭ বা ইউনিয়ন ডিজিটাল সেন্টারে যোগাযোগ করুন।
           </div>
         </div>
       </div>
@@ -98,10 +98,10 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
             className="cursor-pointer flex items-center gap-2.5"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-emerald-900 flex items-center justify-center text-white shadow-md shadow-emerald-900/20 border border-emerald-600">
-              <span className="font-extrabold text-base tracking-tighter">ই-প্র</span>
+              <span className="font-extrabold text-base tracking-tighter">MS</span>
             </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900 leading-tight">ই-প্রত্যয়ন</h1>
+                <h1 className="text-xl font-bold text-slate-900 leading-tight">MySonod</h1>
                 <p className="text-xs text-slate-500 font-medium hidden sm:block">
                   {settings.unionName ? `${settings.unionName} ডিজিটাল সেন্টার` : 'ইউনিয়ন ডিজিটাল সেন্টার অনলাইন সেবা পোর্টাল'}
                 </p>
