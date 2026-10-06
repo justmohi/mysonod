@@ -20,6 +20,9 @@ import { Building2 } from 'lucide-react';
 
 function AppContent() {
   const { currentUser, loading, isAdmin, isStaff } = useAuth();
+  const isPublicVerifyRoute =
+    typeof window !== 'undefined' &&
+    window.location.hash.startsWith('#verify');
   const [currentView, setCurrentView] = useState<string>('dashboard');
   const [selectedCertType, setSelectedCertType] = useState<CertificateType>('citizenship');
   const [selectedCertificateForPrint, setSelectedCertificateForPrint] = useState<CertificateApplication | null>(null);
@@ -55,6 +58,18 @@ function AppContent() {
     setIsPrintDuplicate(options?.isDuplicate ?? false);
     setSelectedCertificateForPrint(unified);
   };
+
+  // QR verification is a public route. It must bypass the login modal
+  // so anyone scanning a certificate QR can verify it without signing in.
+  if (isPublicVerifyRoute) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-4 sm:p-6">
+        <div className="max-w-5xl mx-auto">
+          <CertificateVerificationView onViewCertificate={() => undefined} />
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
