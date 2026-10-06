@@ -96,7 +96,7 @@ export const CertificateVerificationView: React.FC<CertificateVerificationViewPr
           অনলাইন পাবলিক ভেরিফিকেশন পোর্টাল
         </span>
         <h2 className="text-2xl font-bold text-slate-900 mt-1">
-          ই-প্রত্যয়ন সনদ সত্যতা যাচাই
+          MySonod সনদ সত্যতা যাচাই
         </h2>
         <p className="text-xs text-slate-500 mt-1 max-w-lg mx-auto">
           ১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার কর্তৃক ইস্যুকৃত সকল নাগরিক ও ব্যবসায়িক প্রত্যয়ন পত্রের সত্যতা অনলাইন ডেটাবেস থেকে তাৎক্ষণিক যাচাই করুন।
