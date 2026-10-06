@@ -601,7 +601,7 @@ select option {
     box-shadow: none !important;
     border: none !important;
     background: #FCFBF7 !important;
-    page-break-after: always;
+    page-break-after: auto;
     page-break-inside: avoid;
     break-inside: avoid;
     overflow: hidden !important;
@@ -723,6 +723,8 @@ select option {
     margin: 0 !important;
     padding: 10mm 12mm !important;
     box-sizing: border-box !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 
   /* Application-Only target */
@@ -743,6 +745,8 @@ select option {
     margin: 0 !important;
     padding: 10mm 12mm !important;
     box-sizing: border-box !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 
   /* Dual View (Both Copies): Section 1 on Page 1, Section 2 on Page 2 */
