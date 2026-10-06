@@ -587,6 +587,51 @@ select option {
     display: none !important;
   }
 
+  /* Neutralize the screen-only modal wrappers. They are fixed, padded,
+     centered and overflow-scrolling on screen, but must not participate in
+     paginated print layout. */
+  #print-modal-root {
+    position: static !important;
+    display: block !important;
+    width: 210mm !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  #print-modal-shell {
+    position: static !important;
+    display: block !important;
+    width: 210mm !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #FCFBF7 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  #dual-print-container {
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  #dual-print-container > .relative {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+  }
+
   .print-container, .certificate-page, .application-page {
     width: 210mm !important;
     height: 297mm !important;
