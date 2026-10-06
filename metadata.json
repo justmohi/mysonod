@@ -1,6 +1,6 @@
 {
-  "name": "eProttoyon - Union Digital Center Portal",
-  "description": "Union Digital Center Portal matching eProttoyon.com for online citizenship, character, inheritance, income certificates, trade licenses, fee deduction and balance top-ups.",
+  "name": "MySonod - Union Digital Center Portal",
+  "description": "MySonod - Union Digital Center Portal for online citizenship, character, inheritance, income certificates, trade licenses, fee deduction and balance top-ups.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
