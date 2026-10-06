@@ -33,9 +33,6 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
       {/* Top Banner with Union Name, Helpline, and Government Branding */}
       <div className="bg-[#0e6245] text-white px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm">
         <div className="flex items-center space-x-2">
-          <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center font-bold text-[10px] text-white border border-white">
-            ★
-          </div>
           <span className="font-semibold tracking-wide flex items-center gap-1.5">
             <Building2 className="w-4 h-4 text-emerald-300 inline" />
             গণপ্রজাতন্ত্রী বাংলাদেশ সরকার | <strong className="text-emerald-200">{settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ'} ডিজিটাল সেন্টার</strong>
