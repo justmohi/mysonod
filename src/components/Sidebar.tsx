@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span className="font-bold text-white text-sm block truncate max-w-[130px]" title={settings.unionName || 'আমবাড়ীয়া ইউপি'}>
                 {settings.unionName || 'আমবাড়ীয়া ইউপি'}
               </span>
-              <span className="text-[11px] text-emerald-300">ই-প্রত্যয়ন পোর্টাল</span>
+              <span className="text-[11px] text-emerald-300">MySonod পোর্টাল</span>
             </div>
           </div>
           <button 
