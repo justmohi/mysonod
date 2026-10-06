@@ -105,6 +105,28 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const mobileFallbackEn = isOperator ? '' : '01741-185765';
   const titleEn = application.certificateTitleEn || certMeta?.titleEn || 'Official Certificate';
 
+  // Certificate-specific application form heading.
+  // Use natural Bangla possessive wording for certificates/pratyayan.
+  const applicationFormTitleBn = (() => {
+    if (application.certificateType === 'new_voter') {
+      return 'নতুন ভোটারের আবেদন ফরম';
+    }
+
+    if (titleBn.endsWith('সনদপত্র')) {
+      return titleBn.slice(0, -'সনদপত্র'.length) + 'সনদপত্রের আবেদন ফরম';
+    }
+
+    if (titleBn.endsWith('সনদ')) {
+      return titleBn.slice(0, -'সনদ'.length) + 'সনদের আবেদন ফরম';
+    }
+
+    if (titleBn.endsWith('প্রত্যয়ন')) {
+      return titleBn.slice(0, -'প্রত্যয়ন'.length) + 'প্রত্যয়নের আবেদন ফরম';
+    }
+
+    return titleBn + ' এর আবেদন ফরম';
+  })();
+
   const isTableCertificate = application.certificateType === 'inheritance' || 
                              application.certificateType === 'succession' || 
                              application.certificateType === 'family';
@@ -635,11 +657,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           
                           {/* Title Badge: "[সনদের নাম] এর আবেদন ফরম" */}
                           <div className="inline-block mt-1.5 px-3 py-1 rounded-md bg-[#0d5c3a] text-white font-bold text-xs sm:text-sm tracking-wide shadow-xs">
-                            {lang === 'en' 
+                            {lang === 'en'
                               ? `Application Form for ${titleEn}`
-                              : (application.certificateType === 'citizenship'
-                                  ? 'নাগরিক সনদ এর আবেদন ফরম'
-                                  : `${titleBn} এর আবেদন ফরম`)}
+                              : applicationFormTitleBn}
                           </div>
                         </div>
 
