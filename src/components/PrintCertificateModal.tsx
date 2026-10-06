@@ -655,12 +655,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               : `ডাকঘর: ${settings.postOffice || 'হালসা-৭০৩১'}, উপজেলা: ${settings.upazila || 'মিরপুর'}, জেলা: ${settings.district || 'কুষ্টিয়া'}।`}
                           </p>
                           
-                          {/* Title Badge: "[সনদের নাম] এর আবেদন ফরম" */}
-                          <div className="inline-block mt-1.5 px-3 py-1 rounded-md bg-[#0d5c3a] text-white font-bold text-xs sm:text-sm tracking-wide shadow-xs">
-                            {lang === 'en'
-                              ? `Application Form for ${titleEn}`
-                              : applicationFormTitleBn}
-                          </div>
+
                         </div>
 
                         {/* Right: Union Logo */}
@@ -675,6 +670,15 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           ) : (
                             <UnionCouncilSeal className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-xs" />
                           )}
+                        </div>
+                      </div>
+
+                      {/* Certificate-specific application title badge — placed below the header divider. */}
+                      <div className="text-center">
+                        <div className="inline-block mt-2 px-3 py-1 rounded-md bg-[#0d5c3a] text-white font-bold text-xs sm:text-sm tracking-wide shadow-xs">
+                          {lang === 'en'
+                            ? `Application Form for ${titleEn}`
+                            : applicationFormTitleBn}
                         </div>
                       </div>
 
