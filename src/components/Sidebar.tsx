@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { CERTIFICATE_CATALOG, type CertificateType } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { useUnionSettings } from '../context/UnionSettingsContext';
 
 interface SidebarProps {
   currentView: string;
@@ -41,7 +40,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile
 }) => {
   const { isAdmin, isStaff, isOperator } = useAuth();
-  const { settings } = useUnionSettings();
   const [isApplyMenuOpen, setIsApplyMenuOpen] = useState(true);
   const [sidebarSearch, setSidebarSearch] = useState('');
 
@@ -77,42 +75,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
         md:translate-x-0 md:static md:z-20
         ${isOpenMobile ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        {/* Sidebar Brand Header */}
-        <div className="p-4 border-b border-emerald-800/60 flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0">
-            <button
-              type="button"
-              onClick={() => { onNavigate('dashboard'); onCloseMobile(); }}
-              className="shrink-0 w-10 h-10 rounded-xl bg-white/95 border border-emerald-300/50 flex items-center justify-center shadow-sm overflow-hidden hover:scale-[1.02] transition"
-              title="MySonod"
-              aria-label="MySonod হোম"
-            >
-              <img
-                src="/mysonod-logo.webp"
-                alt="MySonod"
-                className="w-full h-full object-contain"
-              />
-            </button>
-            <div className="min-w-0">
-              <span
-                className="font-bold text-white text-sm block truncate max-w-[130px]"
-                title={settings.unionName || 'আমবাড়ীয়া ইউপি'}
-              >
-                {settings.unionName || 'আমবাড়ীয়া ইউপি'}
-              </span>
-              <span className="text-[11px] text-emerald-300">MySonod পোর্টাল</span>
-            </div>
-          </div>
-          <button 
-            onClick={onCloseMobile}
-            className="md:hidden p-1 text-emerald-300 hover:text-white rounded"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        {/* Mobile Close Control */}
+        <button
+          onClick={onCloseMobile}
+          className="md:hidden absolute top-3 right-3 z-10 p-1.5 text-emerald-300 hover:text-white hover:bg-emerald-800/60 rounded-lg transition"
+          aria-label="সাইডবার বন্ধ করুন"
+          title="বন্ধ করুন"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
         {/* Navigation List */}
-        <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm">
+        <div className="flex-1 overflow-y-auto pt-4 pb-4 px-3 space-y-1 text-sm md:pt-4">
           {/* Dashboard */}
           <button
             onClick={() => { onNavigate('dashboard'); onCloseMobile(); }}
