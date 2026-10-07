@@ -10,7 +10,8 @@ import {
   collection,
   query,
   where,
-  getDocs
+  getDocs,
+  getDoc
 } from 'firebase/firestore';
 import { 
   CERTIFICATE_CATALOG, 
@@ -19,12 +20,14 @@ import {
   type CertificateApplication,
   type Transaction,
   type HeirItem,
-  type FamilyMemberItem
+  type FamilyMemberItem,
+  type CitizenProfile
 } from '../types';
 import { toBengaliNumber, formatCurrencyBn, generateTrackingId, formatBengaliDate, cleanNidNumber } from '../utils/bengali';
 import { cleanDataForFirestore } from '../utils/firestore';
 import { clearCurrentApplicationData, setCurrentApplicationData } from '../utils/currentApplication';
 import { applyOperatorCompletionChargeInTransaction } from '../utils/operatorBilling';
+import { buildCitizenProfile, createCitizenProfileId } from '../utils/citizenProfile';
 import { 
   FileText, 
   AlertTriangle, 
@@ -61,7 +64,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   onNavigate,
   onViewCertificate
 }) => {
-  const { currentUser, userProfile, isOperator, isAdmin } = useAuth();
+  const { currentUser, userProfile, isOperator, isAdmin, isStaff } = useAuth();
   const [selectedType, setSelectedType] = useState<CertificateType>(initialType);
   const [language, setLanguage] = useState<'bn' | 'en'>('bn');
   const [editingExistingApp, setEditingExistingApp] = useState<CertificateApplication | null>(null);
@@ -242,6 +245,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
   // NID Lookup & Duplicate Detection State (Crucial Firebase Logic)
   const [existingRecordFound, setExistingRecordFound] = useState<CertificateApplication | null>(null);
+  const [sharedProfileFound, setSharedProfileFound] = useState<CitizenProfile | null>(null);
   const [checkingNid, setCheckingNid] = useState(false);
   const [nidCheckedStatus, setNidCheckedStatus] = useState<'idle' | 'found' | 'not_found'>('idle');
 
@@ -381,8 +385,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   };
 
   // Find the latest application matching the entered NID.
-  // Admins may search all applications. Citizens/operators search only their
-  // own application history, matching the current Firestore security model.
+  // Operators use their own application history for duplicate actions, while
+  // reusable citizen identity/address data is stored separately in a sanitized
+  // shared profile. This prevents one operator from seeing another operator's
+  // tracking, billing, account or union metadata.
   const findLatestApplicationByNid = async (rawVal: string): Promise<CertificateApplication | null> => {
     const cleanNid = cleanNidNumber(rawVal);
     if (!currentUser || cleanNid.length < 10) return null;
@@ -403,8 +409,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       const querySnap = await getDocs(q);
       matchedDocs = querySnap.docs.map(d => d.data() as CertificateApplication);
     } else {
-      // Collection-wide reads are blocked by Firestore rules for citizens/operators.
-      // Search their own history instead, then normalize NID/Birth Reg digits.
       const q = query(
         collection(db, 'applications'),
         where('userId', '==', currentUser.uid)
@@ -425,6 +429,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     return matchedDocs[0];
   };
 
+  const findSharedCitizenProfileByNid = async (rawVal: string): Promise<CitizenProfile | null> => {
+    const profileId = await createCitizenProfileId(rawVal);
+    if (!profileId) return null;
+
+    const snapshot = await getDoc(doc(db, 'citizen_profiles', profileId));
+    return snapshot.exists() ? (snapshot.data() as CitizenProfile) : null;
+  };
+
+  const applySharedCitizenProfile = (profile: CitizenProfile) => {
+    applyApplicantData(profile);
+    setSharedProfileFound(profile);
+  };
+
   // Listen to NID input changes and trigger a Firestore query to fetch and auto-fill existing applicant data
   useEffect(() => {
     const rawVal = nidOrBirthReg.trim();
@@ -434,6 +451,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     if (cleanNid.length < 10) {
       if (nidCheckedStatus !== 'idle') setNidCheckedStatus('idle');
       if (existingRecordFound) setExistingRecordFound(null);
+      if (sharedProfileFound) setSharedProfileFound(null);
       return;
     }
 
@@ -445,10 +463,22 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         if (latestRecord) {
           applyApplicantData(latestRecord);
           setExistingRecordFound(latestRecord);
+          setSharedProfileFound(null);
           setNidCheckedStatus('found');
         } else {
-          setExistingRecordFound(null);
-          setNidCheckedStatus('not_found');
+          const sharedProfile = isStaff
+            ? await findSharedCitizenProfileByNid(rawVal)
+            : null;
+
+          if (sharedProfile) {
+            applySharedCitizenProfile(sharedProfile);
+            setExistingRecordFound(null);
+            setNidCheckedStatus('found');
+          } else {
+            setExistingRecordFound(null);
+            setSharedProfileFound(null);
+            setNidCheckedStatus('not_found');
+          }
         }
       } catch (err) {
         console.error('NID auto-fetch query error:', err);
@@ -460,7 +490,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [nidOrBirthReg, currentUser?.uid, isAdmin]);
+  }, [nidOrBirthReg, currentUser?.uid, isAdmin, isStaff]);
 
   // Query Firebase Firestore applications manually (e.g. on blur or search click)
   const checkNidInDatabase = async (nidToSearch?: string) => {
@@ -476,10 +506,22 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       if (existingData) {
         applyApplicantData(existingData);
         setExistingRecordFound(existingData);
+        setSharedProfileFound(null);
         setNidCheckedStatus('found');
       } else {
-        setExistingRecordFound(null);
-        setNidCheckedStatus('not_found');
+        const sharedProfile = isStaff
+          ? await findSharedCitizenProfileByNid(rawVal)
+          : null;
+
+        if (sharedProfile) {
+          applySharedCitizenProfile(sharedProfile);
+          setExistingRecordFound(null);
+          setNidCheckedStatus('found');
+        } else {
+          setExistingRecordFound(null);
+          setSharedProfileFound(null);
+          setNidCheckedStatus('not_found');
+        }
       }
     } catch (err) {
       console.error('NID check error:', err);
@@ -562,6 +604,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       const userDocRef = doc(db, 'users', currentUser.uid);
       const appDocRef = doc(db, 'applications', appId);
       const txDocRef = doc(db, 'transactions', txId);
+      const citizenProfileId = await createCitizenProfileId(nidOrBirthReg);
+      const citizenProfileRef = citizenProfileId
+        ? doc(db, 'citizen_profiles', citizenProfileId)
+        : null;
 
       // Run transactional update to guarantee balance deduction atomicity
       await runTransaction(db, async (transaction) => {
@@ -635,7 +681,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           gender,
           maritalStatus: maritalStatus || 'বিবাহিত',
           nidOrBirthReg,
-          mobile: '',
+          mobile: mobile.trim(),
           fee: 2.0,
           status: isOperator ? 'Approved' : 'Pending',
           issuingOfficer: isOperator ? userProfile.name : undefined,
@@ -783,6 +829,22 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
         const cleanedApplication = cleanDataForFirestore(appPayload) as CertificateApplication;
         transaction.set(appDocRef, cleanedApplication);
+
+        // Shared profile contains only reusable citizen identity/address data.
+        // Operator account, certificate, tracking, billing and union metadata
+        // are intentionally excluded.
+        if (citizenProfileRef && citizenProfileId) {
+          const citizenProfile = buildCitizenProfile(
+            appPayload as Partial<CertificateApplication>,
+            citizenProfileId,
+            nowIso
+          );
+          transaction.set(
+            citizenProfileRef,
+            cleanDataForFirestore(citizenProfile),
+            { merge: true }
+          );
+        }
 
         // Citizens are charged the standard 2 BDT application fee.
         if (!isOperator) {
@@ -996,6 +1058,31 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       ) : (
         <form onSubmit={handleSubmit} className="application-form space-y-5">
         {/* Clean Duplicate Copy / Previous Record Notice */}
+        {sharedProfileFound && !existingRecordFound && (
+          <div className="bg-blue-50/95 border border-blue-300 px-4 py-3.5 rounded-xl shadow-2xs animate-in fade-in flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-blue-200/80 text-blue-800 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <div className="text-xs text-blue-950">
+                <span>
+                  এনআইডি <strong>••••{cleanNidNumber(nidOrBirthReg).slice(-4)}</strong>-এর পূর্বের সনদ থেকে
+                  আবেদনকারীর ব্যক্তিগত ও ঠিকানার তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে।
+                  অন্য উদ্যোক্তার সনদ, হিসাব, ট্র্যাকিং বা ইউনিয়ন-সংক্রান্ত তথ্য এখানে দেখানো হয়নি।
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSharedProfileFound(null)}
+              className="cursor-pointer text-slate-400 hover:text-slate-700 p-1 text-xs"
+              title="বিজ্ঞপ্তি বন্ধ করুন"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {existingRecordFound && (
           <div className="bg-emerald-50/95 border border-emerald-300 px-4 py-3.5 rounded-xl shadow-2xs animate-in fade-in flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
