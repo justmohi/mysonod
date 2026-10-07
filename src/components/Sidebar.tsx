@@ -281,14 +281,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
 
-        {/* Footer Info Box */}
+        {/* Footer Support Box */}
         <div className="p-3 m-3 bg-emerald-950/60 rounded-xl border border-emerald-800/60 text-xs">
           <div className="flex items-center gap-1.5 text-amber-300 font-semibold mb-1">
             <HelpCircle className="w-3.5 h-3.5" />
-            <span>সরকারি ফি নিয়মাবলী</span>
+            <span>MySonod সহায়তা</span>
           </div>
-          <p className="text-emerald-200/80 text-[11px] leading-relaxed">
-            প্রত্যেক আবেদনের সরকারি ফি ২/- টাকা স্বয়ংক্রিয়ভাবে ওয়ালেট হতে কর্তন হইবে। ব্যালেন্স শূন্য হইলে রিচার্জ করুন।
+          <p className="text-emerald-200/90 text-[11px] leading-relaxed">
+            Portal-এর যেকোনো সমস্যার জন্য কল করুন: <span className="font-bold text-white">+8801931-379497</span>
           </p>
         </div>
       </aside>
