@@ -687,51 +687,48 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                       </span>
                     </td>
                     <td className="py-2.5 px-3 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {app.status === 'Pending' && (
-                          <>
-                            <button
-                              onClick={() => setEditingApp(app)}
-                              className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2.5 py-1 rounded-lg text-[11px] transition inline-flex items-center gap-1"
-                              title="আবেদনের সকল তথ্য সম্পাদনা করুন"
-                            >
-                              <Edit3 className="w-3 h-3 text-emerald-700" />
-                              <span>তথ্য সম্পাদনা</span>
-                            </button>
-                            <button
-                              onClick={() => handleApproveApplication(app)}
-                              disabled={processingId === app.id}
-                              title={isOperator ? 'অনুমোদন করলে billing নিয়ম অনুযায়ী প্রযোজ্য উদ্যোক্তা চার্জ কাটা হবে' : 'সনদ অনুমোদন করুন'}
-                              className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition disabled:opacity-50"
-                            >
-                              {processingId === app.id ? '...' : isOperator ? 'অনুমোদন • চার্জ' : 'অনুমোদন'}
-                            </button>
-                            <button
-                              onClick={() => handleRejectApplication(app)}
-                              disabled={processingId === app.id}
-                              className="cursor-pointer bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 font-bold px-2.5 py-1 rounded-lg text-[11px] transition disabled:opacity-50"
-                            >
-                              বাতিল
-                            </button>
-                          </>
-                        )}
-                        {app.status === 'Approved' && (
-                          <button
-                            onClick={() => setEditingApp(app)}
-                            className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
-                            title="সনদের তথ্য সম্পাদন করুন"
-                          >
-                            <Edit3 className="w-3 h-3 text-emerald-700" />
-                            <span>সম্পাদন</span>
-                          </button>
-                        )}
+                      <div className="flex flex-wrap items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setEditingApp(app)}
+                          disabled={processingId === app.id}
+                          className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2.5 py-1 rounded-lg text-[11px] transition inline-flex items-center gap-1 disabled:opacity-50"
+                          title="আবেদনের তথ্য সম্পাদনা করুন"
+                        >
+                          <Edit3 className="w-3 h-3 text-emerald-700" />
+                          <span>সম্পাদনা</span>
+                        </button>
+
                         {app.status === 'Approved' && (
                           <button
                             onClick={() => onViewCertificate(app)}
-                            className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2.5 py-1 rounded-lg text-xs transition inline-flex items-center gap-1"
+                            className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2.5 py-1 rounded-lg text-[11px] transition inline-flex items-center gap-1"
+                            title="অনুমোদিত সনদ প্রিন্ট / PDF করুন"
                           >
                             <Printer className="w-3.5 h-3.5" />
                             <span>প্রিন্ট</span>
+                          </button>
+                        )}
+
+                        {app.status === 'Pending' && (
+                          <button
+                            onClick={() => handleApproveApplication(app)}
+                            disabled={processingId === app.id}
+                            title={isOperator ? 'সনদ অনুমোদন করলে উদ্যোক্তার billing নিয়ম অনুযায়ী প্রযোজ্য চার্জ কাটা হবে' : 'সনদ অনুমোদন করুন'}
+                            className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition inline-flex items-center gap-1 disabled:opacity-50"
+                          >
+                            <CheckCheck className="w-3.5 h-3.5" />
+                            <span>{processingId === app.id ? 'প্রসেসিং...' : isOperator ? 'অনুমোদন + চার্জ' : 'অনুমোদন'}</span>
+                          </button>
+                        )}
+
+                        {app.status === 'Pending' && (
+                          <button
+                            onClick={() => handleRejectApplication(app)}
+                            disabled={processingId === app.id}
+                            className="cursor-pointer bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 font-bold px-2.5 py-1 rounded-lg text-[11px] transition disabled:opacity-50"
+                            title="আবেদন বাতিল করুন"
+                          >
+                            বাতিল
                           </button>
                         )}
                       </div>
