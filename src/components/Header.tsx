@@ -97,8 +97,12 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
             onClick={() => onNavigate('dashboard')} 
             className="cursor-pointer flex items-center gap-2.5"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-emerald-900 flex items-center justify-center text-white shadow-md shadow-emerald-900/20 border border-emerald-600">
-              <span className="font-extrabold text-base tracking-tighter">MS</span>
+            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md shadow-emerald-900/10 border border-emerald-100 overflow-hidden">
+              <img
+                src="/mysonod-logo.webp"
+                alt="MySonod"
+                className="w-full h-full object-contain"
+              />
             </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900 leading-tight">MySonod</h1>
