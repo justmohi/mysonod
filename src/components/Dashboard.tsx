@@ -5,7 +5,10 @@ import {
   collection, 
   query, 
   where, 
-  onSnapshot 
+  onSnapshot,
+  doc,
+  runTransaction,
+  updateDoc
 } from 'firebase/firestore';
 import { CERTIFICATE_CATALOG } from '../types';
 import type { CertificateApplication, BalanceRequest, Transaction } from '../types';
@@ -44,10 +47,14 @@ import {
   Briefcase,
   Building,
   FileWarning,
-  FileSignature
+  FileSignature,
+  CheckCheck,
+  XCircle
 } from 'lucide-react';
 import { Chart, registerables } from 'chart.js';
 import { EditCertificateModal } from './EditCertificateModal';
+import { applyOperatorCompletionChargeInTransaction } from '../utils/operatorBilling';
+import { cleanDataForFirestore } from '../utils/firestore';
 
 Chart.register(...registerables);
 
@@ -93,6 +100,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequest[]>([]);
   const [lastTopup, setLastTopup] = useState<{ amount: number; date: string } | null>(null);
   const [editingApp, setEditingApp] = useState<CertificateApplication | null>(null);
+  const [processingIdForDashboard, setProcessingIdForDashboard] = useState<string | null>(null);
 
   const chartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstance = useRef<Chart | null>(null);
@@ -149,6 +157,96 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
       if (unsubTopups) unsubTopups();
     };
   }, [currentUser, isStaff]);
+
+
+  const handleApproveApplication = async (app: CertificateApplication) => {
+    if (!isStaff || !currentUser) return;
+
+    const confirmed = window.confirm(
+      isOperator
+        ? 'সনদ অনুমোদন করলে উদ্যোক্তা billing নিয়ম অনুযায়ী প্রযোজ্য চার্জ কাটা হবে।\\n\\nসনদ: ' + app.certificateTitleBn + '\\nট্র্যাকিং: ' + app.trackingId + '\\n\\nআপনি কি সনদটি অনুমোদন করতে চান?'
+        : 'সনদটি অনুমোদন করবেন?\\n\\nসনদ: ' + app.certificateTitleBn + '\\nট্র্যাকিং: ' + app.trackingId
+    );
+    if (!confirmed) return;
+
+    setProcessingIdForDashboard(app.id);
+
+    try {
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const appRef = doc(db, 'applications', app.id);
+
+      await runTransaction(db, async (transaction) => {
+        const appSnap = await transaction.get(appRef);
+        if (!appSnap.exists()) {
+          throw new Error('আবেদনটি পাওয়া যায়নি।');
+        }
+
+        const liveApp = appSnap.data() as CertificateApplication;
+        if (liveApp.status !== 'Pending') {
+          throw new Error('এই আবেদনটি ইতোমধ্যে প্রসেস করা হয়েছে।');
+        }
+
+        let billing: Awaited<ReturnType<typeof applyOperatorCompletionChargeInTransaction>> | null = null;
+
+        if (isOperator) {
+          billing = await applyOperatorCompletionChargeInTransaction(
+            transaction,
+            currentUser.uid,
+            app.id,
+            liveApp.certificateTitleBn,
+            now
+          );
+        }
+
+        transaction.update(appRef, cleanDataForFirestore({
+          status: 'Approved',
+          approvedAt: nowIso,
+          completedAt: nowIso,
+          completedByUid: isOperator ? currentUser.uid : undefined,
+          completedByEmail: isOperator ? (currentUser.email || '') : undefined,
+          issuingOfficer: userProfile?.name || (isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'প্রশাসক'),
+          completionCharge: billing?.charge,
+          completionChargeType: billing?.chargeType,
+          rejectionReason: undefined
+        }));
+      });
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, 'applications/' + app.id);
+      alert('অনুমোদন ব্যর্থ হয়েছে: ' + (err?.message || 'অজানা সমস্যা'));
+    } finally {
+      setProcessingIdForDashboard(null);
+    }
+  };
+
+  const handleRejectApplication = async (app: CertificateApplication) => {
+    if (!isStaff || !currentUser) return;
+
+    const reason = window.prompt('বাতিলের কারণ লিখুন:', 'তথ্য যাচাই প্রয়োজন / অসম্পূর্ণ আবেদন');
+    if (reason === null) return;
+
+    setProcessingIdForDashboard(app.id);
+
+    try {
+      const nowIso = new Date().toISOString();
+      await updateDoc(
+        doc(db, 'applications', app.id),
+        cleanDataForFirestore({
+          status: 'Rejected',
+          rejectionReason: reason || 'আবেদন বাতিল করা হয়েছে',
+          completedByUid: isOperator ? currentUser.uid : undefined,
+          completedByEmail: isOperator ? (currentUser.email || '') : undefined,
+          completedAt: nowIso,
+          issuingOfficer: userProfile?.name || (isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'প্রশাসক')
+        })
+      );
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, 'applications/' + app.id);
+      alert('বাতিল করা যায়নি: ' + (err?.message || 'অজানা সমস্যা'));
+    } finally {
+      setProcessingIdForDashboard(null);
+    }
+  };
 
   // Render Monthly Analytics Bar Chart using Chart.js
   useEffect(() => {
@@ -481,7 +579,37 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
                     </td>
                     <td className="py-3 px-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        {((!isStaff && app.status === 'Pending') || (isStaff && (app.status === 'Pending' || app.status === 'Approved'))) && (
+                        {app.status === 'Pending' && isStaff ? (
+                          <>
+                            <button
+                              onClick={() => setEditingApp(app)}
+                              disabled={processingIdForDashboard === app.id}
+                              className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                              title="আবেদনের তথ্য সংশোধন করুন"
+                            >
+                              <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
+                              <span>তথ্য সম্পাদনা</span>
+                            </button>
+                            <button
+                              onClick={() => handleApproveApplication(app)}
+                              disabled={processingIdForDashboard === app.id}
+                              className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                              title={isOperator ? 'সনদ অনুমোদন করলে উদ্যোক্তার billing নিয়ম অনুযায়ী প্রযোজ্য চার্জ কাটা হবে' : 'সনদ অনুমোদন করুন'}
+                            >
+                              <CheckCheck className="w-3.5 h-3.5" />
+                              <span>{processingIdForDashboard === app.id ? 'প্রসেসিং...' : isOperator ? 'অনুমোদন + চার্জ' : 'অনুমোদন'}</span>
+                            </button>
+                            <button
+                              onClick={() => handleRejectApplication(app)}
+                              disabled={processingIdForDashboard === app.id}
+                              className="cursor-pointer bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 font-bold px-2 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                              title="আবেদন বাতিল করুন"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              <span>বাতিল</span>
+                            </button>
+                          </>
+                        ) : app.status === 'Approved' && isStaff ? (
                           <>
                             <button
                               onClick={() => setEditingApp(app)}
@@ -491,8 +619,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
                               <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
                               <span>তথ্য সম্পাদনা</span>
                             </button>
-                            {isStaff && app.status === 'Approved' && (
-                              <>
                             <button
                               onClick={() => onViewCertificate(app, { isDuplicate: true })}
                               className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
@@ -507,13 +633,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
                               <Printer className="w-3.5 h-3.5" />
                               <span>প্রিন্ট</span>
                             </button>
-                              </>
-                            )}
                           </>
-                        )}
-                        {!isStaff && app.status === 'Pending' && (
+                        ) : !isStaff && app.status === 'Pending' ? (
                           <span className="text-[10px] text-amber-700 font-semibold">উদ্যোক্তার অনুমোদনের অপেক্ষায়</span>
-                        )}
+                        ) : null}
                       </div>
                     </td>
                   </tr>
