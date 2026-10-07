@@ -446,7 +446,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
               activeTab === 'certificates'
                 ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50 rounded-t-lg'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`
+            }`}
           >
             <FileText className="w-4 h-4" />
             <span>প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
@@ -781,6 +781,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             >
               {creatingOperator ? 'অ্যাকাউন্ট তৈরি হচ্ছে...' : 'উদ্যোক্তা অ্যাকাউন্ট তৈরি করুন'}
             </button>
+          </form>
+
           <div className="mt-6 rounded-xl border border-blue-200 bg-blue-50 p-4">
             <div className="text-sm font-bold text-blue-900">পুরনো সনদ থেকে NID Profile Sync</div>
             <p className="mt-1 text-xs leading-5 text-blue-800">
