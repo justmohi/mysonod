@@ -372,7 +372,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                ১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ - ব্যালেন্স রিচার্জ অনুমোদন ও প্রত্যয়ন পত্র ব্যবস্থাপনা
+                ব্যালেন্স রিচার্জ অনুমোদন ও প্রত্যয়ন পত্র ব্যবস্থাপনা
               </p>
             </div>
           </div>
