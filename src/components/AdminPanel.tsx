@@ -10,7 +10,9 @@ import {
   updateDoc,
   setDoc, 
   runTransaction,
-  getDoc 
+  getDoc,
+  getDocs,
+  writeBatch
 } from 'firebase/firestore';
 import type { BalanceRequest, CertificateApplication, Transaction } from '../types';
 import { toBengaliNumber, formatCurrencyBn, formatBengaliDate } from '../utils/bengali';
@@ -35,6 +37,7 @@ import {
 import { EditCertificateModal } from './EditCertificateModal';
 import { UnionSettingsManager } from './UnionSettingsManager';
 import { applyOperatorCompletionChargeInTransaction } from '../utils/operatorBilling';
+import { buildCitizenProfile, createCitizenProfileId } from '../utils/citizenProfile';
 
 interface AdminPanelProps {
   onViewCertificate: (app: CertificateApplication) => void;
@@ -55,6 +58,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
   const [operatorEmail, setOperatorEmail] = useState('');
   const [operatorPassword, setOperatorPassword] = useState('');
   const [creatingOperator, setCreatingOperator] = useState(false);
+  const [syncingCitizenProfiles, setSyncingCitizenProfiles] = useState(false);
+  const [citizenProfileSyncMessage, setCitizenProfileSyncMessage] = useState('');
 
   // Listen to all balance requests (Admin view)
   useEffect(() => {
@@ -95,6 +100,59 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
     };
   }, [isAdmin, isOperator, currentUser]);
 
+  // One-time backfill for older applications created before shared citizen profiles.
+  // Only sanitized identity/address fields are copied; operator/certificate metadata
+  // never enters citizen_profiles.
+  const handleSyncCitizenProfiles = async () => {
+    if (!isAdmin || syncingCitizenProfiles) return;
+
+    setSyncingCitizenProfiles(true);
+    setCitizenProfileSyncMessage('');
+
+    try {
+      const snapshot = await getDocs(collection(db, 'applications'));
+      const latestByProfileId = new Map<string, { app: CertificateApplication; profileId: string }>();
+
+      await Promise.all(
+        snapshot.docs.map(async (docSnap) => {
+          const app = docSnap.data() as CertificateApplication;
+          const profileId = await createCitizenProfileId(app.nidOrBirthReg);
+          if (!profileId) return;
+
+          const previous = latestByProfileId.get(profileId);
+          if (!previous || new Date(app.createdAt || 0).getTime() >= new Date(previous.app.createdAt || 0).getTime()) {
+            latestByProfileId.set(profileId, { app, profileId });
+          }
+        })
+      );
+
+      const entries = Array.from(latestByProfileId.values());
+      for (let i = 0; i < entries.length; i += 400) {
+        const batch = writeBatch(db);
+        entries.slice(i, i + 400).forEach(({ app, profileId }) => {
+          const profileRef = doc(db, 'citizen_profiles', profileId);
+          batch.set(
+            profileRef,
+            cleanDataForFirestore(
+              buildCitizenProfile(app, profileId, new Date().toISOString())
+            ),
+            { merge: true }
+          );
+        });
+        await batch.commit();
+      }
+
+      setCitizenProfileSyncMessage(
+        'পুরনো ' + toBengaliNumber(entries.length) + ' জন নাগরিকের shared profile প্রস্তুত হয়েছে। এখন একই NID অন্য উদ্যোক্তার account থেকেও নিরাপদভাবে auto-fill হবে.'
+      );
+    } catch (err: any) {
+      console.error('Citizen profile migration error:', err);
+      handleFirestoreError(err, OperationType.WRITE, 'citizen_profiles');
+      setCitizenProfileSyncMessage(err.message || 'পুরনো নাগরিক profile sync করা যায়নি।');
+    } finally {
+      setSyncingCitizenProfiles(false);
+    }
+  };
   // Admin approves balance request -> Adds requested amount directly to user's wallet
   const handleApproveBalance = async (request: BalanceRequest) => {
     if (processingId) return;
@@ -713,6 +771,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
             >
               {creatingOperator ? 'অ্যাকাউন্ট তৈরি হচ্ছে...' : 'উদ্যোক্তা অ্যাকাউন্ট তৈরি করুন'}
             </button>
+          <div className="mt-6 rounded-xl border border-blue-200 bg-blue-50 p-4">
+            <div className="text-sm font-bold text-blue-900">পুরনো সনদ থেকে NID Profile Sync</div>
+            <p className="mt-1 text-xs leading-5 text-blue-800">
+              এই একবার চালালে আগের আবেদনের শুধু নাগরিকের ব্যক্তিগত/ঠিকানার তথ্য আলাদা shared profile-এ সংরক্ষিত হবে।
+              কোনো উদ্যোক্তার account, tracking, billing বা union তথ্য অন্য উদ্যোক্তার কাছে যাবে না।
+            </p>
+            <button
+              type="button"
+              onClick={handleSyncCitizenProfiles}
+              disabled={syncingCitizenProfiles}
+              className="mt-3 rounded-lg bg-blue-700 px-4 py-2 text-xs font-extrabold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {syncingCitizenProfiles ? 'Profile Sync হচ্ছে...' : 'পুরনো NID Profile Sync করুন'}
+            </button>
+            {citizenProfileSyncMessage && (
+              <div className="mt-3 rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs text-blue-900">
+                {citizenProfileSyncMessage}
+              </div>
+            )}
+          </div>
+
           </form>
         </div>
       )}
