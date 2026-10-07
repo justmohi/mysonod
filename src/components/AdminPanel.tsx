@@ -224,9 +224,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
     }
   };
 
-  // Admin/operator approves any citizen certificate application
+  // Admin/operator approves any citizen certificate application.
+  // For operators, approval applies the configured certificate billing rule atomically.
   const handleApproveApplication = async (app: CertificateApplication) => {
     if (!isAdmin && !isOperator) return;
+
+    if (isOperator) {
+      const confirmed = window.confirm(
+        `সনদ অনুমোদন করলে আপনার উদ্যোক্তা billing নিয়ম অনুযায়ী প্রযোজ্য চার্জ কাটা হবে।\n\nসনদ: ${app.certificateTitleBn}\nট্র্যাকিং: ${app.trackingId}\n\nআপনি কি সনদটি অনুমোদন করতে চান?`
+      );
+      if (!confirmed) return;
+    }
+
     setProcessingId(app.id);
 
     try {
@@ -641,7 +650,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                   <th className="py-2.5 px-3">সরকারি ফি</th>
                   <th className="py-2.5 px-3">তারিখ</th>
                   <th className="py-2.5 px-3">স্ট্যাটাস</th>
-                  <th className="py-2.5 px-3 text-right">সনদ দেখুন</th>
+                  <th className="py-2.5 px-3 text-right">কার্যক্রম</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -692,9 +701,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
                             <button
                               onClick={() => handleApproveApplication(app)}
                               disabled={processingId === app.id}
+                              title={isOperator ? 'অনুমোদন করলে billing নিয়ম অনুযায়ী প্রযোজ্য উদ্যোক্তা চার্জ কাটা হবে' : 'সনদ অনুমোদন করুন'}
                               className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition disabled:opacity-50"
                             >
-                              {processingId === app.id ? '...' : 'অনুমোদন'}
+                              {processingId === app.id ? '...' : isOperator ? 'অনুমোদন • চার্জ' : 'অনুমোদন'}
                             </button>
                             <button
                               onClick={() => handleRejectApplication(app)}
