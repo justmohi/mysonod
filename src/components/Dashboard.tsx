@@ -7,6 +7,7 @@ import {
   where, 
   onSnapshot 
 } from 'firebase/firestore';
+import { CERTIFICATE_CATALOG } from '../types';
 import type { CertificateApplication, BalanceRequest, Transaction } from '../types';
 import { toBengaliNumber, formatCurrencyBn, formatBengaliDate } from '../utils/bengali';
 import { 
@@ -24,7 +25,27 @@ import {
   Building2,
   Sparkles,
   Edit3,
-  Copy
+  Copy,
+  Users,
+  Home,
+  Flag,
+  HeartHandshake,
+  UserPlus,
+  Landmark,
+  Heart,
+  UserCheck,
+  Sprout,
+  Award,
+  BadgeDollarSign,
+  User,
+  FileEdit,
+  CheckCircle,
+  MapPin,
+  Accessibility,
+  Briefcase,
+  Building,
+  FileWarning,
+  FileSignature
 } from 'lucide-react';
 import { Chart, registerables } from 'chart.js';
 import { EditCertificateModal } from './EditCertificateModal';
@@ -35,6 +56,36 @@ interface DashboardProps {
   onNavigate: (view: string, data?: any) => void;
   onViewCertificate: (app: CertificateApplication, options?: { isDuplicate?: boolean }) => void;
 }
+
+const CERTIFICATE_ICON_MAP: Record<string, React.ElementType> = {
+  Users,
+  Home,
+  ShieldCheck,
+  FileText,
+  Flag,
+  HeartHandshake,
+  UserPlus,
+  Landmark,
+  Heart,
+  UserCheck,
+  Sprout,
+  Award,
+  BadgeDollarSign,
+  User,
+  FileEdit,
+  CheckCircle,
+  MapPin,
+  Accessibility,
+  Copy,
+  Briefcase,
+  Building,
+  FileWarning,
+  FileSignature
+};
+
+const HOME_CERTIFICATES = Object.values(CERTIFICATE_CATALOG).filter((certificate, index, all) => {
+  return all.findIndex(item => item.titleBn === certificate.titleBn) === index;
+});
 
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertificate }) => {
   const { currentUser, userProfile, isAdmin, isStaff } = useAuth();
@@ -243,6 +294,48 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
           </div>
         </div>
       </div>
+
+      {/* Home certificate service grid — mirrors the main certificate selection page */}
+      <section className="rounded-2xl bg-transparent">
+        <div className="flex flex-wrap items-end justify-between gap-3 mb-4 px-1">
+          <div>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+              সকল সনদ সেবা
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              প্রয়োজনীয় সনদ নির্বাচন করে সরাসরি আবেদন শুরু করুন
+            </p>
+          </div>
+          <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-full">
+            {HOME_CERTIFICATES.length} ধরনের সেবা
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {HOME_CERTIFICATES.map((certificate) => {
+            const Icon = CERTIFICATE_ICON_MAP[certificate.iconName] || FileText;
+
+            return (
+              <button
+                key={certificate.type}
+                type="button"
+                onClick={() => onNavigate('apply_form', { certType: certificate.type })}
+                className="group min-h-[132px] rounded-xl bg-[#173f68] hover:bg-[#123556] text-white px-4 py-5 shadow-[0_8px_18px_rgba(15,23,42,0.14)] border border-[#28527d] transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 flex flex-col items-center justify-center text-center"
+              >
+                <span className="w-12 h-12 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                  <Icon className="w-7 h-7 text-white" strokeWidth={2.2} />
+                </span>
+                <span className="text-sm sm:text-[15px] font-bold leading-snug font-bangla">
+                  {certificate.titleBn}
+                </span>
+                <span className="mt-1 text-[10px] text-blue-100/80 opacity-0 group-hover:opacity-100 transition-opacity">
+                  আবেদন করুন
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Required Stat Cards: Total Balance & Last Top-up + Application Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
