@@ -35,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
         <div className="flex items-center space-x-2">
           <span className="font-semibold tracking-wide flex items-center gap-1.5">
             <Building2 className="w-4 h-4 text-emerald-300 inline" />
-            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার | <strong className="text-emerald-200">{settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ'} ডিজিটাল সেন্টার</strong>
+            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার | <strong className="text-emerald-200">{settings.unionName || 'ইউনিয়ন পরিষদ'} ডিজিটাল সেন্টার</strong>
           </span>
         </div>
 
