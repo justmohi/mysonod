@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas-pro';
-import { BdGovernmentSeal, UnionCouncilSeal, WatermarkShapla, DEFAULT_SHAPLA_WATERMARK_SVG, getActiveWatermarkSrc } from './OfficialLogos';
+import { getActiveWatermarkSrc } from './OfficialLogos';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 import { useAuth } from '../context/AuthContext';
 import { chargeLatePrintFee } from '../utils/operatorBilling';
@@ -586,17 +586,15 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   <div className={`certificate-border-inner border-2 border-[#d97706] ${isUltraCompactTable ? 'p-2 sm:p-2.5' : (isHighRowTable ? 'p-2.5 sm:p-3.5' : (isTableCertificate ? 'p-3 sm:p-4' : 'p-4 sm:p-5'))} rounded-lg relative bg-[#FCFBF7] h-full flex flex-col justify-between flex-1`}>
                     
                     {/* Center Watermark Logo Overlay across all 38 certificate print templates */}
-                    <div className="watermark-container">
-                      <img 
-                        src={watermarkSrc} 
-                        alt="Watermark Logo" 
-                        onError={(e) => {
-                          if ((e.target as HTMLImageElement).src !== DEFAULT_SHAPLA_WATERMARK_SVG) {
-                            (e.target as HTMLImageElement).src = DEFAULT_SHAPLA_WATERMARK_SVG;
-                          }
-                        }}
-                      />
-                    </div>
+                      {watermarkSrc ? (
+                        <div className="watermark-container">
+                          <img
+                            src={watermarkSrc}
+                            alt="Watermark Logo"
+                            onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                          />
+                        </div>
+                      ) : null}
 
                     {/* Form Content Layer */}
                     <div className="certificate-content relative z-10 h-full flex flex-col justify-between flex-1">
@@ -613,9 +611,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               className={`${isUltraCompactTable ? 'w-12 h-12' : (isTableCertificate ? 'w-14 h-14' : 'w-16 h-16 sm:w-20 sm:h-20')} object-contain drop-shadow-xs`} 
                               onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
                             />
-                          ) : (
-                            <BdGovernmentSeal className={`${isUltraCompactTable ? 'w-12 h-12' : (isTableCertificate ? 'w-14 h-14' : 'w-16 h-16 sm:w-20 sm:h-20')} drop-shadow-xs`} />
-                          )}
+                          ) : null}
                         </div>
 
                         {/* Center: Title & Address */}
@@ -655,9 +651,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-xs" 
                               onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
                             />
-                          ) : (
-                            <UnionCouncilSeal className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-xs" />
-                          )}
+                          ) : null}
                         </div>
                       </div>
 
@@ -1060,17 +1054,15 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                 <div className={`certificate-border-inner border-2 border-[#d97706] ${isUltraCompactTable ? 'p-2 sm:p-2.5' : (isHighRowTable ? 'p-2.5 sm:p-3.5' : (isTableCertificate ? 'p-3 sm:p-4.5' : 'p-4 sm:p-6'))} rounded-lg relative bg-[#FCFBF7] h-full flex flex-col justify-between flex-1`}>
 
                   {/* Center Watermark Logo Overlay across all 38 certificate print templates */}
-                  <div className="watermark-container">
-                    <img 
-                      src={watermarkSrc} 
-                      alt="Watermark Logo" 
-                      onError={(e) => {
-                        if ((e.target as HTMLImageElement).src !== DEFAULT_SHAPLA_WATERMARK_SVG) {
-                          (e.target as HTMLImageElement).src = DEFAULT_SHAPLA_WATERMARK_SVG;
-                        }
-                      }}
-                    />
-                  </div>
+                      {watermarkSrc ? (
+                        <div className="watermark-container">
+                          <img
+                            src={watermarkSrc}
+                            alt="Watermark Logo"
+                            onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                          />
+                        </div>
+                      ) : null}
 
                   {/* Duplicate Watermark / Badge if enabled */}
                   {isDuplicateCopy && (
@@ -1103,9 +1095,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           (e.target as HTMLElement).style.display = 'none';
                         }}
                       />
-                    ) : (
-                      <BdGovernmentSeal className={`${isUltraCompactTable ? 'w-12 h-12' : (isTableCertificate ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-20 h-20 sm:w-24 sm:h-24')} drop-shadow-xs`} />
-                    )}
+                    ) : null}
                   </div>
 
                   {/* Center Aligned Government Header */}
@@ -1162,9 +1152,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           (e.target as HTMLElement).style.display = 'none';
                         }}
                       />
-                    ) : (
-                      <UnionCouncilSeal className={`${isUltraCompactTable ? 'w-12 h-12' : (isTableCertificate ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-20 h-20 sm:w-24 sm:h-24')} drop-shadow-xs`} />
-                    )}
+                    ) : null}
                   </div>
                 </div>
 
