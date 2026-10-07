@@ -23,7 +23,6 @@ import {
   ChevronRight,
   ShieldCheck,
   Building2,
-  Sparkles,
   Edit3,
   Copy,
   Users,
@@ -260,41 +259,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
 
   return (
     <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-[#0d5c3a] via-[#09432f] to-[#062c1f] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-        <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-400/30 text-xs text-emerald-200 mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>MySonod ইউনিয়ন ডিজিটাল সেন্টার পোর্টাল</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-              স্বাগতম, {userProfile?.name || 'সম্মানিত নাগরিক'}!
-            </h2>
-            <p className="text-xs md:text-sm text-emerald-100/90 mt-1 max-w-xl">
-              ১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার থেকে নাগরিকত্ব, চারিত্রিক, ওয়ারিশ, আয়ের সনদ ও ট্রেড লাইসেন্স অনলাইনে আবেদন করুন এবং তাৎক্ষণিক সনদ ডাউনলোড করুন।
-            </p>
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => onNavigate('apply')}
-              className="cursor-pointer bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow-md transition flex items-center gap-1.5"
-            >
-              <FileText className="w-4 h-4" />
-              <span>নতুন সনদ আবেদন করুন</span>
-            </button>
-            <button
-              onClick={() => onNavigate('add_balance')}
-              className="cursor-pointer bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2.5 rounded-xl text-xs border border-white/20 transition flex items-center gap-1.5"
-            >
-              <PlusCircle className="w-4 h-4 text-emerald-300" />
-              <span>এড ব্যালেন্স</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Home certificate service grid — mirrors the main certificate selection page */}
       <section className="rounded-2xl bg-transparent">
         <div className="flex flex-wrap items-end justify-between gap-3 mb-4 px-1">
