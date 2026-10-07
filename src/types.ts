@@ -477,6 +477,50 @@ export interface UserProfile {
   billingTotalCompleted?: number;
 }
 
+export interface CitizenProfile {
+  profileId: string;
+  applicantNameBn: string;
+  applicantNameEn?: string;
+  fatherName: string;
+  fatherNameEn?: string;
+  motherName: string;
+  motherNameEn?: string;
+  spouseName?: string;
+  spouseNameEn?: string;
+  gender: 'male' | 'female' | 'other';
+  maritalStatus?: string;
+  mobile?: string;
+  dob?: string;
+  occupation?: string;
+  holdingNo?: string;
+  presentVillage?: string;
+  presentVillageEn?: string;
+  presentWard?: string;
+  presentPost?: string;
+  presentPostEn?: string;
+  presentUpazila?: string;
+  presentUpazilaEn?: string;
+  presentDistrict?: string;
+  presentDistrictEn?: string;
+  permanentVillage?: string;
+  permanentVillageEn?: string;
+  permanentWard?: string;
+  permanentPost?: string;
+  permanentPostEn?: string;
+  permanentUpazila?: string;
+  permanentUpazilaEn?: string;
+  permanentDistrict?: string;
+  permanentDistrictEn?: string;
+  village?: string;
+  villageEn?: string;
+  wardNo?: string;
+  postOffice?: string;
+  postOfficeEn?: string;
+  guardianType?: 'father' | 'husband';
+  familyGuardianType?: 'father' | 'husband';
+  updatedAt: string;
+}
+
 export interface PublicVerificationRecord {
   trackingId: string;
   status: 'Verified';
