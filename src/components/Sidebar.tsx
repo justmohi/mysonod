@@ -194,7 +194,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <Files className="w-4 h-4 text-emerald-300" />
-            <span>সকল প্রত্যয়ন পত্র (All Certificates)</span>
+            <span>{isStaff ? 'প্রত্যয়ন আবেদন ও অনুমোদন' : 'সকল প্রত্যয়ন পত্র (All Certificates)'}</span>
           </button>
 
           {/* Add Balance */}
@@ -238,8 +238,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           )}
 
-          {/* Office Forwarding & Admin Approvals (Exclusive to Admin: mohistudio95@gmail.com) */}
-          {isStaff && (
+          {/* Office administration is for admin-only balance/settings/operator tasks.
+              Certificate approvals are handled directly from the certificate queue. */}
+          {isStaff && !isOperator && (
             <button
               onClick={() => { onNavigate('admin_office'); onCloseMobile(); }}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition font-medium cursor-pointer ${
@@ -250,10 +251,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-3">
                 <Building className="w-4 h-4 text-amber-400" />
-                <span>{isOperator ? 'উদ্যোক্তা অফিস (Approval Panel)' : 'অফিস ফরওয়ার্ডিং (Admin Dashboard)'}</span>
+                <span>অফিস ও ব্যালেন্স প্রশাসন</span>
               </div>
               <span className="bg-amber-400 text-slate-950 font-bold text-[10px] px-1.5 py-0.5 rounded">
-                {isOperator ? 'Operator' : 'Admin'}
+                Admin
               </span>
             </button>
           )}
