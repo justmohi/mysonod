@@ -5,11 +5,15 @@ import {
   collection, 
   query, 
   where, 
-  onSnapshot 
+  onSnapshot,
+  doc,
+  runTransaction
 } from 'firebase/firestore';
 import type { CertificateApplication, CertificateType } from '../types';
 import { CERTIFICATE_CATALOG } from '../types';
 import { toBengaliNumber, formatCurrencyBn, formatBengaliDate } from '../utils/bengali';
+import { cleanDataForFirestore } from '../utils/firestore';
+import { applyOperatorCompletionChargeInTransaction } from '../utils/operatorBilling';
 import { 
   Search, 
   Filter, 
@@ -22,6 +26,7 @@ import {
   ShieldCheck,
   Building2,
   Edit3,
+  CheckCheck,
   Copy
 } from 'lucide-react';
 import { EditCertificateModal } from './EditCertificateModal';
@@ -35,7 +40,8 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   onNavigate,
   onViewCertificate
 }) => {
-  const { currentUser, isAdmin, isStaff } = useAuth();
+  const { currentUser, userProfile, isAdmin, isOperator, isStaff } = useAuth();
+  const [processingId, setProcessingId] = useState<string | null>(null);
   const [applications, setApplications] = useState<CertificateApplication[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -45,8 +51,9 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   useEffect(() => {
     if (!currentUser) return;
 
-    // Primary admin can view all applications; citizens and operators only see their own records.
-    const appQuery = isAdmin
+    // Staff (Admin + all Union Operators) can view the shared certificate queue.
+    // Citizens only see their own applications.
+    const appQuery = isStaff
       ? collection(db, 'applications')
       : query(collection(db, 'applications'), where('userId', '==', currentUser.uid));
 
@@ -62,7 +69,62 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
     });
 
     return () => unsubscribe();
-  }, [currentUser, isAdmin]);
+  }, [currentUser, isStaff]);
+
+  const handleApproveApplication = async (app: CertificateApplication) => {
+    if (!isOperator || !currentUser) return;
+
+    const confirmed = window.confirm(
+      `সনদ অনুমোদন করলে আপনার উদ্যোক্তা billing নিয়ম অনুযায়ী প্রযোজ্য চার্জ কাটা হবে।\\n\\nসনদ: ${app.certificateTitleBn}\\nট্র্যাকিং: ${app.trackingId}\\n\\nআপনি কি সনদটি অনুমোদন করতে চান?`
+    );
+    if (!confirmed) return;
+
+    setProcessingId(app.id);
+
+    try {
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const appRef = doc(db, 'applications', app.id);
+
+      await runTransaction(db, async (transaction) => {
+        const appSnap = await transaction.get(appRef);
+        if (!appSnap.exists()) {
+          throw new Error('আবেদনটি পাওয়া যায়নি।');
+        }
+
+        const liveApp = appSnap.data() as CertificateApplication;
+        if (liveApp.status !== 'Pending') {
+          throw new Error('এই আবেদনটি ইতোমধ্যে প্রসেস করা হয়েছে।');
+        }
+
+        const billing = await applyOperatorCompletionChargeInTransaction(
+          transaction,
+          currentUser.uid,
+          app.id,
+          app.certificateTitleBn,
+          now
+        );
+
+        transaction.update(appRef, cleanDataForFirestore({
+          status: 'Approved',
+          approvedAt: nowIso,
+          completedAt: nowIso,
+          completedByUid: currentUser.uid,
+          completedByEmail: currentUser.email || '',
+          issuingOfficer: userProfile?.name || 'ইউনিয়ন উদ্যোক্তা',
+          completionCharge: billing.charge,
+          completionChargeType: billing.chargeType
+        }));
+      });
+
+      alert('সনদ সফলভাবে অনুমোদিত হয়েছে এবং প্রযোজ্য billing charge কাটা হয়েছে।');
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, `applications/${app.id}`);
+      alert(`অনুমোদন ব্যর্থ হয়েছে: ${err.message || 'অজানা সমস্যা'}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
 
   const filteredApps = applications.filter((app) => {
     const matchesSearch = 
@@ -199,41 +261,56 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                       </span>
                     </td>
                     <td className="py-3 px-3 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {(!isStaff && app.status === 'Pending') || (isStaff && (app.status === 'Pending' || app.status === 'Approved')) ? (
-                          <>
-                            <button
-                              onClick={() => setEditingApp(app)}
-                              className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
-                              title="আবেদনের তথ্য সংশোধন করুন"
-                            >
-                              <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
-                              <span>তথ্য সম্পাদনা</span>
-                            </button>
-                            {isStaff && app.status === 'Approved' && (
-                              <>
-                            <button
-                              onClick={() => onViewCertificate(app, { isDuplicate: true })}
-                              className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
-                            >
-                              <Copy className="w-3.5 h-3.5 text-amber-700" />
-                              <span>অনুলিপি</span>
-                            </button>
-                            <button
-                              onClick={() => onViewCertificate(app)}
-                              className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2.5 py-1.5 rounded-lg text-xs transition inline-flex items-center gap-1 shadow-2xs"
-                            >
-                              <Printer className="w-3.5 h-3.5" />
-                              <span>প্রিন্ট</span>
-                            </button>
-                              </>
-                            )}
-                          </>
-                        ) : (
+                      <div className="flex flex-wrap items-center justify-end gap-1.5">
+                        {(isAdmin || (isOperator && app.status === 'Pending')) && (
+                          <button
+                            onClick={() => setEditingApp(app)}
+                            disabled={processingId === app.id}
+                            className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                            title="আবেদনের তথ্য সংশোধন করুন"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
+                            <span>এডিট</span>
+                          </button>
+                        )}
+
+                        {app.status === 'Approved' && isStaff && (
+                          <button
+                            onClick={() => onViewCertificate(app)}
+                            className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs"
+                            title="অনুমোদিত সনদ প্রিন্ট / PDF করুন"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                            <span>প্রিন্ট</span>
+                          </button>
+                        )}
+
+                        {app.status === 'Pending' && isOperator && (
+                          <button
+                            onClick={() => handleApproveApplication(app)}
+                            disabled={processingId === app.id}
+                            className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                            title="সনদ অনুমোদন করলে উদ্যোক্তার billing নিয়ম অনুযায়ী প্রযোজ্য চার্জ কাটা হবে"
+                          >
+                            <CheckCheck className="w-3.5 h-3.5" />
+                            <span>{processingId === app.id ? 'প্রসেসিং...' : 'Approve + Charge'}</span>
+                          </button>
+                        )}
+
+                        {app.status === 'Approved' && isStaff && (
+                          <button
+                            onClick={() => onViewCertificate(app, { isDuplicate: true })}
+                            className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs"
+                            title="সনদের অনুলিপি প্রস্তুত করুন"
+                          >
+                            <Copy className="w-3.5 h-3.5 text-amber-700" />
+                            <span>অনুলিপি</span>
+                          </button>
+                        )}
+
+                        {!isAdmin && !isOperator && app.status === 'Pending' && (
                           <span className="text-[10px] text-amber-700 font-semibold">
-                            {app.status === 'Pending'
-                              ? 'উদ্যোক্তার অনুমোদনের অপেক্ষায়'
-                              : 'সনদ প্রিন্ট করার অনুমতি নেই'}
+                            উদ্যোক্তার অনুমোদনের অপেক্ষায়
                           </span>
                         )}
                       </div>
