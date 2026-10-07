@@ -58,6 +58,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+
+      // Do not block the whole portal on a Firestore profile read.
+      // Previously, loading stayed true until getDoc()/setDoc() completed.
+      // If Firestore/network was slow or temporarily stalled, the user saw
+      // the MySonod loading screen indefinitely even though Firebase Auth
+      // had already finished restoring the session.
+      setLoading(false);
+
       if (unsubscribeSnapshot) {
         unsubscribeSnapshot();
         unsubscribeSnapshot = null;
@@ -112,7 +120,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setUserProfile(null);
       }
-      setLoading(false);
     });
 
     return () => {
