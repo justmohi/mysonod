@@ -144,6 +144,21 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+
+    function applicationReviewFieldsOnly() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'status',
+        'approvedAt',
+        'completedAt',
+        'completedByUid',
+        'completedByEmail',
+        'issuingOfficer',
+        'completionCharge',
+        'completionChargeType',
+        'rejectionReason'
+      ]);
+    }
+
     // Certificate applications.
     // Citizens create and edit their own applications only while Pending.
     // Staff can review and approve/reject applications.
@@ -170,6 +185,23 @@ service cloud.firestore {
       // ownership, status, or other protected/system fields.
       // Citizens can only edit their own Pending applications.
       allow update: if isAdmin() ||
+        (
+          isOperator() &&
+          resource.data.userId == request.auth.uid &&
+          request.resource.data.userId == resource.data.userId &&
+          resource.data.status == 'Pending' &&
+          request.resource.data.status == 'Approved' &&
+          request.resource.data.completedByUid == request.auth.uid &&
+          applicationReviewFieldsOnly()
+        ) ||
+        (
+          isOperator() &&
+          resource.data.userId == request.auth.uid &&
+          request.resource.data.userId == resource.data.userId &&
+          resource.data.status == 'Pending' &&
+          request.resource.data.status == 'Rejected' &&
+          applicationReviewFieldsOnly()
+        ) ||
         (
           isOperator() &&
           resource.data.userId == request.auth.uid &&
