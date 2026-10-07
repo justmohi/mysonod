@@ -704,7 +704,7 @@ export interface CertificateApplication {
   completedByEmail?: string;
   completedAt?: string;
   completionCharge?: number;
-  completionChargeType?: 'free' | 'month1_overage' | 'monthly';
+  completionChargeType?: 'free' | 'month1_overage' | 'monthly' | 'monthly_overage';
   printDate?: string;
   latePrintFeeChargedAt?: string;
   latePrintFee?: number;
