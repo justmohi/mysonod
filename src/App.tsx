@@ -16,7 +16,6 @@ import { AuthModal } from './components/AuthModal';
 import { testConnection } from './firebase';
 import type { CertificateApplication, CertificateType } from './types';
 import { setCurrentApplicationData } from './utils/currentApplication';
-import { Building2 } from 'lucide-react';
 
 function AppContent() {
   const { currentUser, loading, isAdmin, isStaff } = useAuth();
