@@ -45,7 +45,7 @@ interface AdminPanelProps {
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNavigate }) => {
   const { currentUser, userProfile, isAdmin, isOperator, isStaff, isPrimaryAdmin, toggleAdminMode } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'balance' | 'certificates' | 'settings' | 'operators'>(isAdmin ? 'balance' : 'certificates');
+  const [activeTab, setActiveTab] = useState<'balance' | 'certificates' | 'settings' | 'operators'>('certificates');
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequest[]>([]);
   const [applications, setApplications] = useState<CertificateApplication[]>([]);
   const [processingId, setProcessingId] = useState<string | null>(null);
