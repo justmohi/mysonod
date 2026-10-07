@@ -337,6 +337,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
     }
   };
 
+  useEffect(() => {
+    // Keep the removed certificate tab inaccessible in admin mode.
+    if (isAdmin && activeTab === 'certificates') {
+      setActiveTab('balance');
+    } else if (!isAdmin && activeTab === 'balance') {
+      setActiveTab('certificates');
+    }
+  }, [isAdmin, activeTab]);
   const pendingRequests = balanceRequests.filter(r => r.status === 'Pending');
   const filteredApps = applications.filter(a => {
     const matchesSearch = a.applicantNameBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -431,17 +439,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
           </button>
           )}
 
+          {!isAdmin && (
           <button
             onClick={() => setActiveTab('certificates')}
             className={`cursor-pointer pb-3 px-4 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
               activeTab === 'certificates'
                 ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50 rounded-t-lg'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
+            }}`
           >
             <FileText className="w-4 h-4" />
-            <span>সকল প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
+            <span>প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
           </button>
+          )}
 
           {isAdmin && (
           <button
@@ -589,8 +599,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
         </div>
       )}
 
-      {/* Certificate Applications Management */}
-      {activeTab === 'certificates' && (
+      {/* Certificate Applications Management - operator workspace only */}
+      {!isAdmin && activeTab === 'certificates' && (
         <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="relative flex-1 max-w-sm">
