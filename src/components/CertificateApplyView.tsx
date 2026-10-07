@@ -675,7 +675,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           });
         }
 
-        // Application record (Auto-Approved for official instant delivery matching eProttoyon portal)
+        // Applications created by both citizens and operators remain Pending until reviewed.
+        // The operator usage charge is applied only when the operator approves the application.
         const appPayload: Record<string, any> = {
           id: appId,
           trackingId,
@@ -726,13 +727,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           mobile: mobile.trim(),
           occupation: occupation || undefined,
           fee: 2.0,
-          status: isOperator ? 'Approved' : 'Pending',
-          issuingOfficer: isOperator ? userProfile.name : undefined,
-          createdAt: nowIso,
-          approvedAt: isOperator ? nowIso : undefined,
-          completedByUid: isOperator ? currentUser.uid : undefined,
-          completedByEmail: isOperator ? (currentUser.email || '') : undefined,
-          completedAt: isOperator ? nowIso : undefined
+          status: 'Pending',
+          createdAt: nowIso
         };
 
         if (spouseName) appPayload.spouseName = spouseName;
@@ -853,21 +849,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         } else if (selectedType === 'miscellaneous') {
           appPayload.miscellaneousDetails = miscellaneousDetails;
           appPayload.generalPurpose = generalPurpose;
-        }
-
-        // Operator-created certificates are completed immediately and follow
-        // the operator monthly usage billing rule.
-        if (isOperator) {
-          const billing = await applyOperatorCompletionChargeInTransaction(
-            transaction,
-            currentUser.uid,
-            appId,
-            certMeta.titleBn,
-            new Date(nowIso)
-          );
-          appPayload.completionCharge = billing.charge;
-          appPayload.completionChargeType = billing.chargeType;
-          appPayload.billingMonthKey = billing.monthKey;
         }
 
         const cleanedApplication = cleanDataForFirestore(appPayload) as CertificateApplication;
