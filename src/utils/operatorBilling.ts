@@ -6,9 +6,9 @@ import {
 import { db } from '../firebase';
 import type { CertificateApplication, Transaction, UserProfile } from '../types';
 
-export const FIRST_MONTH_FREE_LIMIT = 100;
-export const FIRST_MONTH_OVERAGE_PRICE = 1;
-export const MONTHLY_CERTIFICATE_PRICE = 2;
+export const MONTHLY_STANDARD_LIMIT = 100;
+export const MONTHLY_STANDARD_PRICE = 2;
+export const MONTHLY_OVERAGE_PRICE = 1;
 export const LATE_PRINT_PRICE = 2;
 
 const pad2 = (value: number) => String(value).padStart(2, '0');
@@ -47,42 +47,26 @@ export const getOperatorCompletionCharge = (
   monthKey: string;
   completedCount: number;
   billingStartAt: string;
-  chargeType: 'free' | 'month1_overage' | 'monthly';
+  chargeType: 'free' | 'month1_overage' | 'monthly' | 'monthly_overage';
 } => {
   const currentMonthKey = getBillingMonthKey(now);
   const billingStartAt = operator.billingStartAt || now.toISOString();
-  const billingStartDate = new Date(billingStartAt);
-  const startMonthKey = getBillingMonthKey(
-    Number.isNaN(billingStartDate.getTime()) ? now : billingStartDate
-  );
-
-  const isFirstBillingMonth = currentMonthKey === startMonthKey;
   const previousCount =
     operator.billingMonthKey === currentMonthKey
       ? Number(operator.billingMonthCompletedCount || 0)
       : 0;
   const completedCount = previousCount + 1;
-
-  if (isFirstBillingMonth) {
-    return {
-      charge: completedCount <= FIRST_MONTH_FREE_LIMIT
-        ? 0
-        : FIRST_MONTH_OVERAGE_PRICE,
-      monthKey: currentMonthKey,
-      completedCount,
-      billingStartAt,
-      chargeType: completedCount <= FIRST_MONTH_FREE_LIMIT
-        ? 'free'
-        : 'month1_overage'
-    };
-  }
+  const isStandardRateCertificate =
+    completedCount <= MONTHLY_STANDARD_LIMIT;
 
   return {
-    charge: MONTHLY_CERTIFICATE_PRICE,
+    charge: isStandardRateCertificate
+      ? MONTHLY_STANDARD_PRICE
+      : MONTHLY_OVERAGE_PRICE,
     monthKey: currentMonthKey,
     completedCount,
     billingStartAt,
-    chargeType: 'monthly'
+    chargeType: isStandardRateCertificate ? 'monthly' : 'monthly_overage'
   };
 };
 
@@ -145,11 +129,9 @@ export const applyOperatorCompletionChargeInTransaction = async (
     amount: pricing.charge,
     balanceAfter: newBalance,
     description:
-      pricing.chargeType === 'free'
-        ? `সনদ সম্পন্ন #${pricing.completedCount} — প্রথম ১০০টি ফ্রি`
-        : pricing.chargeType === 'month1_overage'
-          ? `প্রথম মাসের ১০০টি ফ্রি সীমার পর সনদ #${pricing.completedCount} — ৳১ usage charge`
-          : `মাসিক সনদ usage charge — ${applicationTitle}`,
+      pricing.chargeType === 'monthly_overage'
+        ? `এই মাসের ${pricing.completedCount}তম সনদ — ১০১তম থেকে ৳১ usage charge`
+        : `এই মাসের ${pricing.completedCount}তম সনদ — প্রথম ১০০টি ৳২ usage charge`,
     referenceId: applicationId,
     createdAt: now.toISOString()
   };
