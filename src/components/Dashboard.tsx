@@ -94,7 +94,7 @@ const HOME_CERTIFICATES = Object.values(CERTIFICATE_CATALOG).filter((certificate
 });
 
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertificate }) => {
-  const { currentUser, userProfile, isAdmin, isOperator, isStaff } = useAuth();
+  const { currentUser, userProfile, isOperator, isStaff } = useAuth();
 
   const [applications, setApplications] = useState<CertificateApplication[]>([]);
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequest[]>([]);
