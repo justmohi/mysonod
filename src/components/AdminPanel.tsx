@@ -446,7 +446,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
               activeTab === 'certificates'
                 ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50 rounded-t-lg'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
-            }``
+            }`
           >
             <FileText className="w-4 h-4" />
             <span>প্রত্যয়ন আবেদন ও অনুমোদন ({toBengaliNumber(applications.length)})</span>
