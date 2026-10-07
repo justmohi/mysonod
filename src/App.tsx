@@ -77,7 +77,7 @@ function AppContent() {
           <img src="/mysonod-logo.webp" alt="MySonod" className="w-full h-full object-contain" />
         </div>
         <h2 className="text-xl font-bold text-slate-800">MySonod পোর্টাল লোড হচ্ছে...</h2>
-        <p className="text-xs text-slate-500 mt-1">১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার</p>
+        
       </div>
     );
   }
