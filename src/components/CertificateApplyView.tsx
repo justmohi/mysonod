@@ -50,37 +50,6 @@ import { EditCertificateModal } from './EditCertificateModal';
 import { WarishApplicationForm } from './WarishApplicationForm';
 import { TradeLicenseApplicationForm } from './TradeLicenseApplicationForm';
 
-const GUARDIAN_SELECTOR_TYPES = new Set<CertificateType>([
-  'voter_area_transfer',
-  'new_voter',
-  'new_voter_affidavit',
-  'income',
-  'annual_income',
-  'monthly_income',
-  'character',
-  'unemployed',
-  'citizenship',
-  'nationality',
-  'unmarried',
-  'married',
-  'agriculture',
-  'freedom_fighter',
-  'landless',
-  'disabled',
-  'financial_insolvency',
-  'permanent_resident',
-  'not_rohingya',
-  'no_birth_certificate',
-  'nid_correction',
-  'infrastructure_permission',
-  'no_objection',
-  'childless',
-  'community',
-  'indigenous',
-  'general',
-  'miscellaneous'
-]);
-
 interface CertificateApplyViewProps {
   initialType?: CertificateType;
   onNavigate: (view: string, data?: any) => void;
@@ -437,7 +406,9 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   }, [initialType]);
 
   const certMeta = CERTIFICATE_CATALOG[selectedType];
-  const needsGuardianSelector = GUARDIAN_SELECTOR_TYPES.has(selectedType);
+  // Every certificate in this general application form uses an explicit Father/Husband selector.
+  // The family certificate has its own dedicated selector, so avoid rendering two selectors there.
+  const needsGuardianSelector = selectedType !== 'family';
   const currentBalance = userProfile?.balance ?? 0;
   const isBalanceSufficient = currentBalance >= 2.0;
 
