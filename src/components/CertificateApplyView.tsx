@@ -61,7 +61,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   onNavigate,
   onViewCertificate
 }) => {
-  const { currentUser, userProfile, isOperator } = useAuth();
+  const { currentUser, userProfile, isOperator, isAdmin } = useAuth();
   const [selectedType, setSelectedType] = useState<CertificateType>(initialType);
   const [language, setLanguage] = useState<'bn' | 'en'>('bn');
   const [editingExistingApp, setEditingExistingApp] = useState<CertificateApplication | null>(null);
@@ -247,11 +247,18 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
   // Automatically populate applicant details in the current application form
   const applyApplicantData = (data: CertificateApplication) => {
-    if (data.applicantNameBn) setApplicantNameBn(data.applicantNameBn);
-    if (data.applicantNameEn) setApplicantNameEn(data.applicantNameEn);
-    if (data.fatherName) setFatherName(data.fatherName);
-    if (data.motherName) setMotherName(data.motherName);
-    if (data.spouseName) setSpouseName(data.spouseName);
+    // Core identity and contact
+    setApplicantNameBn(data.applicantNameBn || '');
+    setApplicantNameEn(data.applicantNameEn || '');
+    setFatherName(data.fatherName || '');
+    setMotherName(data.motherName || '');
+    setSpouseName(data.spouseName || '');
+    setGender(data.gender || 'male');
+    setMaritalStatus(data.maritalStatus || 'বিবাহিত');
+    setMobile(data.mobile || '');
+    setDob(data.dob || '');
+    if (data.occupation) setOccupation(data.occupation);
+
     if (data.guardianType === 'father' || data.guardianType === 'husband') {
       setGuardianType(data.guardianType);
     } else if (data.spouseName && !data.fatherName) {
@@ -259,29 +266,27 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     } else {
       setGuardianType('father');
     }
-    if (data.familyGuardianType) {
+
+    if (data.familyGuardianType === 'father' || data.familyGuardianType === 'husband') {
       setFamilyGuardianType(data.familyGuardianType);
     } else if (data.spouseName && !data.fatherName) {
       setFamilyGuardianType('husband');
     } else {
       setFamilyGuardianType('father');
     }
-    if (data.gender) setGender(data.gender);
-    if (data.maritalStatus) setMaritalStatus(data.maritalStatus);
-    if (data.dob) setDob(data.dob);
-    if (data.occupation) setOccupation(data.occupation);
 
+    // Present + permanent address
     const pVill = data.presentVillage || data.village || '';
     const pWard = data.presentWard || data.wardNo || '০১';
-    const pPost = data.presentPost || data.postOffice || 'হালসা-৭০৩১';
-    const pUpazila = data.presentUpazila || 'মিরপুর';
-    const pDist = data.presentDistrict || 'কুষ্টিয়া';
+    const pPost = data.presentPost || data.postOffice || '';
+    const pUpazila = data.presentUpazila || '';
+    const pDist = data.presentDistrict || '';
 
     const permVill = data.permanentVillage || data.village || '';
     const permWard = data.permanentWard || data.wardNo || '০১';
-    const permPost = data.permanentPost || data.postOffice || 'হালসা-৭০৩১';
-    const permUpazila = data.permanentUpazila || 'মিরপুর';
-    const permDist = data.permanentDistrict || 'কুষ্টিয়া';
+    const permPost = data.permanentPost || data.postOffice || '';
+    const permUpazila = data.permanentUpazila || '';
+    const permDist = data.permanentDistrict || '';
 
     setPresentVillage(pVill);
     setPresentWard(pWard);
@@ -298,11 +303,126 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setVillage(permVill || pVill);
     setWardNo(permWard || pWard);
     setPostOffice(permPost || pPost);
+    setHoldingNo(data.holdingNo || '');
 
-    const isSame = !data.permanentVillage || (data.presentVillage === data.permanentVillage && data.presentWard === data.permanentWard);
+    const isSame =
+      !data.permanentVillage ||
+      (data.presentVillage === data.permanentVillage &&
+        data.presentWard === data.permanentWard);
     setSameAsPresent(isSame);
 
-    if (data.holdingNo) setHoldingNo(data.holdingNo);
+    // Common certificate/profile data
+    setAnnualIncome(data.annualIncome ?? 0);
+    setIncomeSource(data.incomeSource || '');
+    setBusinessName(data.businessName || '');
+    setBusinessType(data.businessType || '');
+    setBusinessAddress(data.businessAddress || '');
+    setBusinessCapital(data.businessCapital ?? 0);
+    setDeceasedPersonName(data.deceasedPersonName || '');
+    setDeceasedDate(data.deceasedDate || '');
+    setPreviousHusbandName(data.previousHusbandName || '');
+
+    setDeathPersonName(data.deathPersonName || '');
+    setDeathDate(data.deathDate || '');
+    setDeathPlace(data.deathPlace || '');
+
+    setNationality(data.nationality || '');
+    setCommunityName(data.communityName || '');
+    setReligion(data.religion || '');
+
+    setVoterAreaOld(data.voterAreaOld || '');
+    setVoterAreaNew(data.voterAreaNew || '');
+    setVoterTransferReason(data.voterTransferReason || '');
+
+    setCorrectionField(data.correctionField || '');
+    setCorrectionOldValue(data.correctionOldValue || '');
+    setCorrectionNewValue(data.correctionNewValue || '');
+
+    setGuardianName(data.guardianName || '');
+    setGuardianRelation(data.guardianRelation || '');
+    setPermissionPurpose(data.permissionPurpose || '');
+
+    setLandDescription(data.landDescription || '');
+    setLandAmount(data.landAmount || '');
+
+    setAgricultureType(data.agricultureType || '');
+    setAgricultureLand(data.agricultureLand || '');
+
+    setFreedomFighterName(data.freedomFighterName || '');
+    setFreedomFighterRelation(data.freedomFighterRelation || '');
+    setFreedomFighterNumber(data.freedomFighterNumber || '');
+
+    setMonthlyIncome(data.monthlyIncome ?? 0);
+    setDisabilityType(data.disabilityType || '');
+    setDisabilityDescription(data.disabilityDescription || '');
+    setUnemploymentDuration(data.unemploymentDuration || '');
+
+    setConstructionType(data.constructionType || '');
+    setConstructionLocation(data.constructionLocation || '');
+    setConstructionPurpose(data.constructionPurpose || '');
+
+    setPreviousAddress(data.previousAddress || '');
+    setNewAddress(data.newAddress || '');
+
+    setSameNamePerson(data.sameNamePerson || '');
+    setSameNameRelation(data.sameNameRelation || 'নিজের নাম');
+
+    setCorrectionDetails(data.correctionDetails || '');
+    setGeneralPurpose(data.generalPurpose || '');
+    setCertificateDetails(data.certificateDetails || '');
+
+    setMarriageDate(data.marriageDate || '');
+    setSpouseName2(data.spouseName2 || '');
+    setOrphanGuardian(data.orphanGuardian || '');
+    setMiscellaneousDetails(data.miscellaneousDetails || '');
+
+    if (Array.isArray(data.heirs) && data.heirs.length > 0) setHeirs(data.heirs);
+    if (Array.isArray(data.familyMembers) && data.familyMembers.length > 0) setFamilyMembers(data.familyMembers);
+  };
+
+  // Find the latest application matching the entered NID.
+  // Admins may search all applications. Citizens/operators search only their
+  // own application history, matching the current Firestore security model.
+  const findLatestApplicationByNid = async (rawVal: string): Promise<CertificateApplication | null> => {
+    const cleanNid = cleanNidNumber(rawVal);
+    if (!currentUser || cleanNid.length < 10) return null;
+
+    const candidateKeys = Array.from(new Set([
+      cleanNid,
+      toBengaliNumber(cleanNid),
+      rawVal.trim()
+    ])).filter(k => k.length >= 10);
+
+    let matchedDocs: CertificateApplication[] = [];
+
+    if (isAdmin) {
+      const q = query(
+        collection(db, 'applications'),
+        where('nidOrBirthReg', 'in', candidateKeys)
+      );
+      const querySnap = await getDocs(q);
+      matchedDocs = querySnap.docs.map(d => d.data() as CertificateApplication);
+    } else {
+      // Collection-wide reads are blocked by Firestore rules for citizens/operators.
+      // Search their own history instead, then normalize NID/Birth Reg digits.
+      const q = query(
+        collection(db, 'applications'),
+        where('userId', '==', currentUser.uid)
+      );
+      const querySnap = await getDocs(q);
+
+      matchedDocs = querySnap.docs
+        .map(d => d.data() as CertificateApplication)
+        .filter(app => cleanNidNumber(app.nidOrBirthReg) === cleanNid);
+    }
+
+    if (matchedDocs.length === 0) return null;
+
+    matchedDocs.sort((a, b) =>
+      new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+    );
+
+    return matchedDocs[0];
   };
 
   // Listen to NID input changes and trigger a Firestore query to fetch and auto-fill existing applicant data
@@ -312,37 +432,17 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
     // Bangladesh national IDs are 10, 13, or 17 digits; birth registration numbers are 17 digits
     if (cleanNid.length < 10) {
-      if (nidCheckedStatus !== 'idle') {
-        setNidCheckedStatus('idle');
-      }
-      if (existingRecordFound) {
-        setExistingRecordFound(null);
-      }
+      if (nidCheckedStatus !== 'idle') setNidCheckedStatus('idle');
+      if (existingRecordFound) setExistingRecordFound(null);
       return;
     }
 
     const timer = setTimeout(async () => {
       setCheckingNid(true);
       try {
-        const candidateKeys = Array.from(new Set([
-          cleanNid,
-          toBengaliNumber(cleanNid),
-          rawVal
-        ])).filter(k => k.length >= 10);
+        const latestRecord = await findLatestApplicationByNid(rawVal);
 
-        const q = query(
-          collection(db, 'applications'),
-          where('nidOrBirthReg', 'in', candidateKeys)
-        );
-        const querySnap = await getDocs(q);
-
-        if (!querySnap.empty) {
-          // Sort by creation date descending to pick the most recent application
-          const docs = querySnap.docs.map(d => d.data() as CertificateApplication);
-          docs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          const latestRecord = docs[0];
-
-          // Auto-fill existing applicant data immediately into all form inputs
+        if (latestRecord) {
           applyApplicantData(latestRecord);
           setExistingRecordFound(latestRecord);
           setNidCheckedStatus('found');
@@ -352,13 +452,15 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         }
       } catch (err) {
         console.error('NID auto-fetch query error:', err);
+        setExistingRecordFound(null);
+        setNidCheckedStatus('not_found');
       } finally {
         setCheckingNid(false);
       }
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [nidOrBirthReg]);
+  }, [nidOrBirthReg, currentUser?.uid, isAdmin]);
 
   // Query Firebase Firestore applications manually (e.g. on blur or search click)
   const checkNidInDatabase = async (nidToSearch?: string) => {
@@ -369,22 +471,9 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setCheckingNid(true);
     setNidCheckedStatus('idle');
     try {
-      const candidateKeys = Array.from(new Set([
-        cleanNid,
-        toBengaliNumber(cleanNid),
-        rawVal
-      ])).filter(k => k.length >= 10);
+      const existingData = await findLatestApplicationByNid(rawVal);
 
-      const q = query(
-        collection(db, 'applications'),
-        where('nidOrBirthReg', 'in', candidateKeys)
-      );
-      const querySnap = await getDocs(q);
-
-      if (!querySnap.empty) {
-        const docs = querySnap.docs.map(d => d.data() as CertificateApplication);
-        docs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        const existingData = docs[0];
+      if (existingData) {
         applyApplicantData(existingData);
         setExistingRecordFound(existingData);
         setNidCheckedStatus('found');
@@ -394,6 +483,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       }
     } catch (err) {
       console.error('NID check error:', err);
+      setExistingRecordFound(null);
+      setNidCheckedStatus('not_found');
     } finally {
       setCheckingNid(false);
     }
