@@ -189,6 +189,65 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Shared citizen identity/address profile.
+    // Operators can reuse citizen-entered information by NID, but the profile
+    // contains no application tracking, billing, operator, account or union data.
+    match /citizen_profiles/{profileId} {
+      allow read: if isStaff();
+
+      allow create: if isStaff() &&
+        request.resource.data.profileId == profileId &&
+        request.resource.data.keys().hasOnly([
+          'profileId',
+          'applicantNameBn', 'applicantNameEn',
+          'fatherName', 'fatherNameEn',
+          'motherName', 'motherNameEn',
+          'spouseName', 'spouseNameEn',
+          'gender', 'maritalStatus',
+          'mobile', 'dob', 'occupation',
+          'holdingNo',
+          'presentVillage', 'presentVillageEn',
+          'presentWard', 'presentPost', 'presentPostEn',
+          'presentUpazila', 'presentUpazilaEn',
+          'presentDistrict', 'presentDistrictEn',
+          'permanentVillage', 'permanentVillageEn',
+          'permanentWard', 'permanentPost', 'permanentPostEn',
+          'permanentUpazila', 'permanentUpazilaEn',
+          'permanentDistrict', 'permanentDistrictEn',
+          'village', 'villageEn', 'wardNo',
+          'postOffice', 'postOfficeEn',
+          'guardianType', 'familyGuardianType',
+          'updatedAt'
+        ]);
+
+      allow update: if isStaff() &&
+        resource.data.profileId == profileId &&
+        request.resource.data.profileId == profileId &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'applicantNameBn', 'applicantNameEn',
+          'fatherName', 'fatherNameEn',
+          'motherName', 'motherNameEn',
+          'spouseName', 'spouseNameEn',
+          'gender', 'maritalStatus',
+          'mobile', 'dob', 'occupation',
+          'holdingNo',
+          'presentVillage', 'presentVillageEn',
+          'presentWard', 'presentPost', 'presentPostEn',
+          'presentUpazila', 'presentUpazilaEn',
+          'presentDistrict', 'presentDistrictEn',
+          'permanentVillage', 'permanentVillageEn',
+          'permanentWard', 'permanentPost', 'permanentPostEn',
+          'permanentUpazila', 'permanentUpazilaEn',
+          'permanentDistrict', 'permanentDistrictEn',
+          'village', 'villageEn', 'wardNo',
+          'postOffice', 'postOfficeEn',
+          'guardianType', 'familyGuardianType',
+          'updatedAt'
+        ]);
+
+      allow delete: if isAdmin();
+    }
+
     match /balance_requests/{requestId} {
       allow read: if isSignedIn() &&
         (
