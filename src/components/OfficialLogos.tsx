@@ -383,18 +383,7 @@ export const DEFAULT_SHAPLA_WATERMARK_SVG = `data:image/svg+xml;utf8,${encodeURI
  * 4. Fallback to default Shapla Watermark SVG Data URI
  */
 export const getActiveWatermarkSrc = (settingsWatermark?: string): string => {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const saved1 = window.localStorage.getItem('custom_watermark_logo_base64');
-      if (saved1 && saved1.trim()) return saved1;
-      const saved2 = window.localStorage.getItem('savedWatermarkLogo');
-      if (saved2 && saved2.trim()) return saved2;
-    }
-  } catch (err) {
-    // Ignore local storage read errors
-  }
-  if (settingsWatermark && settingsWatermark.trim()) {
-    return settingsWatermark;
-  }
-  return DEFAULT_SHAPLA_WATERMARK_SVG;
+  // Show a watermark only when one has been uploaded in Union Settings.
+  // No built-in or localStorage fallback is used.
+  return settingsWatermark?.trim() || '';
 };
