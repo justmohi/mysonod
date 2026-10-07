@@ -5,12 +5,14 @@ import { db, handleFirestoreError, OperationType } from '../firebase';
 import { 
   doc, 
   runTransaction, 
-  serverTimestamp 
+  serverTimestamp,
+  getDoc
 } from 'firebase/firestore';
-import type { CertificateApplication, HeirItem, Transaction } from '../types';
+import type { CertificateApplication, HeirItem, Transaction, CitizenProfile } from '../types';
 import { toBengaliNumber, generateTrackingId, formatCurrencyBn } from '../utils/bengali';
 import { cleanDataForFirestore } from '../utils/firestore';
 import { clearCurrentApplicationData, setCurrentApplicationData } from '../utils/currentApplication';
+import { buildCitizenProfile, createCitizenProfileId } from '../utils/citizenProfile';
 import { 
   Users, 
   Plus, 
@@ -78,6 +80,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [sharedProfileFound, setSharedProfileFound] = useState<CitizenProfile | null>(null);
 
   // Handle Photo Selection
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,6 +167,50 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
     });
   };
 
+  // Reuse only sanitized citizen identity/address data shared by NID.
+  useEffect(() => {
+    const rawNid = applicantNid.trim();
+    let cancelled = false;
+
+    if (cleanNidNumber(rawNid).length < 10) {
+      setSharedProfileFound(null);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const profileId = await createCitizenProfileId(rawNid);
+        if (!profileId) return;
+
+        const snapshot = await getDoc(doc(db, 'citizen_profiles', profileId));
+        if (!snapshot.exists() || cancelled) return;
+
+        const profile = snapshot.data() as CitizenProfile;
+        setSharedProfileFound(profile);
+
+        setApplicantNameBn(profile.applicantNameBn || '');
+        setGuardianName(
+          profile.guardianType === 'husband'
+            ? profile.spouseName || ''
+            : profile.fatherName || ''
+        );
+        setGuardianType(profile.guardianType === 'husband' ? 'husband' : 'father');
+        setMotherName(profile.motherName || '');
+        setApplicantMobile(profile.mobile || '');
+        setVillage(profile.presentVillage || profile.village || '');
+        setWardNo(profile.presentWard || profile.wardNo || wardNo);
+        setPostOffice(profile.presentPost || profile.postOffice || '');
+      } catch (err) {
+        console.error('Warish shared NID profile lookup error:', err);
+      }
+    }, 350);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [applicantNid]);
+
   // Form Submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,12 +262,16 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
       const nowIso = new Date().toISOString();
       const userDocRef = doc(db, 'users', currentUser.uid);
       const appDocRef = doc(db, 'applications', appId);
+      const citizenProfileId = await createCitizenProfileId(applicantNid);
+      const citizenProfileRef = citizenProfileId
+        ? doc(db, 'citizen_profiles', citizenProfileId)
+        : null;
 
       const finalApplicantNameBn = applicantNameBn.trim() || '-';
       const finalApplicantNameEn = '';
       const finalGuardianName = guardianName.trim() || '-';
       const finalMotherName = motherName.trim() || '-';
-      const finalMobile = '';
+      const finalMobile = applicantMobile.trim();
       const finalApplicantRelation = applicantRelation.trim() || '-';
       const finalDeceasedIdNumber = deceasedIdNumber.trim() || '-';
       const finalDeceasedDate = deceasedDate || '-';
@@ -304,6 +355,19 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
           createdAtServer: serverTimestamp()
         });
         transaction.set(appDocRef, cleanedApp);
+
+        if (citizenProfileRef && citizenProfileId) {
+          const citizenProfile = buildCitizenProfile(
+            rawApplication,
+            citizenProfileId,
+            nowIso
+          );
+          transaction.set(
+            citizenProfileRef,
+            cleanDataForFirestore(citizenProfile),
+            { merge: true }
+          );
+        }
 
         // 3. Insert transaction log
         const trxId = `trx_${Date.now()}`;
@@ -733,6 +797,13 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
           </div>
         </div>
 
+        {sharedProfileFound && (
+          <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-900">
+            এনআইডি অনুযায়ী পূর্বের সনদ থেকে আবেদনকারীর ব্যক্তিগত ও ঠিকানার তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে।
+            অন্য উদ্যোক্তার হিসাব, ট্র্যাকিং বা সনদ-সংক্রান্ত তথ্য দেখানো হচ্ছে না।
+          </div>
+        )}
+
         {/* Section 3: আবেদনকারীর তথ্য (Applicant Information for Contact & Tracking) */}
         <div className="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
@@ -743,6 +814,32 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-800 mb-1">
+                আবেদনকারীর এনআইডি / জন্ম নিবন্ধন
+              </label>
+              <input
+                type="text"
+                value={applicantNid}
+                onChange={(e) => setApplicantNid(e.target.value)}
+                placeholder="১০, ১৩ বা ১৭ ডিজিট"
+                className="w-full bg-[#E0FFFF] border border-cyan-800/40 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-md px-3 py-2 text-sm text-slate-900 font-mono transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-800 mb-1">
+                আবেদনকারীর মোবাইল
+              </label>
+              <input
+                type="text"
+                value={applicantMobile}
+                onChange={(e) => setApplicantMobile(e.target.value)}
+                placeholder="মোবাইল নম্বর"
+                className="w-full bg-[#E0FFFF] border border-cyan-800/40 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-md px-3 py-2 text-sm text-slate-900 transition"
+              />
+            </div>
+
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
                 আবেদনকারীর নাম (বাংলা)
