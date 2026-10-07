@@ -808,7 +808,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                     <strong className="text-slate-950 font-bold">{application.ownerName || application.applicantNameBn || '—'}</strong>
                                   </div>
                                   <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? "Father's / Husband's Name: " : 'পিতা/স্বামীর নাম: '}</span>
+                                    <span className="text-slate-600 font-semibold">{lang === 'en'
+    ? (application.guardianType === 'husband' ? "Husband's Name: " : "Father's Name: ")
+    : (application.guardianType === 'husband' ? 'স্বামীর নাম: ' : 'পিতার নাম: ')}</span>
                                     <strong className="text-slate-900">{application.ownerFatherOrHusbandName || application.fatherName || application.spouseName || '—'}</strong>
                                   </div>
                                   <div>
@@ -1271,7 +1273,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "Father / Husband Name:" : "পিতা / স্বামীর নাম:"}
+                                {lang === 'en'
+                                  ? (application.guardianType === 'husband' ? "Husband Name:" : "Father Name:")
+                                  : (application.guardianType === 'husband' ? "স্বামীর নাম:" : "পিতার নাম:")}
                               </span>
                               <span className="text-slate-900 font-semibold flex-1">
                                 {application.ownerFatherOrHusbandName || application.fatherName || '—'}
