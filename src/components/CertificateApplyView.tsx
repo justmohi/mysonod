@@ -250,14 +250,27 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [checkingNid, setCheckingNid] = useState(false);
   const [nidCheckedStatus, setNidCheckedStatus] = useState<'idle' | 'found' | 'not_found'>('idle');
 
+  // English applications must only auto-fill from the dedicated English fields.
+  // Never copy Bengali identity/address values into English inputs, even for legacy
+  // records where an *_En field was accidentally stored in Bengali text.
+  const englishAutofillValue = (value?: string | null): string => {
+    const normalized = value?.trim() || '';
+    return /[\u0980-\u09FF]/.test(normalized) ? '' : normalized;
+  };
+
   // Automatically populate applicant details in the current application form
-  const applyApplicantData = (data: CertificateApplication) => {
+  const applyApplicantData = (
+    data: CertificateApplication,
+    targetLanguage: 'bn' | 'en' = language
+  ) => {
+    const isEnglishApplication = targetLanguage === 'en';
+
     // Core identity and contact
     setApplicantNameBn(data.applicantNameBn || '');
-    setApplicantNameEn(data.applicantNameEn || '');
-    setFatherName(data.fatherName || '');
-    setMotherName(data.motherName || '');
-    setSpouseName(data.spouseName || '');
+    setApplicantNameEn(englishAutofillValue(data.applicantNameEn));
+    setFatherName(isEnglishApplication ? englishAutofillValue(data.fatherNameEn) : (data.fatherName || ''));
+    setMotherName(isEnglishApplication ? englishAutofillValue(data.motherNameEn) : (data.motherName || ''));
+    setSpouseName(isEnglishApplication ? englishAutofillValue(data.spouseNameEn) : (data.spouseName || ''));
     setGender(data.gender || 'male');
     setMaritalStatus(data.maritalStatus || 'বিবাহিত');
     setMobile(data.mobile || '');
@@ -266,7 +279,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
     if (data.guardianType === 'father' || data.guardianType === 'husband') {
       setGuardianType(data.guardianType);
-    } else if (data.spouseName && !data.fatherName) {
+    } else if (
+      (isEnglishApplication ? englishAutofillValue(data.spouseNameEn) : data.spouseName) &&
+      !(isEnglishApplication ? englishAutofillValue(data.fatherNameEn) : data.fatherName)
+    ) {
       setGuardianType('husband');
     } else {
       setGuardianType('father');
@@ -274,24 +290,43 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
     if (data.familyGuardianType === 'father' || data.familyGuardianType === 'husband') {
       setFamilyGuardianType(data.familyGuardianType);
-    } else if (data.spouseName && !data.fatherName) {
+    } else if (
+      (isEnglishApplication ? englishAutofillValue(data.spouseNameEn) : data.spouseName) &&
+      !(isEnglishApplication ? englishAutofillValue(data.fatherNameEn) : data.fatherName)
+    ) {
       setFamilyGuardianType('husband');
     } else {
       setFamilyGuardianType('father');
     }
 
-    // Present + permanent address
-    const pVill = data.presentVillage || data.village || '';
+    // Present + permanent address. English mode uses *_En only.
+    const pVill = isEnglishApplication
+      ? englishAutofillValue(data.presentVillageEn || data.villageEn)
+      : (data.presentVillage || data.village || '');
     const pWard = data.presentWard || data.wardNo || '০১';
-    const pPost = data.presentPost || data.postOffice || '';
-    const pUpazila = data.presentUpazila || '';
-    const pDist = data.presentDistrict || '';
+    const pPost = isEnglishApplication
+      ? englishAutofillValue(data.presentPostEn || data.postOfficeEn)
+      : (data.presentPost || data.postOffice || '');
+    const pUpazila = isEnglishApplication
+      ? englishAutofillValue(data.presentUpazilaEn)
+      : (data.presentUpazila || '');
+    const pDist = isEnglishApplication
+      ? englishAutofillValue(data.presentDistrictEn)
+      : (data.presentDistrict || '');
 
-    const permVill = data.permanentVillage || data.village || '';
+    const permVill = isEnglishApplication
+      ? englishAutofillValue(data.permanentVillageEn || data.villageEn)
+      : (data.permanentVillage || data.village || '');
     const permWard = data.permanentWard || data.wardNo || '০১';
-    const permPost = data.permanentPost || data.postOffice || '';
-    const permUpazila = data.permanentUpazila || '';
-    const permDist = data.permanentDistrict || '';
+    const permPost = isEnglishApplication
+      ? englishAutofillValue(data.permanentPostEn || data.postOfficeEn)
+      : (data.permanentPost || data.postOffice || '');
+    const permUpazila = isEnglishApplication
+      ? englishAutofillValue(data.permanentUpazilaEn)
+      : (data.permanentUpazila || '');
+    const permDist = isEnglishApplication
+      ? englishAutofillValue(data.permanentDistrictEn)
+      : (data.permanentDistrict || '');
 
     setPresentVillage(pVill);
     setPresentWard(pWard);
@@ -311,9 +346,15 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setHoldingNo(data.holdingNo || '');
 
     const isSame =
-      !data.permanentVillage ||
-      (data.presentVillage === data.permanentVillage &&
-        data.presentWard === data.permanentWard);
+      !data.permanentVillage &&
+      !data.permanentVillageEn ||
+      (
+        isEnglishApplication
+          ? data.presentVillageEn === data.permanentVillageEn &&
+            data.presentWard === data.permanentWard
+          : data.presentVillage === data.permanentVillage &&
+            data.presentWard === data.permanentWard
+      );
     setSameAsPresent(isSame);
 
     // Common certificate/profile data
@@ -491,7 +532,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [nidOrBirthReg, currentUser?.uid, isAdmin, isStaff]);
+  }, [nidOrBirthReg, currentUser?.uid, isAdmin, isStaff, language]);
 
   // Query Firebase Firestore applications manually (e.g. on blur or search click)
   const checkNidInDatabase = async (nidToSearch?: string) => {
