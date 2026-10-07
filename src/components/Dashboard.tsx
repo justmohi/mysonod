@@ -94,7 +94,7 @@ const HOME_CERTIFICATES = Object.values(CERTIFICATE_CATALOG).filter((certificate
 });
 
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertificate }) => {
-  const { currentUser, userProfile, isAdmin, isStaff } = useAuth();
+  const { currentUser, userProfile, isAdmin, isOperator, isStaff } = useAuth();
 
   const [applications, setApplications] = useState<CertificateApplication[]>([]);
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequest[]>([]);
@@ -110,8 +110,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
     if (!currentUser) return;
 
     // Applications query
-    // Primary admin can view all applications; citizens and operators only see their own records.
-    const appQuery = isAdmin
+    // Staff (admin/operator) can review the shared application queue.
+    // Citizens can only see their own applications.
+    const appQuery = isStaff
       ? collection(db, 'applications')
       : query(collection(db, 'applications'), where('userId', '==', currentUser.uid));
 
