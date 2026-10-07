@@ -79,12 +79,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
       `}>
         {/* Sidebar Brand Header */}
         <div className="p-4 border-b border-emerald-800/60 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 font-bold">
-              ইউপি
-            </div>
-            <div>
-              <span className="font-bold text-white text-sm block truncate max-w-[130px]" title={settings.unionName || 'আমবাড়ীয়া ইউপি'}>
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => { onNavigate('dashboard'); onCloseMobile(); }}
+              className="shrink-0 w-10 h-10 rounded-xl bg-white/95 border border-emerald-300/50 flex items-center justify-center shadow-sm overflow-hidden hover:scale-[1.02] transition"
+              title="MySonod"
+              aria-label="MySonod হোম"
+            >
+              <img
+                src="/mysonod-logo.webp"
+                alt="MySonod"
+                className="w-full h-full object-contain"
+              />
+            </button>
+            <div className="min-w-0">
+              <span
+                className="font-bold text-white text-sm block truncate max-w-[130px]"
+                title={settings.unionName || 'আমবাড়ীয়া ইউপি'}
+              >
                 {settings.unionName || 'আমবাড়ীয়া ইউপি'}
               </span>
               <span className="text-[11px] text-emerald-300">MySonod পোর্টাল</span>
