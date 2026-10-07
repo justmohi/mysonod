@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
-import { doc, runTransaction, serverTimestamp } from 'firebase/firestore';
-import type { CertificateApplication, Transaction } from '../types';
+import { doc, runTransaction, serverTimestamp, getDoc } from 'firebase/firestore';
+import type { CertificateApplication, Transaction, CitizenProfile } from '../types';
 import { 
   toBengaliNumber, 
   generateTrackingId, 
   formatCurrencyBn, 
   numberToWordsBn, 
-  numberToWordsEn 
+  numberToWordsEn,
+  cleanNidNumber
 } from '../utils/bengali';
 import { cleanDataForFirestore } from '../utils/firestore';
 import { clearCurrentApplicationData, setCurrentApplicationData, getCurrentApplicationData } from '../utils/currentApplication';
 import { syncPermanentFromPresent, type AddressFields } from '../utils/addressSync';
+import { buildCitizenProfile, createCitizenProfileId } from '../utils/citizenProfile';
 import { 
   Building2, 
   Briefcase, 
@@ -151,6 +153,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
+  const [sharedProfileFound, setSharedProfileFound] = useState<CitizenProfile | null>(null);
 
   // Handle Photo File Upload
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,6 +171,68 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
       reader.readAsDataURL(file);
     }
   };
+
+  // NID-based shared citizen profile lookup. Only identity/address/contact
+  // fields are reused; operator/business/union metadata is never exposed.
+  useEffect(() => {
+    const rawNid = ownerNidOrBirth.trim();
+    let cancelled = false;
+
+    if (cleanNidNumber(rawNid).length < 10) {
+      setSharedProfileFound(null);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const profileId = await createCitizenProfileId(rawNid);
+        if (!profileId) return;
+
+        const snapshot = await getDoc(doc(db, 'citizen_profiles', profileId));
+        if (!snapshot.exists() || cancelled) return;
+
+        const profile = snapshot.data() as CitizenProfile;
+        setSharedProfileFound(profile);
+
+        setOwnerName(profile.applicantNameBn || '');
+        setOwnerGuardianType(profile.guardianType === 'husband' ? 'husband' : 'father');
+        setOwnerFatherOrHusbandName(
+          profile.guardianType === 'husband'
+            ? profile.spouseName || ''
+            : profile.fatherName || ''
+        );
+        setOwnerMotherName(profile.motherName || '');
+        setOwnerMobile(profile.mobile || '');
+
+        setPresentAddress(prev => ({
+          ...prev,
+          holdingNo: profile.holdingNo || prev.holdingNo,
+          village: profile.presentVillage || profile.village || prev.village,
+          wardNo: profile.presentWard || profile.wardNo || prev.wardNo,
+          postOffice: profile.presentPost || profile.postOffice || prev.postOffice,
+          upazila: profile.presentUpazila || prev.upazila,
+          district: profile.presentDistrict || prev.district
+        }));
+
+        setPermanentAddress(prev => ({
+          ...prev,
+          holdingNo: profile.holdingNo || prev.holdingNo,
+          village: profile.permanentVillage || profile.village || prev.village,
+          wardNo: profile.permanentWard || profile.wardNo || prev.wardNo,
+          postOffice: profile.permanentPost || profile.postOffice || prev.postOffice,
+          upazila: profile.permanentUpazila || prev.upazila,
+          district: profile.permanentDistrict || prev.district
+        }));
+      } catch (err) {
+        console.error('Trade license shared NID profile lookup error:', err);
+      }
+    }, 350);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [ownerNidOrBirth]);
 
   // Form Submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -225,6 +290,10 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
       const nowIso = new Date().toISOString();
       const userDocRef = doc(db, 'users', currentUser.uid);
       const appDocRef = doc(db, 'applications', appId);
+      const citizenProfileId = await createCitizenProfileId(ownerNidOrBirth);
+      const citizenProfileRef = citizenProfileId
+        ? doc(db, 'citizen_profiles', citizenProfileId)
+        : null;
 
       const finalPermanent = sameAsPresent ? syncPermanentFromPresent(presentAddress) : permanentAddress;
 
@@ -331,6 +400,19 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
           createdAtServer: serverTimestamp()
         });
         transaction.set(appDocRef, cleanedApp);
+
+        if (citizenProfileRef && citizenProfileId) {
+          const citizenProfile = buildCitizenProfile(
+            newApplication,
+            citizenProfileId,
+            nowIso
+          );
+          transaction.set(
+            citizenProfileRef,
+            cleanDataForFirestore(citizenProfile),
+            { merge: true }
+          );
+        }
 
         // Insert Transaction
         const trxId = `trx_${Date.now()}`;
@@ -675,6 +757,13 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 <option value="অন্যান্য">অন্যান্য (Other)</option>
               </select>
             </div>
+
+            {sharedProfileFound && (
+              <div className="lg:col-span-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-900">
+                এনআইডি অনুযায়ী পূর্বের সনদ থেকে মালিকের ব্যক্তিগত ও ঠিকানার তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে।
+                অন্য উদ্যোক্তার হিসাব, ট্র্যাকিং বা ব্যবসায়িক তথ্য দেখানো হয়নি।
+              </div>
+            )}
 
             {/* এনআইডি/জন্ম নিবন্ধন */}
             <div>
