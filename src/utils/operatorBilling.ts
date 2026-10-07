@@ -74,7 +74,7 @@ export interface OperatorChargeResult {
   charge: number;
   monthKey: string;
   completedCount: number;
-  chargeType: 'free' | 'month1_overage' | 'monthly';
+  chargeType: 'monthly' | 'monthly_overage';
   newBalance: number;
 };
 
@@ -130,8 +130,8 @@ export const applyOperatorCompletionChargeInTransaction = async (
     balanceAfter: newBalance,
     description:
       pricing.chargeType === 'monthly_overage'
-        ? `এই মাসের ${pricing.completedCount}তম সনদ — ১০১তম থেকে ৳১ usage charge`
-        : `এই মাসের ${pricing.completedCount}তম সনদ — প্রথম ১০০টি ৳২ usage charge`,
+        ? `এই মাসের ${pricing.completedCount}তম সনদ — ১০১তম থেকে ৳১ usage charge (${applicationTitle})`
+        : `এই মাসের ${pricing.completedCount}তম সনদ — প্রথম ১০০টি ৳২ usage charge (${applicationTitle})`,
     referenceId: applicationId,
     createdAt: now.toISOString()
   };
