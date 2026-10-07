@@ -87,6 +87,17 @@ export const CertificateVerificationView: React.FC<CertificateVerificationViewPr
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      {/* MySonod public verification branding */}
+      <div className="flex items-center justify-center gap-3 pt-1">
+        <div className="h-12 w-12 rounded-xl bg-white border border-emerald-100 shadow-sm overflow-hidden flex items-center justify-center">
+          <img src="/mysonod-logo.webp" alt="MySonod" className="w-full h-full object-contain" />
+        </div>
+        <div className="text-left">
+          <div className="text-base font-black text-slate-900">MySonod</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-700">Public Verification</div>
+        </div>
+      </div>
+
       {/* Search Header */}
       <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200 text-center">
         <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mx-auto mb-3 shadow-xs">
