@@ -91,6 +91,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [nidOrBirthReg, setNidOrBirthReg] = useState('');
   const [mobile, setMobile] = useState('');
   const [dob, setDob] = useState('');
+  const [occupation, setOccupation] = useState('');
 
   // Present Address Fields
   const [presentVillage, setPresentVillage] = useState('');
@@ -682,6 +683,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           maritalStatus: maritalStatus || 'বিবাহিত',
           nidOrBirthReg,
           mobile: mobile.trim(),
+          occupation: occupation || undefined,
           fee: 2.0,
           status: isOperator ? 'Approved' : 'Pending',
           issuingOfficer: isOperator ? userProfile.name : undefined,
