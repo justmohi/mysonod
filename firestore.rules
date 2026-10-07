@@ -163,10 +163,10 @@ service cloud.firestore {
     // Citizens create and edit their own applications only while Pending.
     // Staff can review and approve/reject applications.
     match /applications/{applicationId} {
-      // Primary admin can read all applications.
-      // Operators can only read applications they submitted themselves.
-      // Citizens can only read applications they submitted themselves.
+      // Admins and union operators can review the shared citizen application queue.
+      // Citizens can only read their own applications.
       allow read: if isAdmin() ||
+        isOperator() ||
         (
           isSignedIn() &&
           resource.data.userId == request.auth.uid
@@ -181,33 +181,30 @@ service cloud.firestore {
       );
 
       // Primary admin can update any application.
-      // An operator can only edit an application they submitted, and cannot change
-      // ownership, status, or other protected/system fields.
+      // Union operators can review/edit any Pending citizen application,
+      // while ownership and protected/system fields remain unchanged.
       // Citizens can only edit their own Pending applications.
       allow update: if isAdmin() ||
         (
           isOperator() &&
-          resource.data.userId == request.auth.uid &&
           request.resource.data.userId == resource.data.userId &&
           resource.data.status == 'Pending' &&
-          request.resource.data.status == 'Approved' &&
-          request.resource.data.completedByUid == request.auth.uid &&
-          applicationReviewFieldsOnly()
-        ) ||
-        (
-          isOperator() &&
-          resource.data.userId == request.auth.uid &&
-          request.resource.data.userId == resource.data.userId &&
-          resource.data.status == 'Pending' &&
-          request.resource.data.status == 'Rejected' &&
-          applicationReviewFieldsOnly()
-        ) ||
-        (
-          isOperator() &&
-          resource.data.userId == request.auth.uid &&
-          request.resource.data.userId == resource.data.userId &&
-          request.resource.data.status == resource.data.status &&
-          applicationEditFieldsOnly()
+          (
+            (
+              request.resource.data.status == 'Approved' &&
+              request.resource.data.completedByUid == request.auth.uid &&
+              applicationReviewFieldsOnly()
+            ) ||
+            (
+              request.resource.data.status == 'Rejected' &&
+              request.resource.data.completedByUid == request.auth.uid &&
+              applicationReviewFieldsOnly()
+            ) ||
+            (
+              request.resource.data.status == resource.data.status &&
+              applicationEditFieldsOnly()
+            )
+          )
         ) ||
         (
           isSignedIn() &&
