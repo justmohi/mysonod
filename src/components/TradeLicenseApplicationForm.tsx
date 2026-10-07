@@ -67,6 +67,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
   // Section 3: মালিকের তথ্য (Owner Information)
   // ----------------------------------------------------
   const [ownerName, setOwnerName] = useState<string>(userProfile?.name || '');
+  const [ownerGuardianType, setOwnerGuardianType] = useState<'father' | 'husband'>('father');
   const [ownerFatherOrHusbandName, setOwnerFatherOrHusbandName] = useState<string>('');
   const [ownerMotherName, setOwnerMotherName] = useState<string>('');
   const [businessNature, setBusinessNature] = useState<string>('একক মালিকানা');
@@ -241,8 +242,10 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
         // Applicant & Owner
         applicantNameBn: ownerName.trim(),
         applicantNameEn: '',
-        fatherName: ownerFatherOrHusbandName.trim(),
+        fatherName: ownerGuardianType === 'father' ? ownerFatherOrHusbandName.trim() : '',
         motherName: ownerMotherName.trim(),
+        spouseName: ownerGuardianType === 'husband' ? ownerFatherOrHusbandName.trim() : undefined,
+        guardianType: ownerGuardianType,
         ownerName: ownerName.trim(),
         ownerFatherOrHusbandName: ownerFatherOrHusbandName.trim(),
         ownerMotherName: ownerMotherName.trim(),
@@ -608,17 +611,33 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               />
             </div>
 
+            {/* পিতা / স্বামী বাছাই */}
+            <div>
+              <label className="block text-xs font-bold text-slate-800 mb-1">
+                অভিভাবক হিসেবে <span className="text-red-500 font-bold">*</span>
+              </label>
+              <select
+                required
+                value={ownerGuardianType}
+                onChange={(e) => setOwnerGuardianType(e.target.value as 'father' | 'husband')}
+                className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 transition"
+              >
+                <option value="father">পিতা</option>
+                <option value="husband">স্বামী</option>
+              </select>
+            </div>
+
             {/* পিতা/স্বামীর নাম */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                পিতা/স্বামীর নাম <span className="text-red-500 font-bold">*</span>
+                {ownerGuardianType === 'father' ? 'পিতার নাম' : 'স্বামীর নাম'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={ownerFatherOrHusbandName}
                 onChange={(e) => setOwnerFatherOrHusbandName(e.target.value)}
-                placeholder="পিতা অথবা স্বামীর নাম *"
+                placeholder={ownerGuardianType === 'father' ? 'পিতার নাম লিখুন *' : 'স্বামীর নাম লিখুন *'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 transition"
               />
             </div>
