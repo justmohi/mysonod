@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpenMobile,
   onCloseMobile
 }) => {
-  const { isAdmin, isStaff, isOperator } = useAuth();
+  const { isStaff, isOperator } = useAuth();
   const [isApplyMenuOpen, setIsApplyMenuOpen] = useState(true);
   const [sidebarSearch, setSidebarSearch] = useState('');
 
@@ -100,7 +100,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>ড্যাশবোর্ড (Dashboard)</span>
           </button>
 
-          {!isOperator && (
+          {/* Certificate Application: citizens only.
+              Staff (Admin/Operator) manage applications from Dashboard / Office Panel. */}
+          {!isStaff && (
             <div>
               {/* Certificate Application Dropdown */}
               <button
