@@ -803,8 +803,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
               </div>
             )}
           </div>
-
-          </form>
         </div>
       )}
 
