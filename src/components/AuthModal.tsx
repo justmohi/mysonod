@@ -25,20 +25,7 @@ interface AuthModalProps {
 type LoginMode = 'citizen' | 'operator' | 'admin';
 
 const MySonodMark: React.FC<{ className?: string }> = ({ className = 'h-10 w-10' }) => (
-  <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-    <defs>
-      <linearGradient id="mysonodMarkGradient" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#34d399" />
-        <stop offset="100%" stopColor="#0d9488" />
-      </linearGradient>
-    </defs>
-    <rect x="3" y="3" width="42" height="42" rx="12" fill="url(#mysonodMarkGradient)" />
-    <path d="M15 14.5h12.5L33 20v13.5a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2Z" fill="white" fillOpacity=".96"/>
-    <path d="M27.5 14.5V20H33" fill="none" stroke="#0f766e" strokeWidth="1.8" strokeLinejoin="round"/>
-    <path d="M18 25.5l3.2 3.2 7-7" fill="none" stroke="#047857" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="35.5" cy="34.5" r="5.5" fill="#064e3b" stroke="white" strokeWidth="1.5"/>
-    <path d="M33 34.5l1.6 1.6 3-3" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
+  <img src="/mysonod-logo.webp" alt="MySonod" className={className + ' object-contain'} />
 );
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
