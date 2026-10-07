@@ -3,8 +3,6 @@ import { useAuth, PRIMARY_ADMIN_EMAIL } from '../context/AuthContext';
 import { db, handleFirestoreError, OperationType, createOperatorAuthAccount } from '../firebase';
 import { 
   collection, 
-  query,
-  where,
   onSnapshot, 
   doc, 
   updateDoc,
@@ -78,10 +76,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
       });
     }
 
-    // Primary admin manages all applications; each operator only manages applications they submitted.
-    const applicationsQuery = isAdmin
-      ? collection(db, 'applications')
-      : query(collection(db, 'applications'), where('userId', '==', currentUser?.uid || ''));
+    // Primary admin and union operators can manage the shared citizen application queue.
+    // Operators must be able to review applications submitted from any citizen account.
+    const applicationsQuery = collection(db, 'applications');
     
     const unsubApps = onSnapshot(applicationsQuery, (snapshot) => {
       const list: CertificateApplication[] = [];
@@ -227,7 +224,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
     }
   };
 
-  // Admin/operator approves certificate application
+  // Admin/operator approves any citizen certificate application
   const handleApproveApplication = async (app: CertificateApplication) => {
     if (!isAdmin && !isOperator) return;
     setProcessingId(app.id);
@@ -289,7 +286,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
     try {
       await updateDoc(doc(db, 'applications', app.id), cleanDataForFirestore({
         status: 'Rejected',
-        rejectionReason: reason || 'আবেদন বাতিল করা হয়েছে'
+        rejectionReason: reason || 'আবেদন বাতিল করা হয়েছে',
+        completedByUid: isOperator ? currentUser?.uid : undefined,
+        completedByEmail: isOperator ? (currentUser?.email || '') : undefined,
+        completedAt: new Date().toISOString(),
+        issuingOfficer: userProfile?.name || (isOperator ? 'ইউনিয়ন উদ্যোক্তা' : 'প্রশাসক')
       }));
     } catch (err: any) {
       handleFirestoreError(err, OperationType.UPDATE, `applications/${app.id}`);
