@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
@@ -9,7 +9,7 @@ import {
   getDoc
 } from 'firebase/firestore';
 import type { CertificateApplication, HeirItem, Transaction, CitizenProfile } from '../types';
-import { toBengaliNumber, generateTrackingId, formatCurrencyBn } from '../utils/bengali';
+import { toBengaliNumber, generateTrackingId, formatCurrencyBn, cleanNidNumber } from '../utils/bengali';
 import { cleanDataForFirestore } from '../utils/firestore';
 import { clearCurrentApplicationData, setCurrentApplicationData } from '../utils/currentApplication';
 import { buildCitizenProfile, createCitizenProfileId } from '../utils/citizenProfile';
