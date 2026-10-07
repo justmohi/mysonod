@@ -100,6 +100,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>ড্যাশবোর্ড (Dashboard)</span>
           </button>
 
+          {!isOperator && (
           {/* Certificate Application Dropdown */}
           <div>
             <button
@@ -179,6 +180,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             )}
           </div>
+
+          )}
 
           {/* All Certificates */}
           <button
