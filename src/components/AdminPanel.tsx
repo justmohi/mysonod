@@ -229,13 +229,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onViewCertificate, onNav
   const handleApproveApplication = async (app: CertificateApplication) => {
     if (!isAdmin && !isOperator) return;
 
-    if (isOperator) {
-      const confirmed = window.confirm(
-        `সনদ অনুমোদন করলে আপনার উদ্যোক্তা billing নিয়ম অনুযায়ী প্রযোজ্য চার্জ কাটা হবে।\n\nসনদ: ${app.certificateTitleBn}\nট্র্যাকিং: ${app.trackingId}\n\nআপনি কি সনদটি অনুমোদন করতে চান?`
-      );
-      if (!confirmed) return;
-    }
-
     setProcessingId(app.id);
 
     try {
