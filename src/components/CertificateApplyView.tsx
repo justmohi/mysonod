@@ -167,6 +167,9 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [deathPersonName, setDeathPersonName] = useState('');
   const [deathDate, setDeathDate] = useState('');
   const [deathPlace, setDeathPlace] = useState('');
+  const [deathCause, setDeathCause] = useState('');
+  const [deathBookNumber, setDeathBookNumber] = useState('');
+  const [deathRegistrationNumber, setDeathRegistrationNumber] = useState('');
 
   const [nationality, setNationality] = useState('বাংলাদেশী');
   const [communityName, setCommunityName] = useState('');
@@ -386,6 +389,9 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setDeathPersonName(data.deathPersonName || '');
     setDeathDate(data.deathDate || '');
     setDeathPlace(data.deathPlace || '');
+    setDeathCause(data.deathCause || '');
+    setDeathBookNumber(data.deathBookNumber || '');
+    setDeathRegistrationNumber(data.deathRegistrationNumber || '');
 
     setNationality(data.nationality || '');
     setCommunityName(data.communityName || '');
@@ -806,6 +812,9 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           appPayload.deathPersonName = deathPersonName;
           appPayload.deathDate = deathDate;
           appPayload.deathPlace = deathPlace;
+          appPayload.deathCause = deathCause;
+          appPayload.deathBookNumber = deathBookNumber;
+          appPayload.deathRegistrationNumber = deathRegistrationNumber;
         } else if (selectedType === 'nationality' || selectedType === 'citizenship') {
           appPayload.nationality = nationality || 'বাংলাদেশী';
           if (religion) appPayload.religion = religion;
@@ -2024,34 +2033,79 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
         {/* Death Certificate */}
         {selectedType === 'death' && (
-          <div className="border-t pt-6">
+          <div className="border-t pt-5">
             <h3 className="text-sm font-bold text-slate-800 mb-4">
               মৃত্যু সংক্রান্ত তথ্য
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input
-                className="w-full px-3 py-2 border rounded-lg"
-                placeholder="মৃত ব্যক্তির নাম"
-                value={deathPersonName}
-                onChange={(e) => setDeathPersonName(e.target.value)}
-                required
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-3 text-sm">
+              <div className="min-w-0">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত ব্যক্তির নাম *</label>
+                <input
+                  type="text"
+                  className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  placeholder="মৃত ব্যক্তির নাম"
+                  value={deathPersonName}
+                  onChange={(e) => setDeathPersonName(e.target.value)}
+                  required
+                />
+              </div>
 
-              <input
-                type="date"
-                className="w-full px-3 py-2 border rounded-lg"
-                value={deathDate}
-                onChange={(e) => setDeathDate(e.target.value)}
-                required
-              />
+              <div className="min-w-0">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত্যুর তারিখ *</label>
+                <input
+                  type="date"
+                  className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  value={deathDate}
+                  onChange={(e) => setDeathDate(e.target.value)}
+                  required
+                />
+              </div>
 
-              <input
-                className="w-full px-3 py-2 border rounded-lg"
-                placeholder="মৃত্যুর স্থান"
-                value={deathPlace}
-                onChange={(e) => setDeathPlace(e.target.value)}
-              />
+              <div className="min-w-0">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত্যুর স্থান</label>
+                <input
+                  type="text"
+                  className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  placeholder="মৃত্যুর স্থান"
+                  value={deathPlace}
+                  onChange={(e) => setDeathPlace(e.target.value)}
+                />
+              </div>
+
+              <div className="min-w-0">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত্যুর কারণ *</label>
+                <input
+                  type="text"
+                  className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  placeholder="মৃত্যুর কারণ"
+                  value={deathCause}
+                  onChange={(e) => setDeathCause(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="min-w-0">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">বই নম্বর</label>
+                <input
+                  type="text"
+                  className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  placeholder="বই নম্বর"
+                  value={deathBookNumber}
+                  onChange={(e) => setDeathBookNumber(e.target.value)}
+                />
+              </div>
+
+              <div className="min-w-0">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">রেজিস্ট্রেশন নম্বর</label>
+                <input
+                  type="text"
+                  className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  placeholder="রেজিস্ট্রেশন নম্বর"
+                  value={deathRegistrationNumber}
+                  onChange={(e) => setDeathRegistrationNumber(e.target.value)}
+                />
+              </div>
             </div>
           </div>
         )}
