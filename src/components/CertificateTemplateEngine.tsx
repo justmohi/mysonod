@@ -1018,7 +1018,6 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       }]
     : [];
   const resolvedSameNameEntries = sameNameEntries.length ? sameNameEntries : legacySameNameEntry;
-  const aliasNameBn = resolvedSameNameEntries[0]?.name || '—';
   const prevDistrictBn = (application as any).prevDistrict || application.permanentDistrict || 'কুষ্টিয়া';
   const prevUpazilaBn = (application as any).prevUpazila || application.permanentUpazila || settings.upazila || '—';
   const prevVillageBn = application.voterAreaOld || (application as any).prevVillage || 'পূর্ববর্তী এলাকা';
