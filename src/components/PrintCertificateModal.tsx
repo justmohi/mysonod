@@ -329,7 +329,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const deceasedIdTypeBn = application.deceasedIdType && application.deceasedIdType !== '-' ? application.deceasedIdType : 'পরিচয়পত্র';
   const deceasedIdNumberBn = application.deceasedIdNumber && application.deceasedIdNumber !== '-'
     ? toBengaliNumber(application.deceasedIdNumber)
-    : (application.nidOrBirthReg && application.nidOrBirthReg !== '-' && application.nidOrBirthReg !== application.trackingId ? toBengaliNumber(application.nidOrBirthReg) : '');
+    : '';
   const deathDateBn = application.deceasedDate && application.deceasedDate !== '-' 
     ? formatBengaliDate(application.deceasedDate) 
     : (application.deathDate ? formatBengaliDate(application.deathDate) : '');
