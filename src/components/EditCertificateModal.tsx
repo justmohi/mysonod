@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import type { CertificateApplication, HeirItem } from '../types';
+import type { CertificateApplication, HeirItem, SameNameEntry } from '../types';
 import { getCertificateCategory } from '../types';
 import { cleanDataForFirestore } from '../utils/firestore';
 import {
@@ -392,6 +392,28 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
   const [familyMembersJson, setFamilyMembersJson] = useState(
     JSON.stringify(application.familyMembers || [], null, 2)
   );
+  const [sameNameEntries, setSameNameEntries] = useState<SameNameEntry[]>(() => {
+    const stored = Array.isArray(application.sameNameEntries)
+      ? application.sameNameEntries.filter(
+          (entry): entry is SameNameEntry =>
+            !!entry &&
+            typeof entry.name === 'string' &&
+            !!entry.name.trim() &&
+            ['নিজের নাম', 'পিতার নাম', 'স্বামীর নাম', 'মাতার নাম'].includes(entry.field)
+        )
+      : [];
+
+    if (stored.length > 0) return stored;
+
+    if (application.sameNamePerson?.trim()) {
+      return [{
+        field: (application.sameNameRelation || 'নিজের নাম') as SameNameEntry['field'],
+        name: application.sameNamePerson.trim()
+      }];
+    }
+
+    return [];
+  });
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -453,6 +475,13 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
       }
 
       const allowedKeys = new Set(getRelevantEditFields(application).map(field => field.key));
+      const normalizedSameNameEntries = sameNameEntries
+        .filter(entry => String(entry?.name || '').trim())
+        .map(entry => ({
+          field: entry.field,
+          name: String(entry.name || '').trim()
+        }));
+
       const updatePayload: Record<string, any> = {
         ...Object.fromEntries(
           Object.entries(formData).filter(([key]) => allowedKeys.has(key))
@@ -469,6 +498,12 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
             : (formData.attachmentUrls || application.attachmentUrls || []),
         updatedAt: new Date().toISOString()
       };
+
+      if (application.certificateType === 'same_name') {
+        updatePayload.sameNameEntries = normalizedSameNameEntries;
+        updatePayload.sameNamePerson = normalizedSameNameEntries[0]?.name || '';
+        updatePayload.sameNameRelation = normalizedSameNameEntries[0]?.field || '';
+      }
 
       // Keep system-controlled fields immutable.
       delete updatePayload.id;
@@ -641,7 +676,15 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
               {onViewCertificate && application.status === 'Approved' && isStaff && (
                 <button
                   type="button"
-                  onClick={() => onViewCertificate({ ...application, ...formData, heirs: application.heirs, familyMembers: application.familyMembers })}
+                  onClick={() => onViewCertificate({
+                    ...application,
+                    ...formData,
+                    sameNameEntries,
+                    sameNamePerson: sameNameEntries[0]?.name || '',
+                    sameNameRelation: sameNameEntries[0]?.field || '',
+                    heirs: application.heirs,
+                    familyMembers: application.familyMembers
+                  })}
                   className="inline-flex items-center gap-1 rounded-lg bg-emerald-700 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-emerald-800"
                 >
                   <Eye className="h-3.5 w-3.5" />
@@ -656,6 +699,88 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
             {renderSection('২. বর্তমান ঠিকানা', <MapPin className="h-4 w-4" />, sections.present)}
             {renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
             {renderSection('৪. সনদ-নির্দিষ্ট সকল তথ্য', <FileText className="h-4 w-4" />, sections.certificate)}
+
+            {application.certificateType === 'same_name' && (
+              <section className="rounded-2xl border border-blue-200 bg-blue-50/50 p-4">
+                <div className="mb-4 flex items-center justify-between gap-3 border-b border-blue-200 pb-3">
+                  <div>
+                    <h4 className="text-sm font-extrabold text-blue-950">৫. একই নামের নামসমূহ</h4>
+                    <p className="mt-1 text-[10px] text-blue-700">
+                      সনদে যে নামগুলো দেখাতে হবে সেগুলো এখানে যোগ, সম্পাদনা বা মুছে দিন।
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-blue-800 ring-1 ring-blue-200">
+                    {sameNameEntries.length}টি নাম
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {sameNameEntries.length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-blue-300 bg-white px-3 py-4 text-center text-[11px] text-slate-500">
+                      এখনো কোনো একই নাম যোগ করা হয়নি।
+                    </div>
+                  ) : (
+                    sameNameEntries.map((entry, index) => (
+                      <div key={index} className="grid gap-2 sm:grid-cols-[180px_1fr_auto] items-center rounded-xl border border-blue-200 bg-white p-2.5">
+                        <select
+                          value={entry.field}
+                          onChange={e =>
+                            setSameNameEntries(prev =>
+                              prev.map((row, rowIndex) =>
+                                rowIndex === index
+                                  ? { ...row, field: e.target.value as SameNameEntry['field'] }
+                                  : row
+                              )
+                            )
+                          }
+                          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+                        >
+                          <option value="নিজের নাম">নিজের নাম</option>
+                          <option value="পিতার নাম">পিতার নাম</option>
+                          <option value="স্বামীর নাম">স্বামীর নাম</option>
+                          <option value="মাতার নাম">মাতার নাম</option>
+                        </select>
+
+                        <input
+                          type="text"
+                          value={entry.name}
+                          onChange={e =>
+                            setSameNameEntries(prev =>
+                              prev.map((row, rowIndex) =>
+                                rowIndex === index ? { ...row, name: e.target.value } : row
+                              )
+                            )
+                          }
+                          placeholder="নাম লিখুন"
+                          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() => setSameNameEntries(prev => prev.filter((_, rowIndex) => rowIndex !== index))}
+                          className="rounded-lg px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50"
+                        >
+                          মুছুন
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSameNameEntries(prev => [
+                      ...prev,
+                      { field: 'নিজের নাম', name: '' }
+                    ])
+                  }
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg bg-blue-700 px-3 py-2 text-xs font-bold text-white hover:bg-blue-800"
+                >
+                  + একই নাম যোগ করুন
+                </button>
+              </section>
+            )}
 
             {application.certificateType === 'inheritance' || application.certificateType === 'succession' ? (
               <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
