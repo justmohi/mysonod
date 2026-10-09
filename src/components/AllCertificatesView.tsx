@@ -246,7 +246,8 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                       {formatBengaliDate(app.approvedAt || app.createdAt)}
                     </td>
                     <td className="py-3 px-3">
-                      <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1 ${
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1 ${
                         app.status === 'Approved'
                           ? 'bg-emerald-100 text-emerald-800'
                           : app.status === 'Pending'
@@ -259,21 +260,22 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                             ? 'অপেক্ষমাণ'
                             : 'বাতিল'}
                       </span>
-                    </td>
-                    <td className="py-3 px-3 text-right">
-                      <div className="flex flex-wrap items-center justify-end gap-1.5">
-                        {(isAdmin || (isOperator && app.status === 'Pending')) && (
+
+                        {(isAdmin || isOperator) && (
                           <button
                             onClick={() => setEditingApp(app)}
                             disabled={processingId === app.id}
-                            className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                            className="cursor-pointer bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold px-2 py-1 rounded-lg text-[10px] transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
                             title="আবেদনের তথ্য সংশোধন করুন"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
+                            <Edit3 className="w-3 h-3 text-emerald-700" />
                             <span>এডিট</span>
                           </button>
                         )}
-
+                      </div>
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <div className="flex flex-wrap items-center justify-end gap-1.5">
                         {app.status === 'Approved' && isStaff && (
                           <button
                             onClick={() => onViewCertificate(app)}
