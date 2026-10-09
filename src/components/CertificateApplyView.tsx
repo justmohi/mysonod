@@ -1534,7 +1534,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                       <select
                         value={guardianType}
                         onChange={(e) => setGuardianType(e.target.value as 'father' | 'husband')}
-                        className="guardian-type-select w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="guardian-type-select w-full max-w-[110px] px-2 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
                       >
                         <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
                         <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
