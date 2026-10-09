@@ -247,8 +247,7 @@ const CERTIFICATE_EDIT_KEYS: Record<string, string[]> = {
     'professionTax', 'tradeTax', 'totalAmount'
   ],
   inheritance: ['deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName'],
-  succession: ['deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName'],
-  family: ['familyGuardianType'],
+  succession: ['deceasedPersonName', 'deceasedDate', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'applicantRelation', 'deceasedPhotoUrl', 'previousHusbandName'],  family: ['familyGuardianType'],
   non_remarriage: ['previousHusbandName'],
   widow: ['previousHusbandName'],
   death: ['deathPersonName', 'deathDate', 'deathPlace'],
@@ -497,8 +496,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
       delete updatePayload.latePrintFeeChargedAt;
 
       const cleaned = cleanDataForFirestore(updatePayload);
-      const appDocRef = doc(db, 'applications', application.id);
-      await updateDoc(appDocRef, cleaned);
+      const appDocRef = doc(db, 'applications', application.id);      await updateDoc(appDocRef, cleaned);
 
       const updatedFullApp: CertificateApplication = {
         ...application,
@@ -617,10 +615,6 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           >
             <X className="h-5 w-5" />
           </button>
-        </div>
-
-        <div className="border-b border-slate-200 bg-amber-50 px-5 py-3 text-xs text-amber-900">
-          আবেদন করার সময় দেওয়া ব্যক্তিগত, ঠিকানা ও সনদ-নির্দিষ্ট তথ্য পরিবর্তন করা যাবে। ট্র্যাকিং নম্বর, আবেদনকারী account, fee, status ও billing metadata নিরাপত্তার জন্য পরিবর্তন করা যাবে না।
         </div>
 
         <form onSubmit={handleSubmit} className="max-h-[calc(94vh-145px)] overflow-y-auto p-4 sm:p-5">
@@ -747,8 +741,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                               <option value="অন্যান্য">অন্যান্য</option>
                             </select>
                           </td>
-                          <td className="border border-slate-300 p-1">
-                            <input
+                          <td className="border border-slate-300 p-1">                            <input
                               type="text"
                               value={item.nidOrBirth || ''}
                               onChange={e =>
