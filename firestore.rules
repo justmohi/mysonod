@@ -75,7 +75,7 @@ service cloud.firestore {
             'unemploymentDuration',
             'constructionType', 'constructionLocation', 'constructionPurpose',
             'previousAddress', 'newAddress',
-            'sameNamePerson', 'sameNameRelation', 'familyGuardianType', 'guardianType',
+            'sameNamePerson', 'sameNameRelation', 'sameNameEntries', 'familyGuardianType', 'guardianType',
             'marriageDate', 'spouseName2',
             'orphanGuardian', 'miscellaneousDetails',
             'organizationName', 'nocPurpose', 'insolvencyReason',
