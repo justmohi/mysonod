@@ -57,7 +57,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   const [attachmentNames, setAttachmentNames] = useState<string[]>([]);
 
   // 2. Applicant Information Fields (আবেদনকারীর তথ্য)
-  const [applicantNameBn, setApplicantNameBn] = useState(userProfile?.name || '');
+  const [applicantNameBn, setApplicantNameBn] = useState('');
   const [applicantNameEn, setApplicantNameEn] = useState('');
   const [applicantRelation, setApplicantRelation] = useState('ছেলে');
   const [applicantMobile, setApplicantMobile] = useState('');
@@ -188,7 +188,6 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         const profile = snapshot.data() as CitizenProfile;
         setSharedProfileFound(profile);
 
-        setApplicantNameBn(profile.applicantNameBn || '');
         setGuardianName(
           profile.guardianType === 'husband'
             ? profile.spouseName || ''
