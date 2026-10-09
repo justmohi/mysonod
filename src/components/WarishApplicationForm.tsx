@@ -246,7 +246,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
     const feeAmount = 2.0;
     const currentBalance = userProfile?.balance ?? 0;
     if (currentBalance < feeAmount) {
-      setErrorMessage(`আপনার ওয়ালেটে অপর্যাপ্ত ব্যালেন্স রয়েছে (বর্তমান ব্যালেন্স: ${formatCurrencyBn(currentBalance)} টাকা)। ওয়ারিশ সনদের সরকারি ফি ${formatCurrencyBn(feeAmount)} টাকা পরিশোধ করতে ব্যালেন্স রিচার্জ করুন।`);
+      setErrorMessage(`আপনার ওয়ালেটে অপর্যাপ্ত ব্যালেন্স রয়েছে (বর্তমান ব্যালেন্স: ${formatCurrencyBn(currentBalance)} টাকা)। উত্তরাধিকারী সনদের সরকারি ফি ${formatCurrencyBn(feeAmount)} টাকা পরিশোধ করতে ব্যালেন্স রিচার্জ করুন।`);
       return;
     }
 
@@ -282,7 +282,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         userName: applicantNameBn.trim() || deceasedName.trim(),
         userEmail: currentUser.email || '',
         certificateType: 'inheritance',
-        certificateTitleBn: 'ওয়ারিশ সনদ',
+        certificateTitleBn: 'উত্তরাধিকারী সনদ',
         certificateTitleEn: 'Heir Certificate',
         language: 'bn',
         applicantNameBn: finalApplicantNameBn,
@@ -377,14 +377,14 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
           type: 'fee_deduction',
           amount: feeAmount,
           balanceAfter: newBalance,
-          description: `ওয়ারিশ সনদ আবেদন ফি কর্তন (ট্র্যাকিং: ${trackingId})`,
+          description: `উত্তরাধিকারী সনদ আবেদন ফি কর্তন (ট্র্যাকিং: ${trackingId})`,
           referenceId: appId,
           createdAt: nowIso
         };
         transaction.set(trxRef, cleanDataForFirestore(trxData));
       });
 
-      setSuccessMessage(`ওয়ারিশ সনদ সফলভাবে দাখিল ও অনুমোদিত হয়েছে! ট্র্যাকিং নম্বর: ${trackingId}`);
+      setSuccessMessage(`উত্তরাধিকারী সনদ সফলভাবে দাখিল ও অনুমোদিত হয়েছে! ট্র্যাকিং নম্বর: ${trackingId}`);
 
       if (onSuccess) {
         onSuccess(unifiedApp);
@@ -409,7 +409,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                ওয়ারিশ সনদ আবেদন ফরম
+                উত্তরাধিকারী সনদ আবেদন ফরম
               </h2>
               <p className="text-xs sm:text-sm text-emerald-300 mt-0.5">
                 {settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার'}
