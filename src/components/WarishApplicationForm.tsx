@@ -291,7 +291,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         motherName: finalMotherName,
         gender: 'male',
         maritalStatus: 'বিবাহিত',
-        nidOrBirthReg: applicantNid.trim() || deceasedIdNumber.trim() || trackingId,
+        nidOrBirthReg: applicantNid.trim(),
         mobile: finalMobile,
         applicantRelation: finalApplicantRelation,
         // Address
