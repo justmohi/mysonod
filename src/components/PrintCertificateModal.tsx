@@ -733,10 +733,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? "Mother's Name: " : 'মাতার নাম: '}</span>
                                     <strong className="text-slate-900">{deceasedMotherNameBn}</strong>
                                   </div>
-                                  <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'ID Type & Number: ' : `${deceasedIdTypeBn} নং: `}</span>
-                                    <strong className="text-slate-900 font-mono">{deceasedIdNumberBn}</strong>
-                                  </div>
+                                  {deceasedIdNumberBn && (
+                                    <div>
+                                      <span className="text-slate-600 font-semibold">{lang === 'en' ? 'ID Type & Number: ' : `${deceasedIdTypeBn} নং: `}</span>
+                                      <strong className="text-slate-900 font-mono">{deceasedIdNumberBn}</strong>
+                                    </div>
+                                  )}
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Ward & Post: ' : 'ওয়ার্ড ও ডাকঘর: '}</span>
                                     <strong className="text-slate-900">ওয়ার্ড: {toBengaliNumber(presentWard || '০১')}, ডাকঘর: {presentPostOffice}</strong>
