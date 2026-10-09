@@ -1502,61 +1502,80 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 </div>
               )}
 
-              {selectedType === 'family' && (
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {language === 'en' ? 'Guardian Type *' : 'অভিভাবক হিসেবে *'}
-                  </label>
-                  <select
-                    value={familyGuardianType}
-                    onChange={(e) => setFamilyGuardianType(e.target.value as 'father' | 'husband')}
-                    className="w-[140px] max-w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  >
-                    <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
-                    <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
-                  </select>
+              {selectedType === 'family' ? (
+                <div className="flex items-end gap-3 min-w-0">
+                  <div className="w-[110px] shrink-0">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      {language === 'en' ? 'Guardian *' : 'অভিভাবক *'}
+                    </label>
+                    <select
+                      value={familyGuardianType}
+                      onChange={(e) => setFamilyGuardianType(e.target.value as 'father' | 'husband')}
+                      className="w-full h-[38px] px-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    >
+                      <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
+                      <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
+                    </select>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      {familyGuardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={familyGuardianType === 'father' ? fatherName : spouseName}
+                      onChange={(e) => familyGuardianType === 'father' ? setFatherName(e.target.value) : setSpouseName(e.target.value)}
+                      placeholder={familyGuardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
+                      className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
-              )}
+              ) : (
+                <>
+                  {needsGuardianSelector && (
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        {language === 'en' ? 'Guardian Type' : 'অভিভাবক হিসেবে পিতা / স্বামী *'}
+                      </label>
+                      <select
+                        value={guardianType}
+                        onChange={(e) => setGuardianType(e.target.value as 'father' | 'husband')}
+                        className="guardian-type-select w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      >
+                        <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
+                        <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
+                      </select>
+                    </div>
+                  )}
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en'
-                    ? (selectedType === 'family'
-                      ? (familyGuardianType === 'father' ? "Father's Name *" : "Husband's Name *")
-                      : (needsGuardianSelector ? (guardianType === 'father' ? "Father's Name *" : "Husband's Name *") : "Father's Name *"))
-                    : (selectedType === 'family'
-                      ? (familyGuardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *')
-                      : (needsGuardianSelector ? (guardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *') : 'পিতার নাম (বাংলায়)'))}
-                </label>
-                {(needsGuardianSelector || selectedType === 'family') ? (
-                  <input
-                    type="text"
-                    required
-                    value={selectedType === 'family'
-                      ? (familyGuardianType === 'father' ? fatherName : spouseName)
-                      : (guardianType === 'father' ? fatherName : spouseName)}
-                    onChange={(e) => {
-                      if (selectedType === 'family') {
-                        if (familyGuardianType === 'father') setFatherName(e.target.value);
-                        else setSpouseName(e.target.value);
-                      } else if (guardianType === 'father') setFatherName(e.target.value);
-                      else setSpouseName(e.target.value);
-                    }}
-                    placeholder={selectedType === 'family'
-                      ? (familyGuardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন')
-                      : (guardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন')}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    value={fatherName}
-                    onChange={(e) => setFatherName(e.target.value)}
-                    placeholder={language === 'en' ? "Father's Name" : 'পিতার নাম (বাংলা)'}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  />
-                )}
-              </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      {language === 'en'
+                        ? (needsGuardianSelector ? (guardianType === 'father' ? "Father's Name *" : "Husband's Name *") : "Father's Name *")
+                        : (needsGuardianSelector ? (guardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *') : 'পিতার নাম (বাংলায়)')}
+                    </label>
+                    {needsGuardianSelector ? (
+                      <input
+                        type="text"
+                        required
+                        value={guardianType === 'father' ? fatherName : spouseName}
+                        onChange={(e) => guardianType === 'father' ? setFatherName(e.target.value) : setSpouseName(e.target.value)}
+                        placeholder={guardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={fatherName}
+                        onChange={(e) => setFatherName(e.target.value)}
+                        placeholder={language === 'en' ? "Father's Name" : 'পিতার নাম (বাংলা)'}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </div>
+                </>
+              )}
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
