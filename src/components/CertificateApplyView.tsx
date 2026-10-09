@@ -21,6 +21,7 @@ import {
   type Transaction,
   type HeirItem,
   type FamilyMemberItem,
+  type SameNameEntry,
   type CitizenProfile
 } from '../types';
 import { toBengaliNumber, formatCurrencyBn, generateTrackingId, formatBengaliDate, cleanNidNumber } from '../utils/bengali';
@@ -208,13 +209,28 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [newAddress, setNewAddress] = useState('');
 
   const [sameNamePerson, setSameNamePerson] = useState('');
-  const [sameNameRelation, setSameNameRelation] = useState('নিজের নাম');
-  const [sameNameField, setSameNameField] = useState('নিজের নাম');
+  const [sameNameRelation, setSameNameRelation] = useState('');
+  const [sameNameField, setSameNameField] = useState('');
+  const [sameNameEntries, setSameNameEntries] = useState<SameNameEntry[]>([]);
   const [sameNameGuardianType, setSameNameGuardianType] = useState<'father' | 'husband'>('father');
   const [sameNameDeceased, setSameNameDeceased] = useState(false);
 
   const handleSameNameAdd = () => {
-    setSameNameRelation(sameNameField);
+    const name = sameNamePerson.trim();
+    const field = sameNameField as SameNameEntry['field'];
+    if (!name || !field) return;
+
+    setSameNameEntries((prev) => [...prev, { field, name }]);
+    setSameNamePerson('');
+  };
+
+  const handleSameNameRemove = (index: number) => {
+    setSameNameEntries((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSameNameClearAll = () => {
+    setSameNameEntries([]);
+    setSameNamePerson('');
   };
 
   const [correctionDetails, setCorrectionDetails] = useState('');
@@ -409,8 +425,30 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setPreviousAddress(data.previousAddress || '');
     setNewAddress(data.newAddress || '');
 
-    setSameNamePerson(data.sameNamePerson || '');
-    setSameNameRelation(data.sameNameRelation || 'নিজের নাম');
+    const storedSameNameEntries = Array.isArray(data.sameNameEntries)
+      ? data.sameNameEntries.filter(
+          (entry): entry is SameNameEntry =>
+            !!entry &&
+            typeof entry.name === 'string' &&
+            !!entry.name.trim() &&
+            ['নিজের নাম', 'পিতার নাম', 'স্বামীর নাম', 'মাতার নাম'].includes(entry.field)
+        )
+      : [];
+
+    if (storedSameNameEntries.length > 0) {
+      setSameNameEntries(storedSameNameEntries);
+    } else if (data.sameNamePerson?.trim()) {
+      setSameNameEntries([{
+        field: (data.sameNameRelation || 'নিজের নাম') as SameNameEntry['field'],
+        name: data.sameNamePerson.trim()
+      }]);
+    } else {
+      setSameNameEntries([]);
+    }
+    // The new entry input must always start blank; it is not the applicant's name.
+    setSameNamePerson('');
+    setSameNameRelation('');
+    setSameNameField('');
 
     setCorrectionDetails(data.correctionDetails || '');
     setGeneralPurpose(data.generalPurpose || '');
@@ -1337,6 +1375,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     onChange={(e) => setSameNameField(e.target.value)}
                     className="same-name-input same-name-select"
                   >
+                    <option value="">একটি ক্ষেত্র বেছে নিন</option>
                     <option value="নিজের নাম">নিজের নাম</option>
                     <option value="পিতার নাম">পিতার নাম</option>
                     <option value="স্বামীর নাম">স্বামীর নাম</option>
@@ -1346,18 +1385,55 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     type="text"
                     value={sameNamePerson}
                     onChange={(e) => setSameNamePerson(e.target.value)}
-                    placeholder="নাম উল্লেখ করুন"
+                    placeholder="নাম লিখুন"
                     className="same-name-input"
                   />
                   <button
                     type="button"
                     onClick={handleSameNameAdd}
-                    className="same-name-add-button"
+                    disabled={!sameNameField || !sameNamePerson.trim()}
+                    className="same-name-add-button disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Plus className="w-4 h-4" />
                     <span>যোগ করুন</span>
                   </button>
                 </div>
+
+                {sameNameEntries.length > 0 && (
+                  <div className="mt-3 border-t border-slate-200 pt-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-bold text-slate-700">যোগ করা তথ্য</span>
+                      <button
+                        type="button"
+                        onClick={handleSameNameClearAll}
+                        className="text-xs font-semibold text-red-500 hover:text-red-700"
+                      >
+                        সব মুছুন
+                      </button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {sameNameEntries.map((entry, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2"
+                        >
+                          <div className="min-w-0 text-sm text-slate-800">
+                            <span className="font-semibold text-slate-500">{entry.field}:</span>{' '}
+                            <span className="font-medium break-words">{entry.name}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleSameNameRemove(index)}
+                            className="shrink-0 rounded-md p-1 text-red-500 hover:bg-red-50 hover:text-red-700"
+                            title="তথ্য মুছে ফেলুন"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <label className="same-name-deceased-toggle">
