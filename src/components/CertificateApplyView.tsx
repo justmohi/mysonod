@@ -1526,38 +1526,42 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 </div>
               ) : (
                 <>
-                  {needsGuardianSelector && (
+                  {needsGuardianSelector ? (
+                    <div className="guardian-name-combined min-w-0 md:col-span-2">
+                      <div className="grid grid-cols-[110px_minmax(0,1fr)] items-end gap-3">
+                        <div className="min-w-0">
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">
+                            {language === 'en' ? 'Guardian Type' : 'পিতা / স্বামী *'}
+                          </label>
+                          <select
+                            value={guardianType}
+                            onChange={(e) => setGuardianType(e.target.value as 'father' | 'husband')}
+                            className="guardian-type-select w-full px-2 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+                          >
+                            <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
+                            <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
+                          </select>
+                        </div>
+                        <div className="min-w-0">
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">
+                            {language === 'en' ? (guardianType === 'father' ? "Father's Name *" : "Husband's Name *") : (guardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *')}
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={guardianType === 'father' ? fatherName : spouseName}
+                            onChange={(e) => guardianType === 'father' ? setFatherName(e.target.value) : setSpouseName(e.target.value)}
+                            placeholder={guardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        {language === 'en' ? 'Guardian Type' : 'অভিভাবক হিসেবে পিতা / স্বামী *'}
+                        {language === 'en' ? "Father's Name *" : 'পিতার নাম (বাংলায়)'}
                       </label>
-                      <select
-                        value={guardianType}
-                        onChange={(e) => setGuardianType(e.target.value as 'father' | 'husband')}
-                        className="guardian-type-select w-full max-w-[110px] px-2 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
-                      >
-                        <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
-                        <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
-                      </select>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      {language === 'en'
-                        ? (needsGuardianSelector ? (guardianType === 'father' ? "Father's Name *" : "Husband's Name *") : "Father's Name *")
-                        : (needsGuardianSelector ? (guardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *') : 'পিতার নাম (বাংলায়)')}
-                    </label>
-                    {needsGuardianSelector ? (
-                      <input
-                        type="text"
-                        required
-                        value={guardianType === 'father' ? fatherName : spouseName}
-                        onChange={(e) => guardianType === 'father' ? setFatherName(e.target.value) : setSpouseName(e.target.value)}
-                        placeholder={guardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                      />
-                    ) : (
                       <input
                         type="text"
                         value={fatherName}
@@ -1565,8 +1569,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                         placeholder={language === 'en' ? "Father's Name" : 'পিতার নাম (বাংলা)'}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                       />
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </>
               )}
 
