@@ -635,6 +635,9 @@ export interface CertificateApplication {
   deathPersonName?: string;
   deathDate?: string;
   deathPlace?: string;
+  deathCause?: string;
+  deathBookNumber?: string;
+  deathRegistrationNumber?: string;
 
   nationality?: string;
   communityName?: string;
