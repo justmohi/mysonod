@@ -12,17 +12,35 @@ service firebase.storage {
         request.auth.token.email == 'mohistudio95@gmail.com';
     }
 
-    match /union_settings/{operatorId}/{fileName} {
-      // Union branding is safe to serve from Firebase Storage once its URL is used
-      // by the certificate portal. Upload/delete is restricted to the same UID or
-      // the primary admin. All uploads are images and <= 5 MB.
-      allow read: if signedIn() &&
-        (request.auth.uid == operatorId || isPrimaryAdmin());
+    function canManageUnionBranding(operatorId) {
+      return signedIn() &&
+        (
+          isPrimaryAdmin() ||
+          request.auth.uid == operatorId
+        );
+    }
 
-      allow write: if signedIn() &&
-        (request.auth.uid == operatorId || isPrimaryAdmin()) &&
+    function isAllowedBrandingFile(fileName) {
+      return fileName == 'govtLogoUrl' ||
+        fileName == 'unionLogoUrl' ||
+        fileName == 'watermarkLogoUrl';
+    }
+
+    match /union_settings/{operatorId}/{fileName} {
+      // These branding assets are intentionally publicly readable because
+      // certificates and public QR verification pages can display them.
+      allow read: if isAllowedBrandingFile(fileName);
+
+      // Only the same operator or the primary admin can create/replace branding.
+      // Limit uploads to the three expected branding files, images, and 5 MB.
+      allow create, update: if canManageUnionBranding(operatorId) &&
+        isAllowedBrandingFile(fileName) &&
         request.resource.size <= 5 * 1024 * 1024 &&
         request.resource.contentType.matches('image/.*');
+
+      // Deletes are handled separately because delete requests have no
+      // request.resource object.
+      allow delete: if canManageUnionBranding(operatorId);
     }
 
     match /{allPaths=**} {
