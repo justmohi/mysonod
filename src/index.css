@@ -1160,3 +1160,181 @@ select option {
     will-change: auto !important;
   }
 }
+
+
+/* MySonod modern interface system v2 — screen UI only. Keep official print layouts untouched. */
+@media screen {
+  :root {
+    --ms-modern-ink: #122c3a;
+    --ms-modern-muted: #647b86;
+    --ms-modern-line: #dce8e9;
+    --ms-modern-teal: #149e98;
+    --ms-modern-green: #087653;
+    --ms-modern-soft: #f5f9f9;
+  }
+
+  body {
+    font-family: Inter, "Noto Sans Bengali", "Hind Siliguri", system-ui, sans-serif;
+    color: var(--ms-modern-ink);
+  }
+
+  #app-shell {
+    background:
+      radial-gradient(ellipse at 82% 0%, rgba(20, 158, 152, .055), transparent 30%),
+      #f4f8f9 !important;
+  }
+
+  #app-shell > header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255,255,255,.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 5px 24px rgba(13, 45, 54, .055) !important;
+  }
+
+  #app-shell > header > div:first-child {
+    background: linear-gradient(100deg, #07583f, #0b6b51 58%, #087d75) !important;
+  }
+
+  #app-shell aside {
+    background: linear-gradient(180deg, #073f31 0%, #06382f 58%, #082f2b 100%) !important;
+    border-right: 1px solid rgba(167, 243, 208, .12);
+  }
+
+  #app-shell aside button {
+    border-radius: 10px;
+    margin-block: 2px;
+  }
+
+  #app-shell aside button:hover {
+    transform: translateX(2px);
+  }
+
+  #app-shell aside button[class*="bg-emerald-600/50"],
+  #app-shell aside button[class*="bg-emerald-800/70"] {
+    box-shadow: inset 3px 0 0 #5eead4, 0 5px 14px rgba(0, 0, 0, .09);
+  }
+
+  #app-shell main {
+    background: transparent;
+    scrollbar-gutter: stable;
+  }
+
+  #app-shell main > div {
+    max-width: 1600px;
+    margin-inline: auto;
+  }
+
+  #app-shell main h1,
+  #app-shell main h2,
+  #app-shell main h3 {
+    letter-spacing: -.015em;
+  }
+
+  #app-shell main .bg-white:not(.print-container):not(.certificate-page):not(.application-page) {
+    border-color: var(--ms-modern-line);
+  }
+
+  #app-shell main .rounded-2xl.bg-white,
+  #app-shell main .rounded-xl.bg-white,
+  #app-shell main .rounded-lg.bg-white {
+    box-shadow: 0 3px 12px rgba(17, 55, 64, .035);
+  }
+
+  #app-shell main .rounded-2xl.bg-white:hover,
+  #app-shell main .rounded-xl.bg-white:hover,
+  #app-shell main .rounded-lg.bg-white:hover {
+    box-shadow: 0 10px 28px rgba(17, 55, 64, .075);
+    border-color: #c9dedd;
+  }
+
+  #app-shell main button:not(:disabled),
+  #app-shell header button:not(:disabled),
+  #app-shell aside button:not(:disabled) {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #app-shell main button:active:not(:disabled),
+  #app-shell header button:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  #app-shell main input:not([type="checkbox"]):not([type="radio"]),
+  #app-shell main select,
+  #app-shell main textarea {
+    border-radius: 9px;
+  }
+
+  #app-shell main input::placeholder,
+  #app-shell main textarea::placeholder {
+    color: #91a5ad;
+    opacity: 1;
+  }
+
+  #app-shell main table thead th {
+    background: #f2f7f7;
+    color: #47616c;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  #app-shell main table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+  }
+
+  #app-shell main table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+  }
+
+  #app-shell main .application-titlebar {
+    background: linear-gradient(110deg, #139f9a, #118c85 58%, #087b72) !important;
+  }
+
+  /* Clearer focus ring and less visually noisy native controls. */
+  #app-shell input:focus-visible,
+  #app-shell select:focus-visible,
+  #app-shell textarea:focus-visible {
+    outline: 0;
+    border-color: #0d9488 !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, .14) !important;
+  }
+
+  #app-shell :is(button, a, input, select, textarea):disabled {
+    cursor: not-allowed;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  #app-shell main {
+    padding: 28px 32px !important;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #app-shell main {
+    padding: 12px !important;
+  }
+
+  #app-shell main .grid {
+    min-width: 0;
+  }
+
+  #app-shell main table {
+    font-size: 12px;
+  }
+
+  #app-shell main button {
+    touch-action: manipulation;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app-shell aside button:hover,
+  #app-shell main button:active:not(:disabled),
+  #app-shell header button:active:not(:disabled) {
+    transform: none !important;
+  }
+}
