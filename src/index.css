@@ -262,6 +262,7 @@ select option {
 }
 
 .guardian-type-select {
+  width: 100% !important;
   height: 38px !important;
   min-height: 38px !important;
   max-height: 38px !important;
