@@ -121,20 +121,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md">
       <div className="relative w-full max-w-5xl max-h-[95vh] overflow-hidden rounded-[28px] border border-white/20 bg-white shadow-[0_30px_100px_rgba(2,6,23,0.35)]">
         {/* Background glow */}
-        <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-violet-300/20 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl ms-auth-glow ms-auth-glow-one" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-violet-300/20 blur-3xl ms-auth-glow ms-auth-glow-two" />
 
         <div className="relative grid min-h-[560px] lg:grid-cols-[0.92fr_1.08fr]">
           {/* Premium brand panel */}
           <div className="relative hidden overflow-hidden bg-gradient-to-br from-[#063b2e] via-[#006a4e] to-[#0b7a59] p-8 text-white lg:flex lg:flex-col">
             <div className="absolute inset-0 opacity-20">
-              <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full border-[24px] border-white/20" />
-              <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full border-[28px] border-white/10" />
-              <div className="absolute top-1/2 left-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rotate-45 border border-white/10" />
+              <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full border-[24px] border-white/20 ms-auth-orbit ms-auth-orbit-one" />
+              <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full border-[28px] border-white/10 ms-auth-orbit ms-auth-orbit-two" />
+              <div className="absolute top-1/2 left-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rotate-45 border border-white/10 ms-auth-orbit ms-auth-orbit-three" />
             </div>
 
             <div className="relative flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/12 ring-1 ring-white/20 backdrop-blur-sm">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/12 ring-1 ring-white/20 backdrop-blur-sm ms-auth-logo-float">
                 <MySonodMark className="h-10 w-10" />
               </div>
               <div>
@@ -145,13 +145,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen }) => {
               </div>
             </div>
 
-            <div className="relative mt-auto mb-auto max-w-md py-10">
+            <div className="relative mt-auto mb-auto max-w-md py-10 ms-auth-content-reveal">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-50 backdrop-blur-sm">
                 <Sparkles className="h-3.5 w-3.5" />
                 ডিজিটাল ইউনিয়ন সেবা
               </div>
 
-              <h1 className="text-4xl font-black leading-tight tracking-tight">
+              <h1 className="text-4xl font-black leading-tight tracking-tight ms-auth-headline">
                 দ্রুত, নিরাপদ ও
                 <span className="block text-emerald-200">আধুনিক সনদ ব্যবস্থাপনা</span>
               </h1>
