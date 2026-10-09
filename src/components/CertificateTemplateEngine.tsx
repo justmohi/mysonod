@@ -348,24 +348,46 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
 
   // 5. Same Name
   if (type === 'same_name') {
+    const sameNameEntries = Array.isArray(application.sameNameEntries) && application.sameNameEntries.length > 0
+      ? application.sameNameEntries
+      : (application.sameNamePerson
+          ? [{
+              field: application.sameNameRelation || 'নিজের নাম',
+              name: application.sameNamePerson
+            }]
+          : []);
+
     return (
       <div className="border border-slate-300 rounded-lg overflow-hidden bg-white text-xs">
         <div className="bg-blue-100/90 px-3 py-1.5 font-bold text-blue-950 border-b border-slate-300 flex items-center gap-1.5">
           <Copy className="w-3.5 h-3.5 text-blue-700" />
-          <span>{isEn ? '3. Same Name Particulars & Alias Proof' : '৩. একই নামের বিবরণ ও নথিপত্র তথ্য:'}</span>
+          <span>{isEn ? '3. Same Name Particulars & Reference Names' : '৩. একই নামের বিবরণ ও রেফারেন্স নামসমূহ:'}</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 text-[11.5px] bg-slate-50/50">
           <div>
-            <span className="text-slate-600 block">{isEn ? 'Original/Primary Name:' : 'নথিতে মূল নাম:'}</span>
-            <strong className="text-slate-950 font-bold">{application.applicantNameBn}</strong>
+            <span className="text-slate-600 block">{isEn ? 'Original/Primary Name:' : 'প্রধান/আবেদনকারীর নাম:'}</span>
+            <strong className="text-slate-950 font-bold">{application.applicantNameBn || '—'}</strong>
           </div>
+
           <div>
-            <span className="text-slate-600 block">{isEn ? 'Alias / Alternate Name:' : 'অন্যান্য নথিতে অপর নাম (ওরফে):'}</span>
-            <strong className="text-blue-900 font-bold">{application.sameNamePerson || (application as any).sameNameRelation || '—'}</strong>
+            <span className="text-slate-600 block mb-1">{isEn ? 'Reference Name(s):' : 'নথিতে ব্যবহৃত নামসমূহ:'}</span>
+            {sameNameEntries.length > 0 ? (
+              <div className="space-y-1">
+                {sameNameEntries.map((entry, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <span className="font-semibold text-blue-900 shrink-0">{entry.field}:</span>
+                    <strong className="text-blue-900 font-bold break-words">{entry.name}</strong>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <strong className="text-slate-500">—</strong>
+            )}
           </div>
+
           <div className="sm:col-span-2 text-slate-700">
             <span className="text-slate-600 block mb-0.5">{isEn ? 'Affirmation:' : 'স্বীকৃতি:'}</span>
-            <span>উভয় নাম একই ব্যক্তিকে নির্দেশ করে বলিয়া আবেদনকারী হলফপূর্বক ঘোষণা করিয়াছেন।</span>
+            <span>উপরোক্ত নাম/পরিচয়সমূহ একই ব্যক্তিকে নির্দেশ করে বলিয়া আবেদনকারী হলফপূর্বক ঘোষণা করিয়াছেন।</span>
           </div>
         </div>
       </div>
@@ -986,7 +1008,17 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const incomeTypeBn = type === 'monthly_income' ? 'মাসিক' : 'বাৎসরিক';
   const incomeAmount = type === 'monthly_income' ? (application.monthlyIncome || 0) : (application.annualIncome || 0);
   const incomeAmountBn = formatCurrencyBn(incomeAmount);
-  const aliasNameBn = application.sameNamePerson || (application as any).sameNameRelation || '—';
+  const sameNameEntries = Array.isArray(application.sameNameEntries)
+    ? application.sameNameEntries.filter((entry: any) => entry && typeof entry.name === 'string' && entry.name.trim())
+    : [];
+  const legacySameNameEntry = !sameNameEntries.length && application.sameNamePerson
+    ? [{
+        field: application.sameNameRelation || 'নিজের নাম',
+        name: application.sameNamePerson
+      }]
+    : [];
+  const resolvedSameNameEntries = sameNameEntries.length ? sameNameEntries : legacySameNameEntry;
+  const aliasNameBn = resolvedSameNameEntries[0]?.name || '—';
   const prevDistrictBn = (application as any).prevDistrict || application.permanentDistrict || 'কুষ্টিয়া';
   const prevUpazilaBn = (application as any).prevUpazila || application.permanentUpazila || settings.upazila || '—';
   const prevVillageBn = application.voterAreaOld || (application as any).prevVillage || 'পূর্ববর্তী এলাকা';
@@ -1248,7 +1280,12 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       {/* 3. Same Name Certificate (একই নামের প্রত্যয়ন) */}
       {type === 'same_name' && (
         <p className={pClass}>
-          এই মর্মে নাম প্রত্যয়ন প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। আমি তাহাকে ব্যক্তিগত ভাবে চিনি ও অবগত রহিয়াছি। সে সমাজ বা রাষ্ট্রের বিরোধী কোন প্রকার কাজের সহিত জড়িত নাই। আমার জানামতে তাহার নাম: <strong>{nameBn}</strong> ওরফে <strong>{aliasNameBn}</strong> তিনি একই ব্যক্তি এবং উভয় নাম দ্বারা একই ব্যক্তিকে বুঝানো হইয়া থাকে। <span className="certificate-closing-sentence"><span className="certificate-closing-sentence">আমি তাহার জীবনের সার্বিক উন্নতি ও মঙ্গল কামনা করি।</span></span>
+          এই মর্মে নাম প্রত্যয়ন প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। আমি তাহাকে ব্যক্তিগত ভাবে চিনি ও অবগত রহিয়াছি। সে সমাজ বা রাষ্ট্রের বিরোধী কোন প্রকার কাজের সহিত জড়িত নাই। আমার জানামতে নথিপত্রে তাহার পরিচয় নিম্নরূপ নামে উল্লেখ আছে: {resolvedSameNameEntries.length > 0 ? resolvedSameNameEntries.map((entry: any, index: number) => (
+            <React.Fragment key={index}>
+              {index > 0 ? ' এবং ' : ''}
+              <strong>{entry.field}:</strong> <strong>{entry.name}</strong>
+            </React.Fragment>
+          )) : <strong>—</strong>}। উপরোক্ত নাম/পরিচয়সমূহ দ্বারা একই ব্যক্তিকে বুঝানো হইয়া থাকে। <span className="certificate-closing-sentence">আমি তাহার জীবনের সার্বিক মঙ্গল কামনা করি।</span>
         </p>
       )}
 
