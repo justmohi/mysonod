@@ -831,10 +831,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
     : (application.guardianType === 'husband' ? 'স্বামীর নাম: ' : 'পিতার নাম: ')}</span>
                                     <strong className="text-slate-900">{application.ownerFatherOrHusbandName || application.fatherName || application.spouseName || '—'}</strong>
                                   </div>
-                                  <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'এনআইডি / জন্মনিবন্ধন: '}</span>
-                                    <strong className="font-mono text-slate-900">{toBengaliNumber(application.ownerNidOrBirth || application.nidOrBirthReg || '')}</strong>
-                                  </div>
+                                  {(application.ownerNidOrBirth || application.nidOrBirthReg) && (
+                                    <div>
+                                      <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'এনআইডি / জন্মনিবন্ধন: '}</span>
+                                      <strong className="font-mono text-slate-900">{toBengaliNumber(application.ownerNidOrBirth || application.nidOrBirthReg || '')}</strong>
+                                    </div>
+                                  )}
                                   <div className="sm:col-span-2">
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Residential Address: ' : 'স্থায়ী ঠিকানা: '}</span>
                                     <span className="text-slate-900">গ্রাম: <b>{permanentVillage || presentVillage || '—'}</b>, ওয়ার্ড: <b>{toBengaliNumber(permanentWard || presentWard || '০১')}</b>, উপজেলা: <b>{presentUpazila}</b>, জেলা: <b>{presentDistrict}</b></span>
@@ -862,10 +864,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? "Father's Name: " : 'পিতার নাম: '}</span>
                                     <strong className="text-slate-900">{application.fatherName || '—'}</strong>
                                   </div>
-                                  <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'জাতীয় পরিচয়পত্র: '}</span>
-                                    <strong className="font-mono text-slate-900">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
-                                  </div>
+                                  {application.nidOrBirthReg && (
+                                    <div>
+                                      <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'জাতীয় পরিচয়পত্র: '}</span>
+                                      <strong className="font-mono text-slate-900">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
+                                    </div>
+                                  )}
                                   <div className="sm:col-span-2">
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Address: ' : 'ঠিকানা: '}</span>
                                     <span className="text-slate-900">গ্রাম: <b>{presentVillage || '—'}</b>, ওয়ার্ড: <b>{toBengaliNumber(presentWard || '০১')}</b>, ডাকঘর: <b>{presentPostOffice}</b>, উপজেলা: <b>{presentUpazila}</b>, জেলা: <b>{presentDistrict}</b></span>
@@ -910,10 +914,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? "Spouse's Name: " : 'স্বামী / স্ত্রীর নাম: '}</span>
                                   <strong className="text-slate-900">{application.spouseName || 'প্রযোজ্য নয়'}</strong>
                                 </div>
-                                <div>
-                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg No: ' : 'জাতীয় পরিচয়পত্র / জন্মনিবন্ধন: '}</span>
-                                  <strong className="font-mono text-slate-950 font-bold">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
-                                </div>
+                                {application.nidOrBirthReg && (
+                                  <div>
+                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg No: ' : 'জাতীয় পরিচয়পত্র / জন্মনিবন্ধন: '}</span>
+                                    <strong className="font-mono text-slate-950 font-bold">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
+                                  </div>
+                                )}
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}</span>
                                   <strong className="text-slate-900">{application.dob ? formatBengaliDate(application.dob) : '—'}</strong>
