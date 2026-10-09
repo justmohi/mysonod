@@ -461,6 +461,11 @@ export interface FamilyMemberItem {
   age: string;
 }
 
+export interface SameNameEntry {
+  field: 'নিজের নাম' | 'পিতার নাম' | 'স্বামীর নাম' | 'মাতার নাম';
+  name: string;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -673,6 +678,7 @@ export interface CertificateApplication {
 
   sameNamePerson?: string;
   sameNameRelation?: string;
+  sameNameEntries?: SameNameEntry[];
   familyGuardianType?: 'father' | 'husband';
   guardianType?: 'father' | 'husband';
 
