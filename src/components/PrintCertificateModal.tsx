@@ -333,7 +333,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const deathDateBn = application.deceasedDate && application.deceasedDate !== '-' 
     ? formatBengaliDate(application.deceasedDate) 
     : (application.deathDate ? formatBengaliDate(application.deathDate) : '');
-  const deathReasonBn = application.deathPlace || (application as any).deathReason || 'স্বাভাবিক/বার্ধক্য';
+  const deathReasonBn = (application as any).deathCause || (application as any).deathReason || '—';
 
   const prevDistrictBn = (application as any).prevDistrict || application.permanentDistrict || 'কুষ্টিয়া';
   const prevUpazilaBn = (application as any).prevUpazila || application.permanentUpazila || 'মিরপুর';
@@ -709,6 +709,22 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Date of Death: ' : 'মৃত্যুর তারিখ: '}</span>
                                     <strong className="text-slate-900">{deathDateBn || '—'}</strong>
                                   </div>
+                                  <div>
+                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Cause of Death: ' : 'মৃত্যুর কারণ: '}</span>
+                                    <strong className="text-slate-900">{deathReasonBn}</strong>
+                                  </div>
+                                  {(application as any).deathBookNumber && (
+                                    <div>
+                                      <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Book Number: ' : 'বই নম্বর: '}</span>
+                                      <strong className="text-slate-900">{(application as any).deathBookNumber}</strong>
+                                    </div>
+                                  )}
+                                  {(application as any).deathRegistrationNumber && (
+                                    <div>
+                                      <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Registration Number: ' : 'রেজিস্ট্রেশন নম্বর: '}</span>
+                                      <strong className="text-slate-900">{(application as any).deathRegistrationNumber}</strong>
+                                    </div>
+                                  )}
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? "Father's / Husband's Name: " : (deceasedGuardianTypeBn === 'স্বামী' ? 'স্বামীর নাম: ' : 'পিতার নাম: ')}</span>
                                     <strong className="text-slate-900">{deceasedGuardianNameBn}</strong>
