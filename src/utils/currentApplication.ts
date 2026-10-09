@@ -49,7 +49,7 @@ export const setCurrentApplicationData = (app: CertificateApplication): Certific
     const fatherName = app.fatherName?.trim() ? app.fatherName.trim() : '-';
     const motherName = app.motherName?.trim() ? app.motherName.trim() : '-';
     const mobile = app.mobile?.trim() ? app.mobile.trim() : '-';
-    const nidOrBirthReg = app.nidOrBirthReg?.trim() ? app.nidOrBirthReg.trim() : app.trackingId;
+    const nidOrBirthReg = app.nidOrBirthReg?.trim() || '';
     const applicantRelation = app.applicantRelation?.trim() ? app.applicantRelation.trim() : '-';
 
     // Address Sanitization
