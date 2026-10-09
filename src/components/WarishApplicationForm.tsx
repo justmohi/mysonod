@@ -399,37 +399,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   };
 
   return (
-    <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden font-bangla">
-      {/* Form Header */}
-      <div className="bg-[#09432f] text-white p-5 sm:p-6 border-b border-emerald-800">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-300">
-              <Users className="w-6 h-6" />
-            </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                উত্তরাধিকারী সনদ আবেদন ফরম
-              </h2>
-              <p className="text-xs sm:text-sm text-emerald-300 mt-0.5">
-                {settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ ডিজিটাল সেন্টার'}
-              </p>
-            </div>
-          </div>
-
-          {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="cursor-pointer bg-emerald-800/80 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-emerald-600 transition"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>পূর্বের পাতায় ফিরুন</span>
-            </button>
-          )}
-        </div>
-      </div>
-
+    <div className="w-full font-bangla">
       {/* Main Form Body */}
       <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8 space-y-6">
         
