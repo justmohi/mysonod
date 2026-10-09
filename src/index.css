@@ -1122,3 +1122,41 @@ select option {
     transition: none !important;
   }
 }
+
+
+/* MySonod sign-in motion design: restrained, smooth and accessibility-aware. */
+@keyframes ms-auth-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -13px, 0); }
+}
+@keyframes ms-auth-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(12px, -10px, 0) scale(1.045); }
+}
+@keyframes ms-auth-orbit-spin {
+  from { rotate: 0deg; }
+  to { rotate: 360deg; }
+}
+@keyframes ms-auth-reveal {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes ms-auth-headline-glow {
+  0%, 100% { text-shadow: 0 0 0 rgba(167, 243, 208, 0); }
+  50% { text-shadow: 0 5px 24px rgba(167, 243, 208, .18); }
+}
+.ms-auth-glow { will-change: transform; animation: ms-auth-drift 11s ease-in-out infinite; }
+.ms-auth-glow-two { animation-delay: -5s; animation-duration: 14s; }
+.ms-auth-orbit { transform-origin: center; will-change: rotate; }
+.ms-auth-orbit-one { animation: ms-auth-orbit-spin 42s linear infinite; }
+.ms-auth-orbit-two { animation: ms-auth-orbit-spin 55s linear infinite reverse; }
+.ms-auth-orbit-three { animation: ms-auth-float 8s ease-in-out infinite; }
+.ms-auth-logo-float { animation: ms-auth-float 5s ease-in-out infinite; }
+.ms-auth-content-reveal { animation: ms-auth-reveal .8s cubic-bezier(.2,.75,.25,1) both; }
+.ms-auth-headline { animation: ms-auth-headline-glow 5s ease-in-out 1s infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .ms-auth-glow, .ms-auth-orbit, .ms-auth-logo-float, .ms-auth-content-reveal, .ms-auth-headline {
+    animation: none !important;
+    will-change: auto !important;
+  }
+}
