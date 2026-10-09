@@ -1003,7 +1003,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const deathDateBn = application.deceasedDate && application.deceasedDate !== '-' 
     ? formatBengaliDate(application.deceasedDate) 
     : (application.deathDate ? formatBengaliDate(application.deathDate) : '');
-  const deathReasonBn = application.deathPlace || (application as any).deathReason || 'স্বাভাবিক/বার্ধক্য';
+  const deathReasonBn = (application as any).deathCause || (application as any).deathReason || '—';
 
   const incomeTypeBn = type === 'monthly_income' ? 'মাসিক' : 'বাৎসরিক';
   const incomeAmount = type === 'monthly_income' ? (application.monthlyIncome || 0) : (application.annualIncome || 0);
