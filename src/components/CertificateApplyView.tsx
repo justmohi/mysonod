@@ -847,10 +847,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           appPayload.constructionLocation = constructionLocation;
           appPayload.constructionPurpose = constructionPurpose;
         } else if (selectedType === 'same_name') {
+          const finalSameNameEntries = [...sameNameEntries];
+          const pendingSameName = sameNamePerson.trim();
+          if (pendingSameName && sameNameField) {
+            finalSameNameEntries.push({
+              field: sameNameField as SameNameEntry['field'],
+              name: pendingSameName
+            });
+          }
           appPayload.fatherName = sameNameGuardianType === 'father' ? fatherName.trim() : '';
           appPayload.spouseName = sameNameGuardianType === 'husband' ? spouseName.trim() : '';
-          appPayload.sameNamePerson = sameNamePerson;
-          appPayload.sameNameRelation = sameNameRelation;
+          appPayload.sameNameEntries = finalSameNameEntries;
+          appPayload.sameNamePerson = finalSameNameEntries[0]?.name || '';
+          appPayload.sameNameRelation = finalSameNameEntries[0]?.field || '';
         } else if (selectedType === 'family') {
           appPayload.familyGuardianType = familyGuardianType;
         } else if (selectedType === 'married') {
