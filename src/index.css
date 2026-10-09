@@ -930,3 +930,195 @@ select option {
   display: block;
   margin-top: 0.5em;
 }
+
+
+/* Premium MySonod visual refresh — responsive screen UI only; print templates stay unchanged. */
+:root {
+  --ms-ink: #102a43;
+  --ms-muted: #62748a;
+  --ms-green: #087653;
+  --ms-green-dark: #064e3b;
+  --ms-teal: #159e9a;
+  --ms-border: #dce7e8;
+  --ms-surface: #ffffff;
+  --ms-page: #f3f7f8;
+}
+
+@media screen {
+  html {
+    scroll-behavior: smooth;
+    background: var(--ms-page);
+  }
+
+  body {
+    color: var(--ms-ink);
+    background:
+      radial-gradient(ellipse at 12% 0%, rgba(20, 184, 166, .07), transparent 34%),
+      linear-gradient(180deg, #f8fbfc 0%, #f1f6f7 100%);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  #app-shell {
+    background: transparent;
+  }
+
+  #app-shell > header,
+  body #app-shell header.sticky {
+    box-shadow: 0 5px 22px rgba(15, 42, 54, .06) !important;
+    border-bottom-color: #dce8e8 !important;
+  }
+
+  #app-shell header .bg-\[\#0e6245\] {
+    background: linear-gradient(100deg, #07583f 0%, #0c7355 58%, #0b6658 100%) !important;
+  }
+
+  #app-shell aside {
+    box-shadow: 8px 0 28px rgba(6, 47, 39, .08);
+  }
+
+  #app-shell main {
+    scroll-behavior: smooth;
+  }
+
+  #app-shell main > div {
+    animation: ms-enter .32s ease-out both;
+  }
+
+  @keyframes ms-enter {
+    from { opacity: .0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Consistent premium surfaces for dashboard, lists, settings and management panels. */
+  #app-shell main .bg-white:not(.application-form):not(.print-container):not(.certificate-page):not(.application-page) {
+    border-color: #dfe8eb;
+    box-shadow: 0 5px 20px rgba(16, 42, 67, .045);
+  }
+
+  #app-shell main .rounded-2xl.bg-white,
+  #app-shell main .rounded-xl.bg-white {
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+
+  #app-shell main .rounded-2xl.bg-white:hover,
+  #app-shell main .rounded-xl.bg-white:hover {
+    border-color: #c7dddc;
+    box-shadow: 0 10px 26px rgba(16, 42, 67, .07);
+  }
+
+  #app-shell main button:not(:disabled) {
+    transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+
+  #app-shell main button:focus-visible,
+  #app-shell header button:focus-visible,
+  #app-shell aside button:focus-visible,
+  #app-shell main a:focus-visible {
+    outline: 3px solid rgba(20, 184, 166, .4);
+    outline-offset: 2px;
+  }
+
+  #app-shell main input:not([type="checkbox"]):not([type="radio"]),
+  #app-shell main textarea,
+  #app-shell main select {
+    transition: border-color .16s ease, box-shadow .16s ease;
+  }
+
+  #app-shell main input:not([type="checkbox"]):not([type="radio"]):focus,
+  #app-shell main textarea:focus,
+  #app-shell main select:focus {
+    border-color: #0d9488 !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, .13) !important;
+  }
+
+  #app-shell main table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  #app-shell main table thead th {
+    letter-spacing: .01em;
+  }
+
+  #app-shell main table tbody tr {
+    transition: background-color .15s ease;
+  }
+
+  #app-shell main table tbody tr:hover {
+    background-color: #f2faf8;
+  }
+
+  /* Make the dashboard action tiles feel like polished service cards. */
+  #app-shell main button.group.min-h-\[132px\] {
+    background: linear-gradient(145deg, #174d68 0%, #123b56 58%, #0f514e 100%) !important;
+    border: 1px solid rgba(111, 190, 190, .25) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 18px rgba(15, 55, 75, .12) !important;
+  }
+
+  #app-shell main button.group.min-h-\[132px\]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 28px rgba(15, 55, 75, .19) !important;
+  }
+
+  .application-titlebar {
+    background: linear-gradient(100deg, #159e9a 0%, #0f8e8a 55%, #087f79 100%) !important;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 9px !important;
+    box-shadow: 0 5px 14px rgba(10, 125, 119, .13) !important;
+  }
+
+  .application-form {
+    border: 1px solid #e3ecee;
+    border-radius: 13px !important;
+    box-shadow: 0 8px 28px rgba(16, 42, 67, .045);
+  }
+
+  .application-form .application-fee-row {
+    border-radius: 10px !important;
+  }
+
+  .application-declaration {
+    border-radius: 8px !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #b9cecf;
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #86aead;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #app-shell main {
+    padding: 12px !important;
+  }
+
+  #app-shell main .grid {
+    min-width: 0;
+  }
+
+  #app-shell main .rounded-2xl,
+  #app-shell main .rounded-xl {
+    border-radius: 13px;
+  }
+
+  .application-titlebar {
+    gap: 8px;
+    padding: 9px 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  #app-shell main > div { animation: none !important; }
+  #app-shell main button:not(:disabled),
+  #app-shell main .rounded-2xl.bg-white,
+  #app-shell main .rounded-xl.bg-white {
+    transition: none !important;
+  }
+}
