@@ -1527,7 +1527,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               ) : (
                 <>
                   {needsGuardianSelector ? (
-                    <div className="guardian-name-combined min-w-0 md:col-span-2">
+                    <div className="guardian-name-combined min-w-0">
                       <div className="grid grid-cols-[110px_minmax(0,1fr)] items-end gap-3">
                         <div className="min-w-0">
                           <label className="block text-xs font-semibold text-slate-700 mb-1">
