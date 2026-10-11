@@ -7,7 +7,8 @@ import {
   where, 
   onSnapshot,
   doc,
-  runTransaction
+  runTransaction,
+  addDoc
 } from 'firebase/firestore';
 import type { CertificateApplication, CertificateType } from '../types';
 import { CERTIFICATE_CATALOG } from '../types';
@@ -49,6 +50,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   const [editingApp, setEditingApp] = useState<CertificateApplication | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [copyingId, setCopyingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -125,6 +127,44 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
       alert(`অনুমোদন ব্যর্থ হয়েছে: ${err.message || 'অজানা সমস্যা'}`);
     } finally {
       setProcessingId(null);
+    }
+  };
+
+  const handleCreateDuplicate = async (app: CertificateApplication) => {
+    if (!isStaff || !currentUser || app.status !== 'Approved') return;
+    const confirmed = window.confirm(
+      'এই অনুমোদিত সনদের একটি অনুলিপি তালিকায় যোগ হবে। মূল সনদ অপরিবর্তিত থাকবে। চালিয়ে যাবেন?'
+    );
+    if (!confirmed) return;
+
+    setCopyingId(app.id);
+    try {
+      const nowIso = new Date().toISOString();
+      const duplicateRef = await addDoc(collection(db, 'applications'), cleanDataForFirestore({
+        ...app,
+        id: '',
+        trackingId: app.trackingId + '-COPY-' + Date.now().toString().slice(-6),
+        certificateNumber: '',
+        userId: currentUser.uid,
+        userName: userProfile?.name || app.userName || '',
+        userEmail: currentUser.email || userProfile?.email || '',
+        status: 'Approved',
+        isDuplicateCopy: true,
+        createdAt: nowIso,
+        approvedAt: nowIso,
+        completedAt: nowIso,
+        completedByUid: currentUser.uid,
+        completedByEmail: currentUser.email || '',
+        duplicateOfTrackingId: app.trackingId
+      }));
+      // Firestore snapshot listener adds the new record to this list automatically.
+      setSelectedIds(prev => [...prev, duplicateRef.id]);
+      alert('সনদের অনুলিপি তালিকায় যোগ হয়েছে।');
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.CREATE, 'applications');
+      alert('অনুলিপি তৈরি করা যায়নি: ' + (err?.message || 'অজানা সমস্যা'));
+    } finally {
+      setCopyingId(null);
     }
   };
 
@@ -284,7 +324,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                       </div>
                     </td>
                     <td className="py-3 px-3 text-right">
-                      <div className="flex flex-wrap items-center justify-end gap-1.5">
+                      <div className="flex flex-nowrap items-center justify-end gap-1 whitespace-nowrap">
                         {(isAdmin || isOperator) && (
                           <button
                             onClick={() => setEditingApp(app)}
@@ -319,9 +359,10 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
 
                         {app.status === 'Approved' && isStaff && (
                           <button
-                            onClick={() => onViewCertificate(app, { isDuplicate: true })}
-                            className="cursor-pointer bg-violet-500 hover:bg-violet-600 text-white p-2 rounded-md transition inline-flex items-center justify-center"
-                            title="সনদের অনুলিপি প্রস্তুত করুন" aria-label="সনদের অনুলিপি"
+                            onClick={() => handleCreateDuplicate(app)}
+                            disabled={copyingId === app.id}
+                            className="cursor-pointer bg-violet-500 hover:bg-violet-600 text-white p-2 rounded-md transition inline-flex items-center justify-center disabled:opacity-50"
+                            title="সনদের অনুলিপি তালিকায় যোগ করুন" aria-label="সনদের অনুলিপি"
                           >
                             <Copy className="w-3.5 h-3.5" />
                           </button>
