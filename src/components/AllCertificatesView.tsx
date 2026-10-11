@@ -281,6 +281,10 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                             : 'বাতিল'}
                       </span>
 
+                      </div>
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <div className="flex flex-wrap items-center justify-end gap-1.5">
                         {(isAdmin || isOperator) && (
                           <button
                             onClick={() => setEditingApp(app)}
@@ -291,10 +295,6 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
                         )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-3 text-right">
-                      <div className="flex flex-wrap items-center justify-end gap-1.5">
                         {app.status === 'Approved' && isStaff && (
                           <button
                             onClick={() => onViewCertificate(app)}
