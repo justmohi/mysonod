@@ -7,11 +7,12 @@ import {
   where, 
   onSnapshot,
   doc,
-  runTransaction
+  runTransaction,
+  setDoc
 } from 'firebase/firestore';
 import type { CertificateApplication, CertificateType } from '../types';
 import { CERTIFICATE_CATALOG } from '../types';
-import { toBengaliNumber, formatCurrencyBn, formatBengaliDate } from '../utils/bengali';
+import { toBengaliNumber, formatCurrencyBn, formatBengaliDate, generateTrackingId } from '../utils/bengali';
 import { cleanDataForFirestore } from '../utils/firestore';
 import { applyOperatorCompletionChargeInTransaction } from '../utils/operatorBilling';
 import { 
@@ -70,6 +71,45 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
 
     return () => unsubscribe();
   }, [currentUser, isStaff]);
+
+  const handleDuplicateApplication = async (app: CertificateApplication) => {
+    if (!isStaff || !currentUser || app.status !== 'Approved') return;
+
+    const confirmed = window.confirm(
+      `এই ${app.certificateTitleBn || 'সনদ'}-এর আরেকটি অনুলিপি তালিকায় যোগ হবে। মূল সনদ অপরিবর্তিত থাকবে এবং নতুন অনুলিপির জন্য আলাদা আবেদন/ট্র্যাকিং রেকর্ড তৈরি হবে।\n\nআপনি কি চালিয়ে যেতে চান?`
+    );
+    if (!confirmed) return;
+
+    setProcessingId(app.id);
+    try {
+      const nowIso = new Date().toISOString();
+      const duplicateRef = doc(collection(db, 'applications'));
+      const duplicateTrackingId = generateTrackingId('AMB');
+      const duplicateData = cleanDataForFirestore({
+        ...app,
+        id: duplicateRef.id,
+        trackingId: duplicateTrackingId,
+        createdAt: nowIso,
+        updatedAt: nowIso,
+        status: 'Approved',
+        approvedAt: app.approvedAt || nowIso,
+        completedAt: app.completedAt || app.approvedAt || nowIso,
+        duplicateOfApplicationId: app.id,
+        duplicateOfTrackingId: app.trackingId,
+        isDuplicateCopy: true,
+        duplicateCreatedByUid: currentUser.uid,
+        duplicateCreatedByEmail: currentUser.email || ''
+      });
+
+      await setDoc(duplicateRef, duplicateData);
+      alert(`সনদের অনুলিপি তালিকায় যোগ হয়েছে। নতুন ট্র্যাকিং নম্বর: ${duplicateTrackingId}`);
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.CREATE, 'applications');
+      alert(`অনুলিপি তৈরি করা যায়নি: ${err.message || 'অজানা সমস্যা'}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
 
   const handleApproveApplication = async (app: CertificateApplication) => {
     if (!isOperator || !currentUser) return;
@@ -301,12 +341,13 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
 
                         {app.status === 'Approved' && isStaff && (
                           <button
-                            onClick={() => onViewCertificate(app, { isDuplicate: true })}
-                            className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs"
-                            title="সনদের অনুলিপি প্রস্তুত করুন"
+                            onClick={() => handleDuplicateApplication(app)}
+                            disabled={processingId === app.id}
+                            className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                            title="সনদের অনুলিপি তালিকায় যোগ করুন"
                           >
                             <Copy className="w-3.5 h-3.5 text-amber-700" />
-                            <span>অনুলিপি</span>
+                            <span>{processingId === app.id ? 'তৈরি হচ্ছে...' : 'অনুলিপি'}</span>
                           </button>
                         )}
 
