@@ -542,6 +542,7 @@ export interface PublicVerificationRecord {
 export interface CertificateApplication {
   id: string;
   trackingId: string;
+  certificateNumber?: string;
   userId: string;
   userName: string;
   userEmail?: string;
