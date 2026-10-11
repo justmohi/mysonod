@@ -8,7 +8,8 @@ import {
   onSnapshot,
   doc,
   runTransaction,
-  addDoc
+  addDoc,
+  setDoc
 } from 'firebase/firestore';
 import type { CertificateApplication, CertificateType } from '../types';
 import { CERTIFICATE_CATALOG } from '../types';
@@ -140,9 +141,10 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
     setCopyingId(app.id);
     try {
       const nowIso = new Date().toISOString();
-      const duplicateRef = await addDoc(collection(db, 'applications'), cleanDataForFirestore({
+      const duplicateRef = doc(collection(db, 'applications'));
+      await setDoc(duplicateRef, cleanDataForFirestore({
         ...app,
-        id: '',
+        id: duplicateRef.id,
         trackingId: app.trackingId + '-COPY-' + Date.now().toString().slice(-6),
         certificateNumber: '',
         userId: currentUser.uid,
