@@ -7,8 +7,7 @@ import {
   where, 
   onSnapshot,
   doc,
-  runTransaction,
-  setDoc
+  runTransaction
 } from 'firebase/firestore';
 import type { CertificateApplication, CertificateType } from '../types';
 import { CERTIFICATE_CATALOG } from '../types';
@@ -48,9 +47,6 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [editingApp, setEditingApp] = useState<CertificateApplication | null>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [copyingId, setCopyingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -130,67 +126,14 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
     }
   };
 
-  const handleCreateDuplicate = async (app: CertificateApplication) => {
-    if (!isStaff || !currentUser || app.status !== 'Approved') return;
-    const confirmed = window.confirm(
-      'এই অনুমোদিত সনদের একটি অনুলিপি তালিকায় যোগ হবে। মূল সনদ অপরিবর্তিত থাকবে। চালিয়ে যাবেন?'
-    );
-    if (!confirmed) return;
-
-    setCopyingId(app.id);
-    try {
-      const nowIso = new Date().toISOString();
-      const duplicateRef = doc(collection(db, 'applications'));
-      await setDoc(duplicateRef, cleanDataForFirestore({
-        ...app,
-        id: duplicateRef.id,
-        trackingId: app.trackingId + '-COPY-' + Date.now().toString().slice(-6),
-        certificateNumber: '',
-        userId: currentUser.uid,
-        userName: userProfile?.name || app.userName || '',
-        userEmail: currentUser.email || userProfile?.email || '',
-        status: 'Approved',
-        isDuplicateCopy: true,
-        createdAt: nowIso,
-        approvedAt: nowIso,
-        completedAt: nowIso,
-        completedByUid: currentUser.uid,
-        completedByEmail: currentUser.email || '',
-        duplicateOfTrackingId: app.trackingId
-      }));
-      // Firestore snapshot listener adds the new record to this list automatically.
-      setSelectedIds(prev => [...prev, duplicateRef.id]);
-      alert('সনদের অনুলিপি তালিকায় যোগ হয়েছে।');
-    } catch (err: any) {
-      handleFirestoreError(err, OperationType.CREATE, 'applications');
-      alert('অনুলিপি তৈরি করা যায়নি: ' + (err?.message || 'অজানা সমস্যা'));
-    } finally {
-      setCopyingId(null);
-    }
-  };
-
-  const normalizedSearch = searchQuery.trim().toLocaleLowerCase();
   const filteredApps = applications.filter((app) => {
-    const searchable = [
-      app.trackingId, app.applicantNameBn, app.applicantNameEn, app.fatherName,
-      app.fatherNameEn, app.spouseName, app.motherName, app.nidOrBirthReg,
-      app.certificateTitleBn, app.certificateTitleEn, app.certificateNumber,
-      app.mobile, app.village, app.wardNo
-    ].filter(Boolean).join(' ').toLocaleLowerCase();
-    const matchesSearch = !normalizedSearch || searchable.includes(normalizedSearch);
+    const matchesSearch = 
+      app.trackingId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.applicantNameBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.nidOrBirthReg.includes(searchQuery);
     const matchesType = typeFilter === 'all' || app.certificateType === typeFilter;
-    const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesSearch && matchesType;
   });
-  const allVisibleSelected = filteredApps.length > 0 && filteredApps.every(app => selectedIds.includes(app.id));
-  const toggleSelectAll = () => {
-    setSelectedIds(prev => allVisibleSelected
-      ? prev.filter(id => !filteredApps.some(app => app.id === id))
-      : [...new Set([...prev, ...filteredApps.map(app => app.id)])]);
-  };
-  const toggleSelected = (id: string) => {
-    setSelectedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]);
-  };
 
   return (
     <div className="space-y-6">
@@ -219,7 +162,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
         </div>
 
         {/* Filters and Search Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-6 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-4 border-t border-slate-100">
           <div className="sm:col-span-2 relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
             <input
@@ -241,14 +184,6 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
               {(Object.keys(CERTIFICATE_CATALOG) as CertificateType[]).map(t => (
                 <option key={t} value={t}>{CERTIFICATE_CATALOG[t].titleBn}</option>
               ))}
-            </select>
-          </div>
-          <div>
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white">
-              <option value="all">স্ট্যাটাস: সকল</option>
-              <option value="Pending">অপেক্ষমাণ</option>
-              <option value="Approved">অনুমোদিত</option>
-              <option value="Rejected">বাতিল</option>
             </select>
           </div>
         </div>
@@ -276,36 +211,40 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-slate-800 text-white font-bold uppercase text-[10px] border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-3"><input aria-label="সব দৃশ্যমান আবেদন নির্বাচন" type="checkbox" checked={allVisibleSelected} onChange={toggleSelectAll} className="accent-emerald-600" /></th>
-                  <th className="py-3 px-3">সনদ নং / ট্র্যাকিং</th>
-                  <th className="py-3 px-3">নাম, পিতা/স্বামী</th>
-                  <th className="py-3 px-3">NID / জন্ম নিবন্ধন</th>
-                  <th className="py-3 px-3">ধরন</th>
-                  <th className="py-3 px-3">তারিখ</th>
-                  <th className="py-3 px-3">স্ট্যাটাস</th>
-                  <th className="py-3 px-3 text-right">একশন</th>
+                  <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
+                  <th className="py-3 px-3">সনদের নাম</th>
+                  <th className="py-3 px-3">আবেদনকারীর নাম</th>
+                  <th className="py-3 px-3">এনআইডি/জন্মনিবন্ধন</th>
+                  <th className="py-3 px-3">গ্রাম ও ওয়ার্ড</th>
+                  <th className="py-3 px-3">ইস্যুর তারিখ</th>
+                  <th className="py-3 px-3">অবস্থা</th>
+                  <th className="py-3 px-3 text-right">সনদ ডাউনলোড</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredApps.map((app) => (
-                  <tr key={app.id} className="hover:bg-emerald-50/60 transition-colors">
-                    <td className="py-3 px-3"><input aria-label={app.trackingId + ' নির্বাচন'} type="checkbox" checked={selectedIds.includes(app.id)} onChange={() => toggleSelected(app.id)} className="accent-emerald-600" /></td>
-                    <td className="py-3 px-3 font-mono font-bold text-emerald-800 whitespace-nowrap">
-                      {app.certificateNumber || app.trackingId}
-                      <span className="block text-[10px] font-normal text-slate-400">{app.trackingId}</span>
+                  <tr key={app.id} className="hover:bg-slate-50/80">
+                    <td className="py-3 px-3 font-mono font-bold text-emerald-800">
+                      {app.trackingId}
                     </td>
-                    <td className="py-3 px-3 text-slate-800 min-w-[150px]">
-                      <span className="font-semibold block">{app.applicantNameBn || '—'}</span>
-                      <span className="block text-[10px] text-slate-500">{app.fatherName ? 'পিতা: ' + app.fatherName : app.spouseName ? 'স্বামী: ' + app.spouseName : '—'}</span>
-                    </td>
-                    <td className="py-3 px-3 font-mono text-slate-600 whitespace-nowrap">{app.nidOrBirthReg?.trim() || '—'}</td>
-                    <td className="py-3 px-3 text-slate-700 min-w-[120px]">
-                      <span className="block font-semibold">{app.certificateTitleBn || CERTIFICATE_CATALOG[app.certificateType]?.titleBn || 'সনদ'}</span>
+                    <td className="py-3 px-3">
+                      <span className="font-semibold text-slate-900 block">{app.certificateTitleBn}</span>
                       <span className="text-[10px] text-slate-400">ফি: {formatCurrencyBn(app.fee)}</span>
                     </td>
-                    <td className="py-3 px-3 text-slate-500 whitespace-nowrap">{formatBengaliDate(app.approvedAt || app.createdAt)}</td>
+                    <td className="py-3 px-3 font-medium text-slate-800">
+                      {app.applicantNameBn}
+                    </td>
+                    <td className="py-3 px-3 font-mono text-slate-600">
+                      {app.nidOrBirthReg}
+                    </td>
+                    <td className="py-3 px-3 text-slate-600">
+                      {app.village}, ওয়ার্ড: {toBengaliNumber(app.wardNo)}
+                    </td>
+                    <td className="py-3 px-3 text-slate-500">
+                      {formatBengaliDate(app.approvedAt || app.createdAt)}
+                    </td>
                     <td className="py-3 px-3">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1 ${
@@ -322,27 +261,29 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                             : 'বাতিল'}
                       </span>
 
-                      </div>
-                    </td>
-                    <td className="py-3 px-3 text-right">
-                      <div className="flex flex-nowrap items-center justify-end gap-1 whitespace-nowrap">
                         {(isAdmin || isOperator) && (
                           <button
                             onClick={() => setEditingApp(app)}
                             disabled={processingId === app.id}
-                            className="cursor-pointer bg-sky-500 hover:bg-sky-600 text-white p-2 rounded-md transition inline-flex items-center justify-center disabled:opacity-50"
-                            title="আবেদনের তথ্য সংশোধন করুন" aria-label="আবেদন এডিট"
+                            className="cursor-pointer bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold px-2 py-1 rounded-lg text-[10px] transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
+                            title="আবেদনের তথ্য সংশোধন করুন"
                           >
-                            <Edit3 className="w-3.5 h-3.5" />
+                            <Edit3 className="w-3 h-3 text-emerald-700" />
+                            <span>এডিট</span>
                           </button>
                         )}
+                      </div>
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <div className="flex flex-wrap items-center justify-end gap-1.5">
                         {app.status === 'Approved' && isStaff && (
                           <button
                             onClick={() => onViewCertificate(app)}
-                            className="cursor-pointer bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-md transition inline-flex items-center justify-center"
-                            title="অনুমোদিত সনদ প্রিন্ট / PDF করুন" aria-label="সনদ প্রিন্ট"
+                            className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs"
+                            title="অনুমোদিত সনদ প্রিন্ট / PDF করুন"
                           >
                             <Printer className="w-3.5 h-3.5" />
+                            <span>প্রিন্ট</span>
                           </button>
                         )}
 
@@ -360,12 +301,12 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
 
                         {app.status === 'Approved' && isStaff && (
                           <button
-                            onClick={() => handleCreateDuplicate(app)}
-                            disabled={copyingId === app.id}
-                            className="cursor-pointer bg-violet-500 hover:bg-violet-600 text-white p-2 rounded-md transition inline-flex items-center justify-center disabled:opacity-50"
-                            title="সনদের অনুলিপি তালিকায় যোগ করুন" aria-label="সনদের অনুলিপি"
+                            onClick={() => onViewCertificate(app, { isDuplicate: true })}
+                            className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs"
+                            title="সনদের অনুলিপি প্রস্তুত করুন"
                           >
-                            <Copy className="w-3.5 h-3.5" />
+                            <Copy className="w-3.5 h-3.5 text-amber-700" />
+                            <span>অনুলিপি</span>
                           </button>
                         )}
 
