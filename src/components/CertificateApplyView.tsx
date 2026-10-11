@@ -1465,19 +1465,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             </>
           ) : (
             <div className="application-basic-grid grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? 'Applicant Name (Bengali)' : 'আবেদনকারীর নাম (বাংলায়) *'}
-                </label>
-                <input
-                  type="text"
-                  required={language === 'bn'}
-                  value={applicantNameBn}
-                  onChange={(e) => setApplicantNameBn(e.target.value)}
-                  placeholder={language === 'en' ? 'Applicant Name in Bengali' : 'আবেদনকারীর নাম (বাংলা)'}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
+              {language !== 'en' && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    আবেদনকারীর নাম (বাংলায়) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={applicantNameBn}
+                    onChange={(e) => setApplicantNameBn(e.target.value)}
+                    placeholder="আবেদনকারীর নাম (বাংলা)"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+              )}
 
               {language === 'en' && (
                 <div>
