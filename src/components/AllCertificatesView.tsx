@@ -285,11 +285,10 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                           <button
                             onClick={() => setEditingApp(app)}
                             disabled={processingId === app.id}
-                            className="cursor-pointer bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold px-2 py-1 rounded-lg text-[10px] transition inline-flex items-center gap-1 shadow-2xs disabled:opacity-50"
-                            title="আবেদনের তথ্য সংশোধন করুন"
+                            className="cursor-pointer bg-sky-500 hover:bg-sky-600 text-white p-2 rounded-md transition inline-flex items-center justify-center disabled:opacity-50"
+                            title="আবেদনের তথ্য সংশোধন করুন" aria-label="আবেদন এডিট"
                           >
-                            <Edit3 className="w-3 h-3 text-emerald-700" />
-                            <span>এডিট</span>
+                            <Edit3 className="w-3.5 h-3.5" />
                           </button>
                         )}
                       </div>
@@ -299,11 +298,10 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                         {app.status === 'Approved' && isStaff && (
                           <button
                             onClick={() => onViewCertificate(app)}
-                            className="cursor-pointer bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs"
-                            title="অনুমোদিত সনদ প্রিন্ট / PDF করুন"
+                            className="cursor-pointer bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-md transition inline-flex items-center justify-center"
+                            title="অনুমোদিত সনদ প্রিন্ট / PDF করুন" aria-label="সনদ প্রিন্ট"
                           >
                             <Printer className="w-3.5 h-3.5" />
-                            <span>প্রিন্ট</span>
                           </button>
                         )}
 
@@ -322,11 +320,10 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                         {app.status === 'Approved' && isStaff && (
                           <button
                             onClick={() => onViewCertificate(app, { isDuplicate: true })}
-                            className="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-1.5 rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-2xs"
-                            title="সনদের অনুলিপি প্রস্তুত করুন"
+                            className="cursor-pointer bg-violet-500 hover:bg-violet-600 text-white p-2 rounded-md transition inline-flex items-center justify-center"
+                            title="সনদের অনুলিপি প্রস্তুত করুন" aria-label="সনদের অনুলিপি"
                           >
-                            <Copy className="w-3.5 h-3.5 text-amber-700" />
-                            <span>অনুলিপি</span>
+                            <Copy className="w-3.5 h-3.5" />
                           </button>
                         )}
 
