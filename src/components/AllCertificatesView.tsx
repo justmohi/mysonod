@@ -8,7 +8,6 @@ import {
   onSnapshot,
   doc,
   runTransaction,
-  addDoc,
   setDoc
 } from 'firebase/firestore';
 import type { CertificateApplication, CertificateType } from '../types';
