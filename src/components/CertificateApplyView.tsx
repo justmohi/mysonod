@@ -361,7 +361,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setVillage(permVill || pVill);
     setWardNo(permWard || pWard);
     setPostOffice(permPost || pPost);
-    setHoldingNo(data.holdingNo || '');
+    // Citizenship certificate holding number must be entered manually by the operator.
+    setHoldingNo(selectedType === 'citizenship' ? '' : (data.holdingNo || ''));
 
     const isSame =
       !data.permanentVillage &&
@@ -776,7 +777,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
         if (spouseName) appPayload.spouseName = spouseName;
         if (dob) appPayload.dob = dob;
-        if (holdingNo) appPayload.holdingNo = holdingNo;
+        if (selectedType === 'citizenship') {
+          // Do not carry a previously saved/profile holding number into a new citizenship application.
+          if (holdingNo.trim()) appPayload.holdingNo = holdingNo.trim();
+        } else if (holdingNo) {
+          appPayload.holdingNo = holdingNo;
+        }
         if (needsGuardianSelector) appPayload.guardianType = guardianType;
 
         if (selectedType === 'income' || selectedType === 'annual_income') {
