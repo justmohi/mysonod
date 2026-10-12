@@ -881,7 +881,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   </div>
                                   {application.nidOrBirthReg && (
                                     <div>
-                                      <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg: ' : 'জাতীয় পরিচয়পত্র: '}</span>
+                                      <span className="text-slate-600 font-semibold">{(application.certificateType === 'citizenship' || application.certificateType === 'new_voter')
+                                         ? (application.identityNumberType === 'birth_reg'
+                                             ? (lang === 'en' ? 'Birth Registration No: ' : 'জন্ম সনদ নং: ')
+                                             : (lang === 'en' ? 'National ID No: ' : 'জাতীয় পরিচয়পত্র নং: '))
+                                         : (lang === 'en' ? 'NID / Birth Reg: ' : 'জাতীয় পরিচয়পত্র: ')}</span>
                                       <strong className="font-mono text-slate-900">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
                                     </div>
                                   )}
@@ -931,7 +935,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 </div>
                                 {application.nidOrBirthReg && (
                                   <div>
-                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'NID / Birth Reg No: ' : 'জাতীয় পরিচয়পত্র / জন্মনিবন্ধন: '}</span>
+                                    <span className="text-slate-600 font-semibold">{(application.certificateType === 'citizenship' || application.certificateType === 'new_voter')
+                                         ? (application.identityNumberType === 'birth_reg'
+                                             ? (lang === 'en' ? 'Birth Registration No: ' : 'জন্ম সনদ নং: ')
+                                             : (lang === 'en' ? 'National ID No: ' : 'জাতীয় পরিচয়পত্র নং: '))
+                                         : (lang === 'en' ? 'NID / Birth Reg No: ' : 'জাতীয় পরিচয়পত্র / জন্মনিবন্ধন: ')}</span>
                                     <strong className="font-mono text-slate-950 font-bold">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
                                   </div>
                                 )}
