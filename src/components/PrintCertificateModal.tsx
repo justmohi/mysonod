@@ -1387,7 +1387,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                         {/* Dual Column Address Section: Left (Present) and Right (Permanent) */}
                         <div className="grid grid-cols-2 gap-3 text-[10px]">
-                          <div className="border-t border-slate-400 px-1 py-1.5 bg-transparent">
+                          <div className="border border-emerald-300/70 rounded-xl p-3 bg-transparent">
                             <h4 className="font-bold text-[#006A4E] border-b border-emerald-200 pb-1 mb-1.5 flex items-center gap-1.5">
                               <MapPin className="w-3.5 h-3.5 text-emerald-700" />
                               <span>{lang === 'en' ? 'Present Address:' : 'মালিকের বর্তমান ঠিকানা:'}</span>
