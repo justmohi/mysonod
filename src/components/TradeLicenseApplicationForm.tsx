@@ -194,6 +194,15 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
         const profile = snapshot.data() as CitizenProfile;
         setSharedProfileFound(profile);
 
+        // Restore NID-based citizen autofill; do not use the logged-in operator's name as the license owner.
+        setOwnerName(profile.applicantNameBn || '');
+        setOwnerGuardianType(profile.guardianType === 'husband' ? 'husband' : 'father');
+        setOwnerFatherOrHusbandName(
+          profile.guardianType === 'husband'
+            ? profile.spouseName || ''
+            : profile.fatherName || ''
+        );
+        setOwnerMotherName(profile.motherName || '');
         setOwnerMobile(profile.mobile || '');
 
         setPresentAddress(prev => ({
