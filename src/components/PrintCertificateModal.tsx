@@ -1182,41 +1182,46 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   </div>
                 </div>
 
-                {/* Metadata Bar (Justified Grid Below Header) */}
-                <div className={`flex flex-wrap items-center justify-between gap-3 ${isUltraCompactTable ? 'mt-1 pb-0.5 text-[10px]' : (isTableCertificate ? 'mt-1.5 pb-1 text-[11px]' : 'mt-2.5 pb-2 text-xs')} font-semibold text-slate-800 border-b border-emerald-700/30`}>
-                  <div className="space-y-0.5">
-                    <div>
-                      {lang === 'en' ? 'Memo / Tracking No: ' : 'স্মারক নং: '}
-                      <span className="font-mono font-bold text-emerald-900 bg-white/80 px-1.5 py-0.5 rounded border border-emerald-200">
-                        {application.trackingId}
-                      </span>
+                {/* Standard certificate metadata; trade license uses its own license number/date row below. */}
+                {application.certificateType !== 'trade_license' && (
+                  {/* Metadata Bar (Justified Grid Below Header) */}
+                  <div className={`flex flex-wrap items-center justify-between gap-3 ${isUltraCompactTable ? 'mt-1 pb-0.5 text-[10px]' : (isTableCertificate ? 'mt-1.5 pb-1 text-[11px]' : 'mt-2.5 pb-2 text-xs')} font-semibold text-slate-800 border-b border-emerald-700/30`}>
+                    <div className="space-y-0.5">
+                      <div>
+                        {lang === 'en' ? 'Memo / Tracking No: ' : 'স্মারক নং: '}
+                        <span className="font-mono font-bold text-emerald-900 bg-white/80 px-1.5 py-0.5 rounded border border-emerald-200">
+                          {application.trackingId}
+                        </span>
+                      </div>
+                      <div>
+                        {lang === 'en' ? 'NID / Birth Reg No: ' : 'এনআইডি / জন্ম নিবন্ধন: '}
+                        <span className="font-mono font-bold text-slate-900">
+                          {lang === 'en'
+                            ? ((application as any).nidNumber || application.nidOrBirthReg)
+                            : toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg)}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      {lang === 'en' ? 'NID / Birth Reg No: ' : 'এনআইডি / জন্ম নিবন্ধন: '}
-                      <span className="font-mono font-bold text-slate-900">
-                        {lang === 'en'
-                          ? ((application as any).nidNumber || application.nidOrBirthReg)
-                          : toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg)}
-                      </span>
+  
+                    <div className="text-right space-y-0.5">
+                      <div>
+                        {lang === 'en' ? 'Issue Date: ' : 'ইস্যুর তারিখ: '}
+                        <span className="font-bold text-slate-900">
+                          {lang === 'en' ? formattedDateEn : formatBengaliDate(application.approvedAt || application.createdAt)}
+                        </span>
+                      </div>
+                      <div>
+                        {lang === 'en' ? (
+                          <>Ward No: <span className="font-bold text-slate-900">{application.wardNo || '09'}</span> | Holding No: <span className="font-bold">{application.holdingNo || '144'}</span></>
+                        ) : (
+                          <>ওয়ার্ড নং: <span className="font-bold text-slate-900">{toBengaliNumber(application.wardNo || '09')}</span> | হোল্ডিং নং: <span className="font-bold">{application.holdingNo ? toBengaliNumber(application.holdingNo) : '১৪৪'}</span></>
+                        )}
+                      </div>
                     </div>
                   </div>
-
-                  <div className="text-right space-y-0.5">
-                    <div>
-                      {lang === 'en' ? 'Issue Date: ' : 'ইস্যুর তারিখ: '}
-                      <span className="font-bold text-slate-900">
-                        {lang === 'en' ? formattedDateEn : formatBengaliDate(application.approvedAt || application.createdAt)}
-                      </span>
-                    </div>
-                    <div>
-                      {lang === 'en' ? (
-                        <>Ward No: <span className="font-bold text-slate-900">{application.wardNo || '09'}</span> | Holding No: <span className="font-bold">{application.holdingNo || '144'}</span></>
-                      ) : (
-                        <>ওয়ার্ড নং: <span className="font-bold text-slate-900">{toBengaliNumber(application.wardNo || '09')}</span> | হোল্ডিং নং: <span className="font-bold">{application.holdingNo ? toBengaliNumber(application.holdingNo) : '১৪৪'}</span></>
-                      )}
-                    </div>
-                  </div>
-                </div>
+  
+  
+                )}
 
                 {/* Specialized Trade License Document Layout vs Standard Certificate Layout */}
                 {(() => {
