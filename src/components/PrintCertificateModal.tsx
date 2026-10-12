@@ -1511,12 +1511,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   </div>
 
                   {/* Official Seal (Center) */}
-                  <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 rounded-full border-2 border-dashed border-emerald-800/80 flex flex-col items-center justify-center p-1.5 text-center bg-transparent">
-                      <span className="text-[9.5px] font-bold text-emerald-900 uppercase tracking-tight">
+                  <div className="flex shrink-0 flex-col items-center justify-center px-2">
+                    <div className="box-border flex h-20 w-20 shrink-0 flex-col items-center justify-center overflow-visible rounded-full border-2 border-dashed border-emerald-800/80 p-1.5 text-center bg-white">
+                      <span className="block text-[9px] leading-tight font-bold text-emerald-900 uppercase tracking-tight">
                         OFFICIAL SEAL
                       </span>
-                      <span className="text-[8px] text-slate-600 mt-0.5 font-semibold">
+                      <span className="mt-1 block text-[7.5px] leading-tight text-slate-600 font-semibold">
                         (কার্যালয়ের সীল)
                       </span>
                     </div>
