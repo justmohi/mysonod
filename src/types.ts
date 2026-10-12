@@ -562,6 +562,7 @@ export interface CertificateApplication {
   gender: 'male' | 'female' | 'other';
   maritalStatus?: string;
   nidOrBirthReg: string;
+  identityNumberType?: 'nid' | 'birth_reg';
   mobile: string;
   email?: string;
   dob?: string;
