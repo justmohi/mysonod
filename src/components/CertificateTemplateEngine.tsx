@@ -1279,12 +1279,12 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       {/* 3. Same Name Certificate (একই নামের প্রত্যয়ন) */}
       {type === 'same_name' && (
         <p className={pClass}>
-          এই মর্মে নাম প্রত্যয়ন প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, {nidBn && <>{nidBn && <>জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong></>}, </>} {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। আমি তাহাকে ব্যক্তিগত ভাবে চিনি ও অবগত রহিয়াছি। সে সমাজ বা রাষ্ট্রের বিরোধী কোন প্রকার কাজের সহিত জড়িত নাই। আমার জানামতে নথিপত্রে তাহার পরিচয় নিম্নরূপ নামে উল্লেখ আছে: {resolvedSameNameEntries.length > 0 ? resolvedSameNameEntries.map((entry: any, index: number) => (
+          এই মর্মে নাম প্রত্যয়ন প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>, {nidBn && <>{nidBn && <>জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong></>}, </>} {guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি আমার ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। আমি তাহাকে ব্যক্তিগত ভাবে চিনি ও অবগত রহিয়াছি। সে সমাজ বা রাষ্ট্রের বিরোধী কোন প্রকার কাজের সহিত জড়িত নাই। আমার জানামতে তার নাম: {resolvedSameNameEntries.length > 0 ? resolvedSameNameEntries.map((entry: any, index: number) => (
             <React.Fragment key={index}>
-              {index > 0 ? ' এবং ' : ''}
-              <strong>{entry.field}:</strong> <strong>{entry.name}</strong>
+              {index > 0 ? ' ওরফে ' : ''}
+              <strong>{entry.name}</strong>
             </React.Fragment>
-          )) : <strong>—</strong>}। উপরোক্ত নাম/পরিচয়সমূহ দ্বারা একই ব্যক্তিকে বুঝানো হইয়া থাকে। <span className="certificate-closing-sentence">আমি তাহার জীবনের সার্বিক মঙ্গল কামনা করি।</span>
+          )) : <strong>—</strong>}। উল্লিখিত নামসমূহ একই ব্যক্তির। <span className="certificate-closing-sentence">আমি তাহার জীবনের সার্বিক মঙ্গল কামনা করি।</span>
         </p>
       )}
 
