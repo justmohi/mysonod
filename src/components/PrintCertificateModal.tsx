@@ -1267,7 +1267,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               Under the conditions prescribed by the Government under section 66 of the Local Government (Union Councils) Act, 2009 (Act No. 61 of 2009), this Trade License is hereby granted to the undermentioned person/enterprise for conducting lawful commercial operations within the jurisdiction of this Union Parishad.
                             </p>
                           ) : (
-                            <p className="text-justify [text-align-last:justify]">
+                            <p className="text-justify [text-align-last:left]">
                               স্থানীয় সরকার (ইউনিয়ন পরিষদ) আইন, ২০০৯ (২০০৯ সনের ৬১ নং আইন) ধারা ৬৬ তে প্রদত্ত ক্ষমতাবলে সরকার প্রণীত আদেশ কর তফসিল, ২০১৩ এর ৬ ও ১৭ নং অনুচ্ছেদ অনুযায়ী ব্যবসা, বৃত্তি, পেশা বা শিল্প প্রতিষ্ঠানের উপর আরোপিত কর আদায়ের লক্ষ্যে নির্ধারিত শর্তে নিম্ন বর্ণিত ব্যক্তি বা প্রতিষ্ঠানের অনুকূলে এই ট্রেড লাইসেন্সটি ইস্যু করা হল :
                             </p>
                           )}
