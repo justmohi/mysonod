@@ -1184,6 +1184,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                 {/* Standard certificate metadata; trade license uses its own license number/date row below. */}
                 {application.certificateType !== 'trade_license' && (
+                  <>
                   {/* Metadata Bar (Justified Grid Below Header) */}
                   <div className={`flex flex-wrap items-center justify-between gap-3 ${isUltraCompactTable ? 'mt-1 pb-0.5 text-[10px]' : (isTableCertificate ? 'mt-1.5 pb-1 text-[11px]' : 'mt-2.5 pb-2 text-xs')} font-semibold text-slate-800 border-b border-emerald-700/30`}>
                     <div className="space-y-0.5">
@@ -1219,8 +1220,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                       </div>
                     </div>
                   </div>
-  
-  
+                  </>
                 )}
 
                 {/* Specialized Trade License Document Layout vs Standard Certificate Layout */}
