@@ -278,8 +278,16 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
     }
   };
 
-  const issueDateIso = printDateOverride || application.printDate || application.approvedAt || application.createdAt;
+  // Keep the original application date on the certificate; show the current
+  // print date separately when the operator prints/reprints it.
+  const issueDateIso = application.createdAt;
   const formattedDateEn = new Date(issueDateIso).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+  const currentPrintDateIso = printDateOverride || new Date().toISOString();
+  const formattedPrintDateEn = new Date(currentPrintDateIso).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
     year: 'numeric'
@@ -1220,9 +1228,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                       </div>
                       <div>
                         {lang === 'en' ? (
-                          <>Ward No: <span className="font-bold text-slate-900">{application.wardNo || '09'}</span>{application.holdingNo ? <> | Holding No: <span className="font-bold">{application.holdingNo}</span></> : null}</>
+                          <>Date of Issue / Reprint: <span className="font-bold text-slate-900">{formattedPrintDateEn}</span></>
                         ) : (
-                          <>ওয়ার্ড নং: <span className="font-bold text-slate-900">{toBengaliNumber(application.wardNo || '09')}</span>{application.holdingNo ? <> | হোল্ডিং নং: <span className="font-bold">{toBengaliNumber(application.holdingNo)}</span></> : null}</>
+                          <>প্রদানের তারিখ: <span className="font-bold text-slate-900">{formatBengaliDate(currentPrintDateIso)}</span></>
                         )}
                       </div>
                     </div>
