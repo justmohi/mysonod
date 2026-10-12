@@ -630,7 +630,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/65 p-2 sm:p-3 backdrop-blur-[2px]">
-      <div className="relative flex h-auto max-h-[88dvh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl">
+      <div className="relative flex h-fit max-h-[88dvh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl">
         <div className="flex items-center justify-between bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-800 px-3 py-2 sm:px-4 text-white">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
@@ -652,7 +652,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2 sm:p-3">
+        <form onSubmit={handleSubmit} className="min-h-0 max-h-[calc(88dvh-64px)] flex-none overflow-y-auto overscroll-contain p-2 sm:p-3">
           {!canEdit && (
             <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
               <AlertCircle className="h-4 w-4 shrink-0" />
@@ -972,7 +972,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
             </div>
           </div>
 
-          <div className="sticky bottom-0 mt-2 flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-1 pt-2 pb-1">
+          <div className="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-slate-200 bg-white px-1 pt-2 pb-1">
             <button
               type="button"
               onClick={onClose}
