@@ -58,7 +58,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
   // ----------------------------------------------------
   const [businessName, setBusinessName] = useState<string>('');
   const [businessType, setBusinessType] = useState<string>('মুদি ও স্টেশনারি');
-  const [businessCapital, setBusinessCapital] = useState<number>(200000);
+  const [businessCapital, setBusinessCapital] = useState<number>(0);
   const [businessStartDate, setBusinessStartDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
@@ -68,7 +68,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
   // ----------------------------------------------------
   // Section 3: মালিকের তথ্য (Owner Information)
   // ----------------------------------------------------
-  const [ownerName, setOwnerName] = useState<string>(userProfile?.name || '');
+  const [ownerName, setOwnerName] = useState<string>('');
   const [ownerGuardianType, setOwnerGuardianType] = useState<'father' | 'husband'>('father');
   const [ownerFatherOrHusbandName, setOwnerFatherOrHusbandName] = useState<string>('');
   const [ownerMotherName, setOwnerMotherName] = useState<string>('');
@@ -604,16 +604,15 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* ব্যবসার মূলধন (টাকা) */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ব্যবসার মূলধন (টাকা) <span className="text-red-500 font-bold">*</span>
+                ব্যবসার মূলধন (টাকা) <span className="text-slate-500 font-normal">(ঐচ্ছিক)</span>
               </label>
               <div className="relative">
                 <input
                   type="number"
                   min="0"
-                  required
                   value={businessCapital || ''}
                   onChange={(e) => setBusinessCapital(Number(e.target.value))}
-                  placeholder="যেমন: ২০০০০০ *"
+                  placeholder="ঐচ্ছিক — না দিলেও চলবে"
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg pl-8 pr-3 py-2 text-sm text-slate-900 font-semibold transition"
                 />
                 <span className="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">৳</span>
