@@ -615,7 +615,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
     fields: EditableField[],
     columns = 'grid-cols-1 sm:grid-cols-2'
   ) => (
-    <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+    <section className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
       <div className="mb-4 flex items-center gap-2 border-b border-slate-200 pb-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
           {icon}
@@ -652,7 +652,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="max-h-[calc(94vh-145px)] overflow-y-auto p-4 sm:p-5">
+        <form onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
           {!canEdit && (
             <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
               <AlertCircle className="h-4 w-4 shrink-0" />
@@ -694,11 +694,11 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
             </div>
           )}
 
-          <div className="space-y-4">
-            {renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal)}
-            {renderSection('২. বর্তমান ঠিকানা', <MapPin className="h-4 w-4" />, sections.present)}
-            {renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
-            {renderSection('৪. সনদ-নির্দিষ্ট সকল তথ্য', <FileText className="h-4 w-4" />, sections.certificate)}
+          <div className="space-y-3">
+            {sections.personal.length > 0 && renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal)}
+            {sections.present.length > 0 && renderSection('২. বর্তমান ঠিকানা', <MapPin className="h-4 w-4" />, sections.present)}
+            {sections.permanent.length > 0 && renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
+            {sections.certificate.length > 0 && renderSection('৪. সনদ-নির্দিষ্ট তথ্য', <FileText className="h-4 w-4" />, sections.certificate)
 
             {application.certificateType === 'same_name' && (
               <section className="rounded-2xl border border-blue-200 bg-blue-50/50 p-4">
