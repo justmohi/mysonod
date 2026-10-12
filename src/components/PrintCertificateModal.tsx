@@ -1345,11 +1345,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <strong className="text-slate-900 font-bold flex-1">{application.businessType || 'সাধারণ ব্যবসা'}</strong>
                             </div>
 
-                            <div className="flex border-b border-slate-100 pb-1">
-                              <span className="w-44 text-slate-600 shrink-0 font-medium">
+                            <div className="flex items-center gap-1 border-b border-slate-100 pb-1">
+                              <span className="w-32 shrink-0 text-slate-600 font-medium">
                                 {lang === 'en' ? "License Validity:" : "লাইসেন্সের মেয়াদকাল:"}
                               </span>
-                              <strong className="text-emerald-900 font-bold flex-1">
+                              <strong className="min-w-0 whitespace-nowrap text-[10px] text-emerald-900 font-bold">
                                 {lang === 'en' 
                                   ? `${application.validityStart || '01-07-2026'} to ${application.validityEnd || '30-06-2027'}`
                                   : `${application.validityStart || '০১-০৭-২০২৬'} হতে ${application.validityEnd || '৩০-০৬-২০২৭'}`}
