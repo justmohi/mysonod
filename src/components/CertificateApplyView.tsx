@@ -364,6 +364,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setPostOffice(permPost || pPost);
     // Citizenship certificate holding number must be entered manually by the operator.
     setHoldingNo(selectedType === 'citizenship' ? '' : (data.holdingNo || ''));
+    setIdentityNumberType(data.identityNumberType === 'birth_reg' ? 'birth_reg' : 'nid');
 
     const isSame =
       !data.permanentVillage &&
