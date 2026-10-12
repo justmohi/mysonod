@@ -502,18 +502,43 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
         Object.entries(formData).filter(([key]) => allowedKeys.has(key))
       );
 
-      // Never overwrite an existing applicant name with an empty value during
-      // an unrelated edit. Keep the searchable name fields synchronized.
-      const applicantNameBn = String(formData.applicantNameBn || application.applicantNameBn || application.userName || '').trim();
-      const applicantNameEn = String(formData.applicantNameEn || application.applicantNameEn || '').trim();
-      editableValues.applicantNameBn = applicantNameBn;
-      editableValues.applicantNameEn = applicantNameEn;
+      // Preserve applicant names on unrelated edits. Older inheritance records
+      // may store the applicant name under legacy fields, so never write blank
+      // name values over an existing searchable name.
+      const applicantNameBn = String(
+        formData.applicantNameBn ||
+        application.applicantNameBn ||
+        application.userName ||
+        (application as any).applicantName ||
+        (application as any).name ||
+        ''
+      ).trim();
+      const applicantNameEn = String(
+        formData.applicantNameEn ||
+        application.applicantNameEn ||
+        (application as any).applicantNameEn ||
+        ''
+      ).trim();
+
+      // If no name exists in the record, omit these keys entirely instead of
+      // saving an empty string and making the application impossible to search.
+      if (applicantNameBn) {
+        editableValues.applicantNameBn = applicantNameBn;
+        editableValues.userName = applicantNameBn;
+      } else {
+        delete editableValues.applicantNameBn;
+        delete editableValues.userName;
+      }
+      if (applicantNameEn) {
+        editableValues.applicantNameEn = applicantNameEn;
+      } else {
+        delete editableValues.applicantNameEn;
+      }
 
       const updatePayload: Record<string, any> = {
         ...editableValues,
-        applicantNameBn,
-        applicantNameEn,
-        userName: applicantNameBn,
+        ...(applicantNameBn ? { applicantNameBn, userName: applicantNameBn } : {}),
+        ...(applicantNameEn ? { applicantNameEn } : {}),
         heirs,
         familyMembers,
         attachmentUrls:
