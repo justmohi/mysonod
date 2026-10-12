@@ -1512,11 +1512,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                   {/* Official Seal (Center) */}
                   <div className="flex shrink-0 flex-col items-center justify-center px-2">
-                    <div className="box-border flex h-20 w-20 shrink-0 flex-col items-center justify-center overflow-visible rounded-full border-2 border-dashed border-emerald-800/80 p-1.5 text-center bg-white">
-                      <span className="block text-[9px] leading-tight font-bold text-emerald-900 uppercase tracking-tight">
+                    <div className="box-border flex h-20 w-20 shrink-0 flex-col items-center justify-center overflow-visible rounded-full border-2 border-dashed border-emerald-300 p-1.5 text-center bg-emerald-50/20">
+                      <span className="block text-[9px] leading-tight font-bold text-emerald-500/70 uppercase tracking-tight">
                         OFFICIAL SEAL
                       </span>
-                      <span className="mt-1 block text-[7.5px] leading-tight text-slate-600 font-semibold">
+                      <span className="mt-1 block text-[7.5px] leading-tight text-slate-400 font-semibold">
                         (কার্যালয়ের সীল)
                       </span>
                     </div>
@@ -1537,11 +1537,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                 <div className={`seal-signature-container signature-grid shrink-0 ${isUltraCompactTable ? 'mt-0.5 pt-0.5' : (isTableCertificate ? (isHighRowTable ? 'mt-1 pt-0.5' : 'mt-2 pt-1') : 'mt-5 sm:mt-6 pt-2')} flex flex-wrap items-end justify-between gap-4`}>
                   {/* Left Side: Circular dotted line placeholder for Official Seal */}
                   <div className="flex flex-col items-center">
-                    <div className={`${isUltraCompactTable ? 'w-14 h-14 p-0.5' : (isHighRowTable ? 'w-16 h-16 p-1' : (isTableCertificate ? 'w-20 h-20 p-1.5' : 'w-24 h-24 p-2'))} rounded-full border-2 border-dashed border-emerald-800/80 flex flex-col items-center justify-center text-center bg-transparent`}>
-                      <span className={`${isUltraCompactTable ? 'text-[7.5px]' : (isHighRowTable ? 'text-[8.5px]' : 'text-[10px]')} font-bold text-emerald-900 uppercase tracking-tight`}>
+                    <div className={`${isUltraCompactTable ? 'w-14 h-14 p-0.5' : (isHighRowTable ? 'w-16 h-16 p-1' : (isTableCertificate ? 'w-20 h-20 p-1.5' : 'w-24 h-24 p-2'))} rounded-full border-2 border-dashed border-emerald-300 flex flex-col items-center justify-center text-center bg-emerald-50/20`}>
+                      <span className={`${isUltraCompactTable ? 'text-[7.5px]' : (isHighRowTable ? 'text-[8.5px]' : 'text-[10px]')} font-semibold text-emerald-500/70 uppercase tracking-tight`}>
                         {lang === 'en' ? 'OFFICIAL SEAL' : 'কার্যালয়ের সীল'}
                       </span>
-                      <span className={`${isUltraCompactTable ? 'text-[6.5px]' : (isHighRowTable ? 'text-[7.5px]' : 'text-[8.5px]')} text-slate-600 mt-0.5 font-semibold`}>
+                      <span className={`${isUltraCompactTable ? 'text-[6.5px]' : (isHighRowTable ? 'text-[7.5px]' : 'text-[8.5px]')} text-slate-400 mt-0.5 font-medium`}>
                         {lang === 'en' ? '(Official Stamp)' : '(অফিসিয়াল সীল)'}
                       </span>
                     </div>
