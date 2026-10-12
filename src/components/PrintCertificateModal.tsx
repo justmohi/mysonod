@@ -1274,10 +1274,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
 
                         {/* Key-Value Alignment Section */}
-                        <div className="border border-slate-400 overflow-hidden bg-white">
-                          <div className="bg-white text-[#006A4E] px-2 py-1 text-xs font-bold border-b border-slate-300 flex justify-between items-center">
+                        <div className="border border-slate-400 overflow-hidden bg-transparent">
+                          <div className="bg-transparent text-[#006A4E] px-2 py-1 text-xs font-bold border-b border-slate-300 flex justify-between items-center">
                             <span>১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি (Business & Licensee Particulars)</span>
-                            <span className="font-mono text-xs bg-emerald-900 px-2.5 py-0.5 rounded border border-emerald-500 font-bold">
+                            <span className="font-mono text-xs bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
                               {lang === 'en' ? 'Fiscal Year: ' : 'অর্থবছর: '}
                               {application.fiscalYear || '2026-2027'}
                             </span>
@@ -1387,7 +1387,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                         {/* Dual Column Address Section: Left (Present) and Right (Permanent) */}
                         <div className="grid grid-cols-2 gap-3 text-[10px]">
-                          <div className="border-t border-slate-400 px-1 py-1.5 bg-white">
+                          <div className="border-t border-slate-400 px-1 py-1.5 bg-transparent">
                             <h4 className="font-bold text-[#006A4E] border-b border-emerald-200 pb-1 mb-1.5 flex items-center gap-1.5">
                               <MapPin className="w-3.5 h-3.5 text-emerald-700" />
                               <span>{lang === 'en' ? 'Present Address:' : 'মালিকের বর্তমান ঠিকানা:'}</span>
@@ -1399,7 +1399,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             </div>
                           </div>
 
-                          <div className="border border-emerald-300 rounded-xl p-3 bg-emerald-50/40 shadow-2xs">
+                          <div className="border border-emerald-300/70 rounded-xl p-3 bg-transparent">
                             <h4 className="font-bold text-[#006A4E] border-b border-emerald-200 pb-1 mb-1.5 flex items-center gap-1.5">
                               <Home className="w-3.5 h-3.5 text-emerald-700" />
                               <span>{lang === 'en' ? 'Permanent Address:' : 'মালিকের স্থায়ী ঠিকানা:'}</span>
@@ -1413,7 +1413,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
 
                         {/* Financial Fee Table (Green Header Box) */}
-                        <div className="border border-slate-500 overflow-hidden bg-white">
+                        <div className="border border-slate-500 overflow-hidden bg-transparent">
                           <table className="w-full text-xs text-center border-collapse">
                             <thead>
                               <tr className="bg-[#006A4E] text-white font-bold">
@@ -1435,16 +1435,16 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               </tr>
                             </thead>
                             <tbody>
-                              <tr className="divide-x divide-slate-200 text-slate-900 font-semibold bg-white text-xs sm:text-[13px]">
+                              <tr className="divide-x divide-slate-200 text-slate-900 font-semibold bg-transparent text-xs sm:text-[13px]">
                                 <td className="py-1.5 px-1">{formatCurrencyBn(tlLicenseFee)}</td>
                                 <td className="py-2.5 px-2">{formatCurrencyBn(tlVat)}</td>
                                 <td className="py-2.5 px-2">{formatCurrencyBn(tlProfessionTax)}</td>
                                 <td className="py-2.5 px-2">{formatCurrencyBn(tlTradeTax)}</td>
-                                <td className="py-2.5 px-2 font-bold text-emerald-950 bg-emerald-50">
+                                <td className="py-2.5 px-2 font-bold text-emerald-950 bg-emerald-50/25">
                                   {formatCurrencyBn(tlTotal)}
                                 </td>
                               </tr>
-                              <tr className="bg-emerald-50/90 border-t border-emerald-300">
+                              <tr className="bg-emerald-50/25 border-t border-emerald-300">
                                 <td colSpan={5} className="py-1.5 px-2 text-left font-bold text-emerald-950 text-[11px] sm:text-xs">
                                   <span className="text-slate-600 mr-2">
                                     {lang === 'en' ? 'Total (In Words):' : 'মোট টাকা (কথায়):'}
