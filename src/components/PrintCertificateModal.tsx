@@ -1213,9 +1213,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                       </div>
                       <div>
                         {lang === 'en' ? (
-                          <>Ward No: <span className="font-bold text-slate-900">{application.wardNo || '09'}</span> | Holding No: <span className="font-bold">{application.holdingNo || '144'}</span></>
+                          <>Ward No: <span className="font-bold text-slate-900">{application.wardNo || '09'}</span>{application.holdingNo ? <> | Holding No: <span className="font-bold">{application.holdingNo}</span></> : null}</>
                         ) : (
-                          <>ওয়ার্ড নং: <span className="font-bold text-slate-900">{toBengaliNumber(application.wardNo || '09')}</span> | হোল্ডিং নং: <span className="font-bold">{application.holdingNo ? toBengaliNumber(application.holdingNo) : '১৪৪'}</span></>
+                          <>ওয়ার্ড নং: <span className="font-bold text-slate-900">{toBengaliNumber(application.wardNo || '09')}</span>{application.holdingNo ? <> | হোল্ডিং নং: <span className="font-bold">{toBengaliNumber(application.holdingNo)}</span></> : null}</>
                         )}
                       </div>
                     </div>
