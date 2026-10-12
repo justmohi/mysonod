@@ -1210,7 +1210,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </span>
                       </div>
                       <div>
-                        {lang === 'en' ? 'NID / Birth Reg No: ' : 'এনআইডি / জন্ম নিবন্ধন: '}
+                        {application.certificateType === 'citizenship'
+                          ? (application.identityNumberType === 'birth_reg'
+                              ? (lang === 'en' ? 'Birth Registration No: ' : 'জন্ম সনদ নং: ')
+                              : (lang === 'en' ? 'National ID No: ' : 'জাতীয় পরিচয়পত্র নং: '))
+                          : (lang === 'en' ? 'NID / Birth Reg No: ' : 'এনআইডি / জন্ম নিবন্ধন: ')}
                         <span className="font-mono font-bold text-slate-900">
                           {lang === 'en'
                             ? ((application as any).nidNumber || application.nidOrBirthReg)
