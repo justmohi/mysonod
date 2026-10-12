@@ -1681,6 +1681,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             </label>
           </div>
 
+          {selectedType === 'citizenship' && (
+            <div className="max-w-sm rounded-xl border border-emerald-200 bg-emerald-50/60 p-3">
+              <label className="mb-1 block text-xs font-bold text-slate-800">
+                {language === 'en' ? 'Holding Number (Optional)' : 'হোল্ডিং নম্বর (যদি থাকে)'}
+              </label>
+              <input
+                type="text"
+                value={holdingNo}
+                onChange={(e) => setHoldingNo(e.target.value)}
+                placeholder={language === 'en' ? 'Enter holding number' : 'হোল্ডিং নম্বর লিখুন'}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+          )}
+
           {/* 2.1 Present Address Block */}
           <div className="bg-slate-50/70 p-4 rounded-xl border border-slate-200">
             <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -1868,19 +1883,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
             </div>
 
-            {/* Optional Holding No */}
-            <div className="mt-3 pt-3 border-t border-slate-200/60 max-w-xs">
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {language === 'en' ? 'Holding No (Optional)' : 'হোল্ডিং নং (যদি থাকে)'}
-              </label>
-              <input
-                type="text"
-                value={holdingNo}
-                onChange={(e) => setHoldingNo(e.target.value)}
-                placeholder={language === 'en' ? 'Holding number' : 'হোল্ডিং নম্বর লিখুন'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs bg-white"
-              />
-            </div>
           </div>
           )}
         </div>
