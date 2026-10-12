@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mohistudio.pro.bd/sitemap.xml
+Sitemap: https://mysonod.store/sitemap.xml
