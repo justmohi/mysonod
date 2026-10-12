@@ -121,6 +121,13 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
   const handlePrint = async (target: 'application' | 'certificate' | 'both' = 'certificate') => {
     try {
+      // Every certificate print/reprint uses the date the operator clicks Print.
+      // Set it before printing and allow React to render the updated date.
+      if (target === 'certificate' || target === 'both') {
+        setPrintDateOverride(new Date().toISOString());
+        await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
+      }
+
       // Create/update the public verification record before any certificate
       // print so the QR code works without login.
       if ((target === 'certificate' || target === 'both') && application.status === 'Approved') {
@@ -1208,7 +1215,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                       <div>
                         {lang === 'en' ? 'Issue Date: ' : 'ইস্যুর তারিখ: '}
                         <span className="font-bold text-slate-900">
-                          {lang === 'en' ? formattedDateEn : formatBengaliDate(application.approvedAt || application.createdAt)}
+                          {lang === 'en' ? formattedDateEn : formatBengaliDate(issueDateIso)}
                         </span>
                       </div>
                       <div>
@@ -1255,7 +1262,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               {lang === 'en' ? 'Issue Date:' : 'ইস্যুর তারিখ:'}
                             </span>
                             <span className="text-xs sm:text-sm">
-                              {lang === 'en' ? formattedDateEn : formatBengaliDate(application.approvedAt || application.createdAt)}
+                              {lang === 'en' ? formattedDateEn : formatBengaliDate(issueDateIso)}
                             </span>
                           </div>
                         </div>
