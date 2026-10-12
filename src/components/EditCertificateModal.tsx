@@ -39,6 +39,16 @@ const EDITABLE_FIELDS: EditableField[] = [
   // Personal
   { key: 'applicantNameBn', label: 'আবেদনকারীর নাম (বাংলায়)', section: 'personal' },
   { key: 'applicantNameEn', label: 'আবেদনকারীর নাম (ইংরেজিতে)', section: 'personal' },
+  {
+    key: 'identityNumberType',
+    label: 'পরিচয়পত্রের ধরন',
+    type: 'select',
+    options: [
+      { value: 'nid', label: 'জাতীয় পরিচয়পত্র নং' },
+      { value: 'birth_reg', label: 'জন্ম সনদ নং' }
+    ],
+    section: 'personal'
+  },
   { key: 'fatherName', label: 'পিতার নাম', section: 'personal' },
   { key: 'fatherNameEn', label: 'পিতার নাম (ইংরেজিতে)', section: 'personal' },
   { key: 'motherName', label: 'মাতার নাম', section: 'personal' },
@@ -328,6 +338,7 @@ const PERMANENT_EDIT_KEYS = [
 function getRelevantEditFields(application: CertificateApplication): EditableField[] {
   const allowed = new Set<string>([
     ...COMMON_EDIT_KEYS,
+    ...(['citizenship', 'new_voter'].includes(application.certificateType) ? ['identityNumberType'] : []),
     ...(GUARDIAN_SELECTOR_EDIT_TYPES.has(application.certificateType) ? ['guardianType'] : []),
     ...PRESENT_EDIT_KEYS,
     ...(application.certificateType === 'same_name'
@@ -339,6 +350,7 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
   return EDITABLE_FIELDS.filter(field => {
     if (!allowed.has(field.key)) return false;
     const value = readValue(application, field.key);
+    if (field.key === 'identityNumberType') return true;
     if (Array.isArray(value)) return value.length > 0;
     return String(value ?? '').trim() !== '';
   });
@@ -346,6 +358,9 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
 
 const readValue = (app: CertificateApplication, key: string) => {
   let value = (app as unknown as Record<string, unknown>)[key];
+  if (key === 'identityNumberType' && value !== 'birth_reg') {
+    value = 'nid';
+  }
   if (key === 'guardianType' && !value) {
     value = app.fatherName ? 'father' : (app.spouseName ? 'husband' : 'father');
   }
