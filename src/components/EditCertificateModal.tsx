@@ -566,8 +566,8 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           <textarea
             value={value}
             onChange={e => updateField(field.key, e.target.value)}
-            rows={3}
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+            rows={2}
+            className="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
           />
         ) : field.type === 'select' ? (
           <select
@@ -615,23 +615,23 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
     fields: EditableField[],
     columns = 'grid-cols-1 sm:grid-cols-2'
   ) => (
-    <section className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
-      <div className="mb-4 flex items-center gap-2 border-b border-slate-200 pb-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
+    <section className="rounded-lg border border-slate-200 bg-slate-50/60 p-2">
+      <div className="mb-2 flex items-center gap-2 border-b border-slate-200 pb-2">
+        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-100 text-emerald-800">
           {icon}
         </div>
         <h4 className="text-sm font-extrabold text-slate-900">{title}</h4>
       </div>
-      <div className={`grid gap-3 ${columns}`}>
+      <div className={`grid gap-2 ${columns} lg:grid-cols-3`}>
         {fields.map(renderField)}
       </div>
     </section>
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-3 backdrop-blur-sm">
-      <div className="relative flex max-h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
-        <div className="flex items-center justify-between bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-800 px-5 py-4 text-white">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/65 p-2 sm:p-3 backdrop-blur-[2px]">
+      <div className="relative flex h-auto max-h-[88dvh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl">
+        <div className="flex items-center justify-between bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-800 px-3 py-2 sm:px-4 text-white">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
               <Edit3 className="h-5 w-5 text-emerald-200" />
@@ -652,7 +652,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
+        <form onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2 sm:p-3">
           {!canEdit && (
             <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
               <AlertCircle className="h-4 w-4 shrink-0" />
@@ -694,7 +694,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
             </div>
           )}
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {sections.personal.length > 0 && renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal)}
             {sections.present.length > 0 && renderSection('২. বর্তমান ঠিকানা', <MapPin className="h-4 w-4" />, sections.present)}
             {sections.permanent.length > 0 && renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
@@ -972,7 +972,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
             </div>
           </div>
 
-          <div className="sticky bottom-0 mt-5 flex items-center justify-end gap-3 border-t border-slate-200 bg-white pt-4">
+          <div className="sticky bottom-0 mt-2 flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-1 pt-2 pb-1">
             <button
               type="button"
               onClick={onClose}
