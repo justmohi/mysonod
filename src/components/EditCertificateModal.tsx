@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import type { CertificateApplication, HeirItem, SameNameEntry } from '../types';
@@ -628,7 +629,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
     </section>
   );
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/65 p-2 sm:p-3 backdrop-blur-[2px]">
       <div className="relative flex h-fit max-h-[88dvh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl">
         <div className="flex items-center justify-between bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-800 px-3 py-2 sm:px-4 text-white">
@@ -991,6 +992,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
