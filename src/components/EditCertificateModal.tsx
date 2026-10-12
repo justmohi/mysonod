@@ -483,11 +483,22 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           name: String(entry.name || '').trim()
         }));
 
+      const editableValues = Object.fromEntries(
+        Object.entries(formData).filter(([key]) => allowedKeys.has(key))
+      );
+
+      // Never overwrite an existing applicant name with an empty value during
+      // an unrelated edit. Keep the searchable name fields synchronized.
+      const applicantNameBn = String(formData.applicantNameBn || application.applicantNameBn || application.userName || '').trim();
+      const applicantNameEn = String(formData.applicantNameEn || application.applicantNameEn || '').trim();
+      editableValues.applicantNameBn = applicantNameBn;
+      editableValues.applicantNameEn = applicantNameEn;
+
       const updatePayload: Record<string, any> = {
-        ...Object.fromEntries(
-          Object.entries(formData).filter(([key]) => allowedKeys.has(key))
-        ),
-        userName: String(formData.applicantNameBn || application.applicantNameBn || '').trim(),
+        ...editableValues,
+        applicantNameBn,
+        applicantNameEn,
+        userName: applicantNameBn,
         heirs,
         familyMembers,
         attachmentUrls:
