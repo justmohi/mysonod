@@ -162,18 +162,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
         }
       }
 
-      // Ensure the requested print section is mounted. The tab view only
-      // renders sections included in activeTab; printing from the other tab
-      // otherwise hides the only mounted section and produces a blank page.
-      if (activeTab !== 'stacked') {
-        setActiveTab('stacked');
-        await new Promise<void>((resolve) =>
-          window.requestAnimationFrame(() =>
-            window.requestAnimationFrame(() => resolve())
-          )
-        );
-      }
-
       // Set print target attribute on body to isolate target in @media print
       document.body.setAttribute('data-print-target', target);
       window.print();
@@ -221,21 +209,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
         }
       }
 
-      // PDF capture needs the target section mounted in the DOM.
-      if (activeTab !== 'stacked') {
-        setActiveTab('stacked');
-        await new Promise<void>((resolve) =>
-          window.requestAnimationFrame(() =>
-            window.requestAnimationFrame(() => resolve())
-          )
-        );
-      }
-
-      const elementId = target === 'application' ? 'application-print-area' : 'certificate-print-area';
+            const elementId = target === 'application' ? 'application-print-area' : 'certificate-print-area';
       const element = document.getElementById(elementId);
       if (!element) {
-        console.error(`Cannot generate PDF: #${elementId} is not mounted.`);
-        alert('সনদ/আবেদনপত্র প্রস্তুত হয়নি। আবার চেষ্টা করুন।');
+        handlePrint(target);
         return;
       }
 
