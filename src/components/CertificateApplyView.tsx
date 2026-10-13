@@ -974,8 +974,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         return cleanedApplication;
       }).then((newApp) => {
         clearCurrentApplicationData();
-        const unified = setCurrentApplicationData(newApp as CertificateApplication);
-        setSubmittedApp(unified);
+        setCurrentApplicationData(newApp as CertificateApplication);
+        onNavigate('certificates');
       });
 
     } catch (err: any) {
@@ -1159,18 +1159,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       {/* Main Application Form */}
       {selectedType === 'inheritance' || selectedType === 'succession' ? (
         <WarishApplicationForm
-          onSuccess={(app) => {
-            if (app.status === 'Approved') {
-              onViewCertificate(app);
-            } else {
-              setSubmittedApp(app);
-            }
+          onSuccess={() => {
+            onNavigate('certificates');
           }}
         />
       ) : selectedType === 'trade_license' ? (
         <TradeLicenseApplicationForm
-          onSuccess={(app) => {
-            onViewCertificate(app);
+          onSuccess={() => {
+            onNavigate('certificates');
           }}
         />
       ) : (
