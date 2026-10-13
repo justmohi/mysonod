@@ -645,8 +645,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   // The family certificate has its own dedicated selector, so avoid rendering two selectors there.
   const needsGuardianSelector = selectedType !== 'family';
   const currentBalance = userProfile?.balance ?? 0;
-  // Operators are charged at approval, not at application submission.
-  const isBalanceSufficient = isOperator || currentBalance >= 2.0;
+  const isBalanceSufficient = currentBalance >= 2.0;
 
   const addHeirRow = () => {
     setHeirs([...heirs, { name: '', relation: 'পুত্র', age: '', nidOrBirth: '' }]);
@@ -690,9 +689,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       return;
     }
 
-    // Citizens pay the application fee at submission. Operators are charged
-    // only when they approve/complete the application, so don't block them here.
-    if (!isOperator && currentBalance < 2.0) {
+    // CRUCIAL CHECK: Balance must be >= 2 BDT
+    if (currentBalance < 2.0) {
       setInsufficientBalanceAlert(true);
       return;
     }
@@ -1064,13 +1062,9 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               {submittedApp.status === 'Approved' ? 'সনদ প্রস্তুত!' : 'আবেদন সফলভাবে জমা হয়েছে!'}
             </h3>
             <p className="text-xs text-slate-500 mb-3">
-              {submittedApp.status === 'Approved'
-                ? (isOperator
-                    ? `উদ্যোক্তা billing rule অনুযায়ী usage charge ৳${submittedApp.completionCharge ?? 0} কাটা হয়েছে।`
-                    : 'আবেদনটি অনুমোদিত হয়েছে।')
-                : (isOperator
-                    ? 'আবেদন জমা হয়েছে। এখন ড্যাশবোর্ড বা সকল সনদের তালিকা থেকে আবেদনটি অনুমোদন করুন। অনুমোদনের সময় প্রযোজ্য উদ্যোক্তা usage charge কাটা হবে।'
-                    : 'সরকারি ফি হিসেবে ওয়ালেট থেকে ২.০০ টাকা কর্তন হয়েছে। এখন আবেদনটি ইউনিয়ন উদ্যোক্তার অনুমোদনের অপেক্ষায় আছে।')}
+              {isOperator
+                ? `উদ্যোক্তা billing rule অনুযায়ী usage charge ৳${submittedApp.completionCharge ?? 0} কাটা হয়েছে।`
+                : 'সরকারি ফি হিসেবে ওয়ালেট থেকে ২.০০ টাকা কর্তন হয়েছে। এখন আবেদনটি ইউনিয়ন উদ্যোক্তার অনুমোদনের অপেক্ষায় আছে।'}
             </p>
 
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left space-y-2 mb-6 text-sm">
@@ -2680,9 +2674,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 </strong>
               </div>
               <div className="text-xs font-bold text-slate-800">
-                {isOperator
-                  ? 'উদ্যোক্তা usage charge: অনুমোদনের সময় প্রযোজ্য চার্জ কাটা হবে'
-                  : 'আবেদন ফি: ২.০০ টাকা (সাবমিট করলে স্বয়ংক্রিয়ভাবে কর্তন হবে)'}
+                আবেদন ফি: ২.০০ টাকা (সাবমিট করলে স্বয়ংক্রিয়ভাবে কর্তন হইবে)
               </div>
             </div>
           </div>
