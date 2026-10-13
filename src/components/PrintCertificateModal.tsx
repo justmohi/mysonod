@@ -166,9 +166,15 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
       document.body.setAttribute('data-print-target', target);
       window.print();
 
-      window.setTimeout(() => {
+      // Keep the print target in place for the entire native print-preview
+      // session. A fixed 1-second timeout can remove it while Chrome's print
+      // dialog is still open, causing the @media print selectors to hide the
+      // certificate and show a blank page.
+      const cleanupPrintTarget = () => {
         document.body.removeAttribute('data-print-target');
-      }, 1000);
+        window.removeEventListener('afterprint', cleanupPrintTarget);
+      };
+      window.addEventListener('afterprint', cleanupPrintTarget, { once: true });
     } catch (err: any) {
       console.error('Print billing error:', err);
       alert(err?.message || 'প্রিন্টের আগে billing সম্পন্ন করা যায়নি।');
