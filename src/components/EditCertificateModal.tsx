@@ -502,26 +502,36 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
         Object.entries(formData).filter(([key]) => allowedKeys.has(key))
       );
 
-      // Preserve applicant names on unrelated edits. Older inheritance records
-      // may store the applicant name under legacy fields, so never write blank
-      // name values over an existing searchable name.
-      const applicantNameBn = String(
-        formData.applicantNameBn ||
-        application.applicantNameBn ||
-        application.userName ||
-        (application as any).applicantName ||
-        (application as any).name ||
-        ''
-      ).trim();
-      const applicantNameEn = String(
-        formData.applicantNameEn ||
-        application.applicantNameEn ||
-        (application as any).applicantNameEn ||
-        ''
-      ).trim();
+      // Preserve applicant names during unrelated edits. Some older Warish
+      // records used "-" as a placeholder in applicantNameBn while userName
+      // still contained the real applicant name. Never treat placeholders as
+      // valid names or overwrite a real name with an empty/placeholder value.
+      const usableName = (...values: unknown[]): string => {
+        for (const value of values) {
+          const candidate = String(value ?? '').trim();
+          if (candidate && candidate !== '-' && candidate !== '—') {
+            return candidate;
+          }
+        }
+        return '';
+      };
 
-      // If no name exists in the record, omit these keys entirely instead of
-      // saving an empty string and making the application impossible to search.
+      const applicantNameBn = usableName(
+        formData.applicantNameBn,
+        application.applicantNameBn,
+        application.userName,
+        (application as any).applicantName,
+        (application as any).name
+      );
+      const applicantNameEn = usableName(
+        formData.applicantNameEn,
+        application.applicantNameEn,
+        (application as any).applicantNameEn
+      );
+
+      // Only update name fields when a usable name is available. If an old
+      // record has no name in any field, omit the fields rather than clearing
+      // data or writing a placeholder. The existing real name remains intact.
       if (applicantNameBn) {
         editableValues.applicantNameBn = applicantNameBn;
         editableValues.userName = applicantNameBn;
