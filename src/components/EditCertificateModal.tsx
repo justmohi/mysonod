@@ -337,9 +337,8 @@ const PERMANENT_EDIT_KEYS = [
 
 function getRelevantEditFields(application: CertificateApplication): EditableField[] {
   const isWarishCertificate = ['inheritance', 'succession'].includes(application.certificateType);
-  const commonFields = isWarishCertificate
-    ? COMMON_EDIT_KEYS.filter(key => key !== 'applicantNameBn' && key !== 'applicantNameEn')
-    : COMMON_EDIT_KEYS;
+  const warishKeys = ['deceasedPersonName', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'motherName', 'presentVillage', 'presentWard', 'presentPost', 'deceasedPhotoUrl', 'attachmentUrls', 'deceasedDate'];
+  const commonFields = isWarishCertificate ? [] : COMMON_EDIT_KEYS;
 
   const allowed = new Set<string>([
     ...commonFields,
