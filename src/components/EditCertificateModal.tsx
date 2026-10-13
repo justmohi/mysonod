@@ -336,8 +336,13 @@ const PERMANENT_EDIT_KEYS = [
 ];
 
 function getRelevantEditFields(application: CertificateApplication): EditableField[] {
+  const isWarishCertificate = ['inheritance', 'succession'].includes(application.certificateType);
+  const commonFields = isWarishCertificate
+    ? COMMON_EDIT_KEYS.filter(key => key !== 'applicantNameBn' && key !== 'applicantNameEn')
+    : COMMON_EDIT_KEYS;
+
   const allowed = new Set<string>([
-    ...COMMON_EDIT_KEYS,
+    ...commonFields,
     ...(['citizenship', 'new_voter'].includes(application.certificateType) ? ['identityNumberType'] : []),
     ...(GUARDIAN_SELECTOR_EDIT_TYPES.has(application.certificateType) ? ['guardianType'] : []),
     ...PRESENT_EDIT_KEYS,
