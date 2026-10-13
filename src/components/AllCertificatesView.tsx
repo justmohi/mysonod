@@ -166,11 +166,25 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
     }
   };
 
+  // In an inheritance (ওয়ারিশ) certificate, the record is commonly filed
+  // under the deceased person's name rather than the applicant/heir's name.
+  const getListApplicantName = (app: CertificateApplication) =>
+    app.certificateType === 'inheritance'
+      ? (app.deceasedPersonName?.trim() || app.applicantNameBn?.trim() || '-')
+      : (app.applicantNameBn?.trim() || '-');
+
+  const normalizedSearch = searchQuery.trim().toLocaleLowerCase();
   const filteredApps = applications.filter((app) => {
-    const matchesSearch = 
-      app.trackingId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.applicantNameBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.nidOrBirthReg.includes(searchQuery);
+    const searchableValues = [
+      app.trackingId,
+      getListApplicantName(app),
+      app.applicantNameBn,
+      app.deceasedPersonName,
+      app.nidOrBirthReg
+    ];
+    const matchesSearch = searchableValues.some(value =>
+      (value || '').toLocaleLowerCase().includes(normalizedSearch)
+    );
     const matchesType = typeFilter === 'all' || app.certificateType === typeFilter;
     return matchesSearch && matchesType;
   });
@@ -274,7 +288,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                       <span className="text-[10px] text-slate-400">ফি: {formatCurrencyBn(app.fee)}</span>
                     </td>
                     <td className="py-3 px-3 font-medium text-slate-800">
-                      {app.applicantNameBn}
+                      {getListApplicantName(app)}
                     </td>
                     <td className="py-3 px-3 font-mono text-slate-600">
                       {app.nidOrBirthReg}
