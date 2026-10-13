@@ -752,7 +752,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           )}
 
           <div className="space-y-2">
-            {sections.personal.length > 0 && renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal)}
+            {(['inheritance', 'succession'].includes(application.certificateType) ? sections.personal.map(renderField) : sections.personal.length > 0 && renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal)}
             {sections.present.length > 0 && renderSection('২. বর্তমান ঠিকানা', <MapPin className="h-4 w-4" />, sections.present)}
             {sections.permanent.length > 0 && renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
             {sections.certificate.length > 0 && renderSection('৪. সনদ-নির্দিষ্ট তথ্য', <FileText className="h-4 w-4" />, sections.certificate)}
