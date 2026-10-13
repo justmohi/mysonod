@@ -1021,6 +1021,12 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const prevDistrictBn = (application as any).prevDistrict || application.permanentDistrict || 'কুষ্টিয়া';
   const prevUpazilaBn = (application as any).prevUpazila || application.permanentUpazila || settings.upazila || '—';
   const prevVillageBn = application.voterAreaOld || (application as any).prevVillage || 'পূর্ববর্তী এলাকা';
+  // Resolve the destination address used by the voter-area-transfer certificate.
+  // These values must be declared in this component's scope before rendering.
+  const transferVillageBn = (application as any).transferVillage || application.presentVillage || application.village || '—';
+  const transferPostOfficeBn = (application as any).transferPostOffice || application.presentPost || application.postOffice || '—';
+  const transferUpazilaBn = (application as any).transferUpazila || application.presentUpazila || settings.upazila || '—';
+  const transferDistrictBn = (application as any).transferDistrict || application.presentDistrict || settings.district || '—';
 
   // Standard legal paragraph class with enhanced line-height and balanced font size for A4 canvas
   const pClass = "leading-[2.2] text-justify text-slate-900 text-[16px] sm:text-[17.5px]";
