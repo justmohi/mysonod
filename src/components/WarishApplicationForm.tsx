@@ -36,7 +36,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   onSuccess,
   onCancel
 }) => {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, isOperator } = useAuth();
   const { settings } = useUnionSettings();
 
   // 1. Deceased Person Information Fields (মৃত ব্যক্তির তথ্য)
@@ -245,7 +245,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
 
     const feeAmount = 2.0;
     const currentBalance = userProfile?.balance ?? 0;
-    if (currentBalance < feeAmount) {
+    if (!isOperator && currentBalance < feeAmount) {
       setErrorMessage(`আপনার ওয়ালেটে অপর্যাপ্ত ব্যালেন্স রয়েছে (বর্তমান ব্যালেন্স: ${formatCurrencyBn(currentBalance)} টাকা)। ওয়ারিশ সনদের সরকারি ফি ${formatCurrencyBn(feeAmount)} টাকা পরিশোধ করতে ব্যালেন্স রিচার্জ করুন।`);
       return;
     }
@@ -319,36 +319,36 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         attachmentUrls: attachmentNames,
         heirs: validHeirs,
         fee: feeAmount,
-        status: 'Approved',
-        issuingOfficer: `চেয়ারম্যান, ${settings.unionName || '১২ নং আমবাড়ীয়া ইউনিয়ন পরিষদ'}`,
-        createdAt: nowIso,
-        approvedAt: nowIso
+        status: 'Pending',
+        createdAt: nowIso
       };
 
       // 2. Set as active unified application in global state / localStorage
       const unifiedApp = setCurrentApplicationData(rawApplication);
 
-      // Firestore transaction: deduct fee + record application + record transaction
+      // Save the application as Pending. Citizens pay the application fee now;
+      // operators are billed by the shared approval workflow when they approve it.
       await runTransaction(db, async (transaction) => {
         const userDoc = await transaction.get(userDocRef);
         if (!userDoc.exists()) {
           throw new Error('User record not found');
         }
 
-        const currentBal = userDoc.data()?.balance ?? 0;
-        if (currentBal < feeAmount) {
-          throw new Error('Insufficient balance');
+        const currentBal = Number(userDoc.data()?.balance) || 0;
+        let newBalance = currentBal;
+
+        if (!isOperator) {
+          if (currentBal < feeAmount) {
+            throw new Error('Insufficient balance');
+          }
+
+          newBalance = Number((currentBal - feeAmount).toFixed(2));
+          transaction.update(userDocRef, {
+            balance: newBalance,
+            updatedAt: nowIso
+          });
         }
 
-        const newBalance = Number((currentBal - feeAmount).toFixed(2));
-
-        // 1. Deduct wallet
-        transaction.update(userDocRef, {
-          balance: newBalance,
-          updatedAt: nowIso
-        });
-
-        // 2. Insert application
         const cleanedApp = cleanDataForFirestore({
           ...unifiedApp,
           createdAtServer: serverTimestamp()
@@ -368,23 +368,24 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
           );
         }
 
-        // 3. Insert transaction log
-        const trxId = `trx_${Date.now()}`;
-        const trxRef = doc(db, 'transactions', trxId);
-        const trxData: Transaction = {
-          id: trxId,
-          userId: currentUser.uid,
-          type: 'fee_deduction',
-          amount: feeAmount,
-          balanceAfter: newBalance,
-          description: `ওয়ারিশ সনদ আবেদন ফি কর্তন (ট্র্যাকিং: ${trackingId})`,
-          referenceId: appId,
-          createdAt: nowIso
-        };
-        transaction.set(trxRef, cleanDataForFirestore(trxData));
+        if (!isOperator) {
+          const trxId = `trx_${Date.now()}`;
+          const trxRef = doc(db, 'transactions', trxId);
+          const trxData: Transaction = {
+            id: trxId,
+            userId: currentUser.uid,
+            type: 'fee_deduction',
+            amount: feeAmount,
+            balanceAfter: newBalance,
+            description: `ওয়ারিশ সনদ আবেদন ফি কর্তন (ট্র্যাকিং: ${trackingId})`,
+            referenceId: appId,
+            createdAt: nowIso
+          };
+          transaction.set(trxRef, cleanDataForFirestore(trxData));
+        }
       });
 
-      setSuccessMessage(`ওয়ারিশ সনদ সফলভাবে দাখিল ও অনুমোদিত হয়েছে! ট্র্যাকিং নম্বর: ${trackingId}`);
+      setSuccessMessage(`ওয়ারিশ সনদের আবেদন সফলভাবে জমা হয়েছে। ট্র্যাকিং নম্বর: ${trackingId}। অনুমোদনের পর সনদ প্রিন্ট করা যাবে।`);
 
       if (onSuccess) {
         onSuccess(unifiedApp);
@@ -794,7 +795,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-xs text-slate-600 flex items-center gap-1.5">
             <FileCheck className="w-4 h-4 text-emerald-600" />
-            <span>আবেদন ফি: <b>২.০০ টাকা</b> (তাৎক্ষণিক অনুমোদন ও ডিজিটাল প্রিন্ট কপি প্রস্তুত)</span>
+            <span>{isOperator ? <>উদ্যোক্তা usage charge: <b>অনুমোদনের সময় প্রযোজ্য চার্জ</b></> : <>আবেদন ফি: <b>২.০০ টাকা</b> (জমা দেওয়ার সময় কর্তন হবে)</>}</span>
           </div>
 
           <button
