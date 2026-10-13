@@ -439,6 +439,9 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
 
   const sections = useMemo(() => {
     const relevant = getRelevantEditFields(application);
+    if (['inheritance', 'succession'].includes(application.certificateType)) {
+      return { personal: relevant, present: [], permanent: [], certificate: [] };
+    }
     return {
       personal: relevant.filter(f => f.section === 'personal'),
       present: relevant.filter(f => f.section === 'present'),
