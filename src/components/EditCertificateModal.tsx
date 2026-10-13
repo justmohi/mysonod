@@ -1006,6 +1006,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
               </section>
             ) : null}
 
+            {!['inheritance', 'succession'].includes(application.certificateType) && (
             <div className="rounded-2xl border border-slate-200 bg-white p-4">
               <div className="mb-3 flex items-center gap-2">
                 <FileText className="h-4 w-4 text-emerald-700" />
@@ -1030,6 +1031,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                 </div>
               </div>
             </div>
+            )}
           </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-slate-200 bg-white px-1 pt-2 pb-1">
