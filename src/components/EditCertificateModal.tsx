@@ -340,14 +340,12 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
   const warishKeys = ['deceasedPersonName', 'deceasedIdType', 'deceasedIdNumber', 'deceasedFatherOrHusbandType', 'deceasedFatherOrHusbandName', 'motherName', 'presentVillage', 'presentWard', 'presentPost', 'deceasedPhotoUrl', 'attachmentUrls', 'deceasedDate'];
   const commonFields = isWarishCertificate ? [] : COMMON_EDIT_KEYS;
 
-  const allowed = new Set<string>([
+  const allowed = new Set<string>(isWarishCertificate ? warishKeys : [
     ...commonFields,
     ...(['citizenship', 'new_voter'].includes(application.certificateType) ? ['identityNumberType'] : []),
     ...(GUARDIAN_SELECTOR_EDIT_TYPES.has(application.certificateType) ? ['guardianType'] : []),
     ...PRESENT_EDIT_KEYS,
-    ...(application.certificateType === 'same_name'
-      ? []
-      : PERMANENT_EDIT_KEYS),
+    ...(application.certificateType === 'same_name' ? [] : PERMANENT_EDIT_KEYS),
     ...(CERTIFICATE_EDIT_KEYS[application.certificateType] || [])
   ]);
 
