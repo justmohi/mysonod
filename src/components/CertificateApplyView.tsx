@@ -1632,20 +1632,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
-              {!needsGuardianSelector && (
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {language === 'en' ? "Spouse's Name (if any)" : 'স্বামী / স্ত্রীর নাম (যদি থাকে)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={spouseName}
-                    onChange={(e) => setSpouseName(e.target.value)}
-                    placeholder={language === 'en' ? "Spouse's Name" : 'স্বামী / স্ত্রীর নাম (বাংলা)'}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  />
-                </div>
-              )}
+              {!needsGuardianSelector && selectedType !== 'family' && (
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
