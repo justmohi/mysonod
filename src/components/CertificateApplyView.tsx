@@ -844,7 +844,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         } else if (selectedType === 'community' || selectedType === 'indigenous') {
           appPayload.communityName = communityName;
         } else if (selectedType === 'voter_area_transfer') {
-          appPayload.voterAreaOld = voterAreaOld || prevVillage;
+          appPayload.previousAddress = previousAddress;
+          appPayload.voterAreaOld = previousAddress || voterAreaOld || prevVillage;
           appPayload.voterAreaNew = voterAreaNew || transferVillage;
           appPayload.voterTransferReason = voterTransferReason;
           appPayload.prevDistrict = prevDistrict;
