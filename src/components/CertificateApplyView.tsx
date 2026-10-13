@@ -2196,13 +2196,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           </div>
         )}
 
-        {/* Voter Area Transfer — fields arranged to match the required application format */}
+        {/* Voter Area Transfer — previous address combined into one textarea */}
         {selectedType === 'voter_area_transfer' && (
           <div className="border-t pt-4 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার জেলার নাম" value={prevDistrict} onChange={(e) => setPrevDistrict(e.target.value)} required />
-              <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার উপজেলার নাম" value={prevUpazila} onChange={(e) => setPrevUpazila(e.target.value)} required />
-              <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার গ্রামের নাম" value={prevVillage} onChange={(e) => setPrevVillage(e.target.value)} required />
+            <div className="rounded-lg border border-emerald-700 bg-white p-4">
+              <label className="block text-sm font-semibold text-emerald-800 mb-2">
+                পূর্ববর্তী ঠিকানা / অন্যান্য তথ্য
+              </label>
+              <textarea
+                className="w-full min-h-[72px] px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
+                placeholder="গ্রাম, ডাকঘর, উপজেলা ও জেলা লিখুন"
+                value={previousAddress}
+                onChange={(e) => setPreviousAddress(e.target.value)}
+                rows={3}
+                required
+              />
             </div>
             <div className="grid grid-cols-1 gap-4">
               <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত গ্রামের নাম" value={transferVillage} onChange={(e) => setTransferVillage(e.target.value)} required />
