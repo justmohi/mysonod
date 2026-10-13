@@ -291,7 +291,7 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 w-12 text-center">{isEn ? 'SL' : 'ক্রমিক'}</th>
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2">{isEn ? 'Member Name' : 'সদস্যের নাম'}</th>
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 w-24 text-center">{isEn ? 'Relation' : 'সম্পর্ক'}</th>
-              <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2">{isEn ? 'NID / Birth Certificate' : 'জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন'}</th>
+              <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2">{application.identityNumberType === 'birth_reg' ? (isEn ? 'Birth Registration No.' : 'জন্ম সনদ নং') : (isEn ? 'National ID No.' : 'জাতীয় পরিচয়পত্র নং')}</th>
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="text-center w-24">{isEn ? 'Age' : 'বয়স'}</th>
             </tr>
           </thead>
