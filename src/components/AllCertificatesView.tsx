@@ -60,19 +60,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
 
     const unsubscribe = onSnapshot(appQuery, (snapshot) => {
       const list: CertificateApplication[] = [];
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data() as Partial<CertificateApplication> & Record<string, any>;
-        // Use the Firestore document ID as the canonical ID and recover legacy
-        // applicant-name fields for older inheritance records.
-        list.push({
-          ...data,
-          id: docSnap.id,
-          applicantNameBn: String(
-            data.applicantNameBn || data.userName || data.applicantName || data.name || ''
-          ),
-          userName: String(data.userName || data.applicantNameBn || data.applicantName || data.name || '')
-        } as CertificateApplication);
-      });
+      snapshot.forEach(docSnap => list.push(docSnap.data() as CertificateApplication));
       list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setApplications(list);
       setLoading(false);
@@ -179,16 +167,10 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   };
 
   const filteredApps = applications.filter((app) => {
-    const search = searchQuery.trim().toLowerCase();
-    const trackingId = String(app.trackingId || '');
-    const applicantName = String(
-      app.applicantNameBn || app.userName || (app as any).applicantName || (app as any).name || ''
-    );
-    const identityNumber = String(app.nidOrBirthReg || '');
-    const matchesSearch =
-      trackingId.toLowerCase().includes(search) ||
-      applicantName.toLowerCase().includes(search) ||
-      identityNumber.toLowerCase().includes(search);
+    const matchesSearch = 
+      app.trackingId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.applicantNameBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.nidOrBirthReg.includes(searchQuery);
     const matchesType = typeFilter === 'all' || app.certificateType === typeFilter;
     return matchesSearch && matchesType;
   });
@@ -292,7 +274,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
                       <span className="text-[10px] text-slate-400">ফি: {formatCurrencyBn(app.fee)}</span>
                     </td>
                     <td className="py-3 px-3 font-medium text-slate-800">
-                      {String(app.applicantNameBn || app.userName || (app as any).applicantName || (app as any).name || '').trim() || '—'}
+                      {app.applicantNameBn}
                     </td>
                     <td className="py-3 px-3 font-mono text-slate-600">
                       {app.nidOrBirthReg}
