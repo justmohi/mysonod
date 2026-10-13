@@ -158,7 +158,17 @@ const EDITABLE_FIELDS: EditableField[] = [
   { key: 'totalAmount', label: 'মোট টাকা', type: 'number', section: 'certificate' },
   { key: 'deceasedPersonName', label: 'মৃত ব্যক্তির নাম', section: 'certificate' },
   { key: 'deceasedDate', label: 'মৃত্যুর তারিখ', type: 'date', section: 'certificate' },
-  { key: 'deceasedIdType', label: 'মৃত ব্যক্তির ID-এর ধরণ', section: 'certificate' },
+  {
+    key: 'deceasedIdType',
+    label: 'পরিচয়পত্রের ধরন',
+    type: 'select',
+    options: [
+      { value: 'জাতীয় পরিচয়পত্র', label: 'জাতীয় পরিচয়পত্র' },
+      { value: 'জন্ম নিবন্ধন', label: 'জন্ম নিবন্ধন' },
+      { value: '-', label: 'নেই / প্রযোজ্য নয়' }
+    ],
+    section: 'certificate'
+  },
   { key: 'deceasedIdNumber', label: 'মৃত ব্যক্তির ID নম্বর', section: 'certificate' },
   { key: 'deceasedFatherOrHusbandType', label: 'মৃত ব্যক্তির পিতা / স্বামী', section: 'certificate' },
   { key: 'deceasedFatherOrHusbandName', label: 'মৃত ব্যক্তির পিতা / স্বামীর নাম', section: 'certificate' },
@@ -349,7 +359,7 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
     ...(CERTIFICATE_EDIT_KEYS[application.certificateType] || [])
   ]);
 
-  return EDITABLE_FIELDS.filter(field => {
+  const relevantFields = EDITABLE_FIELDS.filter(field => {
     if (!allowed.has(field.key)) return false;
     if (isWarishCertificate) return true;
     const value = readValue(application, field.key);
@@ -357,6 +367,15 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
     if (Array.isArray(value)) return value.length > 0;
     return String(value ?? '').trim() !== '';
   });
+
+  // Keep the Warish edit form in the same order as the application form.
+  if (isWarishCertificate) {
+    return relevantFields.sort(
+      (a, b) => warishKeys.indexOf(a.key) - warishKeys.indexOf(b.key)
+    );
+  }
+
+  return relevantFields;
 }
 
 const readValue = (app: CertificateApplication, key: string) => {
@@ -755,7 +774,9 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           )}
 
           <div className="space-y-2">
-            {(['inheritance', 'succession'].includes(application.certificateType) ? sections.personal.map(renderField) : sections.personal.length > 0 && renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal)}
+            {(['inheritance', 'succession'].includes(application.certificateType)
+              ? <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">{sections.personal.map(renderField)}</div>
+              : sections.personal.length > 0 && renderSection('১. ব্যক্তিগত তথ্য', <User className="h-4 w-4" />, sections.personal))}
             {sections.present.length > 0 && renderSection('২. বর্তমান ঠিকানা', <MapPin className="h-4 w-4" />, sections.present)}
             {sections.permanent.length > 0 && renderSection('৩. স্থায়ী ও পুরোনো ঠিকানা', <Home className="h-4 w-4" />, sections.permanent)}
             {sections.certificate.length > 0 && renderSection('৪. সনদ-নির্দিষ্ট তথ্য', <FileText className="h-4 w-4" />, sections.certificate)}
