@@ -770,7 +770,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           gender,
           maritalStatus: maritalStatus || 'বিবাহিত',
           nidOrBirthReg,
-          identityNumberType: (selectedType === 'citizenship' || selectedType === 'new_voter') ? identityNumberType : undefined,
+          identityNumberType: (selectedType === 'citizenship' || selectedType === 'new_voter' || selectedType === 'same_name') ? identityNumberType : undefined,
           mobile: mobile.trim(),
           occupation: occupation || undefined,
           fee: 2.0,
@@ -1247,13 +1247,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
                 <div>
                   <label className="same-name-field-label">
-                    জাতীয় পরিচয়পত্র
+                    {identityNumberType === 'birth_reg' ? 'জন্ম সনদ নং' : 'জাতীয় পরিচয়পত্র নং'}
                   </label>
+                  <select
+                    value={identityNumberType}
+                    onChange={(e) => setIdentityNumberType(e.target.value as 'nid' | 'birth_reg')}
+                    className="same-name-input same-name-select"
+                  >
+                    <option value="nid">জাতীয় পরিচয়পত্র নং</option>
+                    <option value="birth_reg">জন্ম সনদ নং</option>
+                  </select>
                   <input
                     type="text"
                     value={nidOrBirthReg}
                     onChange={(e) => setNidOrBirthReg(e.target.value)}
-                    placeholder=""
+                    placeholder={identityNumberType === 'birth_reg' ? 'জন্ম সনদ নম্বর লিখুন' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন'}
                     className="same-name-input"
                   />
                 </div>
