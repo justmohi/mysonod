@@ -1632,8 +1632,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
-              {!needsGuardianSelector && selectedType !== 'family' && (
-
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'en' ? 'Date of Birth (DOB)' : 'জন্ম তারিখ'}
