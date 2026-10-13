@@ -647,6 +647,13 @@ export interface CertificateApplication {
   voterAreaOld?: string;
   voterAreaNew?: string;
   voterTransferReason?: string;
+  prevDistrict?: string;
+  prevUpazila?: string;
+  prevVillage?: string;
+  transferVillage?: string;
+  transferPostOffice?: string;
+  transferUpazila?: string;
+  transferDistrict?: string;
 
   correctionField?: string;
   correctionOldValue?: string;
