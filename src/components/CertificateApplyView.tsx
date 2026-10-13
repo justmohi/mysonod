@@ -179,6 +179,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const [voterAreaOld, setVoterAreaOld] = useState('');
   const [voterAreaNew, setVoterAreaNew] = useState('');
   const [voterTransferReason, setVoterTransferReason] = useState('');
+  const [prevDistrict, setPrevDistrict] = useState('');
+  const [prevUpazila, setPrevUpazila] = useState('');
+  const [prevVillage, setPrevVillage] = useState('');
+  const [transferVillage, setTransferVillage] = useState('');
+  const [transferPostOffice, setTransferPostOffice] = useState('');
+  const [transferUpazila, setTransferUpazila] = useState('');
+  const [transferDistrict, setTransferDistrict] = useState('');
 
   const [correctionField, setCorrectionField] = useState('');
   const [correctionOldValue, setCorrectionOldValue] = useState('');
@@ -403,6 +410,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setVoterAreaOld(data.voterAreaOld || '');
     setVoterAreaNew(data.voterAreaNew || '');
     setVoterTransferReason(data.voterTransferReason || '');
+    setPrevDistrict(data.prevDistrict || '');
+    setPrevUpazila(data.prevUpazila || '');
+    setPrevVillage(data.prevVillage || data.voterAreaOld || '');
+    setTransferVillage(data.transferVillage || data.voterAreaNew || '');
+    setTransferPostOffice(data.transferPostOffice || '');
+    setTransferUpazila(data.transferUpazila || '');
+    setTransferDistrict(data.transferDistrict || '');
 
     setCorrectionField(data.correctionField || '');
     setCorrectionOldValue(data.correctionOldValue || '');
@@ -830,9 +844,16 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         } else if (selectedType === 'community' || selectedType === 'indigenous') {
           appPayload.communityName = communityName;
         } else if (selectedType === 'voter_area_transfer') {
-          appPayload.voterAreaOld = voterAreaOld;
-          appPayload.voterAreaNew = voterAreaNew;
+          appPayload.voterAreaOld = voterAreaOld || prevVillage;
+          appPayload.voterAreaNew = voterAreaNew || transferVillage;
           appPayload.voterTransferReason = voterTransferReason;
+          appPayload.prevDistrict = prevDistrict;
+          appPayload.prevUpazila = prevUpazila;
+          appPayload.prevVillage = prevVillage || voterAreaOld;
+          appPayload.transferVillage = transferVillage || voterAreaNew;
+          appPayload.transferPostOffice = transferPostOffice;
+          appPayload.transferUpazila = transferUpazila;
+          appPayload.transferDistrict = transferDistrict;
         } else if (selectedType === 'new_voter' || selectedType === 'new_voter_affidavit') {
           appPayload.previousAddress = previousAddress;
           appPayload.generalPurpose = generalPurpose;
@@ -2175,31 +2196,20 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           </div>
         )}
 
-        {/* Voter Area Transfer */}
+        {/* Voter Area Transfer — fields arranged to match the required application format */}
         {selectedType === 'voter_area_transfer' && (
-          <div className="border-t pt-6 grid md:grid-cols-3 gap-4">
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="পূর্বের ভোটার এলাকা"
-              value={voterAreaOld}
-              onChange={(e) => setVoterAreaOld(e.target.value)}
-              required
-            />
-
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="নতুন ভোটার এলাকা"
-              value={voterAreaNew}
-              onChange={(e) => setVoterAreaNew(e.target.value)}
-              required
-            />
-
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="স্থানান্তরের কারণ"
-              value={voterTransferReason}
-              onChange={(e) => setVoterTransferReason(e.target.value)}
-            />
+          <div className="border-t pt-4 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার জেলার নাম" value={prevDistrict} onChange={(e) => setPrevDistrict(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার উপজেলার নাম" value={prevUpazila} onChange={(e) => setPrevUpazila(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার গ্রামের নাম" value={prevVillage} onChange={(e) => setPrevVillage(e.target.value)} required />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত গ্রামের নাম" value={transferVillage} onChange={(e) => setTransferVillage(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত ডাকঘর" value={transferPostOffice} onChange={(e) => setTransferPostOffice(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত উপজেলা" value={transferUpazila} onChange={(e) => setTransferUpazila(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত জেলা" value={transferDistrict} onChange={(e) => setTransferDistrict(e.target.value)} required />
+            </div>
           </div>
         )}
 
