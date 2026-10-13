@@ -351,6 +351,7 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
 
   return EDITABLE_FIELDS.filter(field => {
     if (!allowed.has(field.key)) return false;
+    if (isWarishCertificate) return true;
     const value = readValue(application, field.key);
     if (field.key === 'identityNumberType') return true;
     if (Array.isArray(value)) return value.length > 0;
