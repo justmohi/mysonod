@@ -670,7 +670,9 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
     fields: EditableField[],
     columns = 'grid-cols-1 sm:grid-cols-2'
   ) => (
-    <section className="rounded-lg border border-slate-200 bg-slate-50/60 p-2">
+    ['inheritance', 'succession'].includes(application.certificateType)
+      ? <>{fields.map(renderField)}</>
+      : <section className="rounded-lg border border-slate-200 bg-slate-50/60 p-2">
       <div className="mb-2 flex items-center gap-2 border-b border-slate-200 pb-2">
         <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-100 text-emerald-800">
           {icon}
