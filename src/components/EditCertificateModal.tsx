@@ -350,8 +350,6 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
   return EDITABLE_FIELDS.filter(field => {
     if (!allowed.has(field.key)) return false;
     const value = readValue(application, field.key);
-    // Always expose applicant name so legacy records with a blank name can be repaired.
-    if (field.key === 'applicantNameBn') return true;
     if (field.key === 'identityNumberType') return true;
     if (Array.isArray(value)) return value.length > 0;
     return String(value ?? '').trim() !== '';
@@ -360,9 +358,6 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
 
 const readValue = (app: CertificateApplication, key: string) => {
   let value = (app as unknown as Record<string, unknown>)[key];
-  if (key === 'applicantNameBn') {
-    value = value || app.userName || (app as any).applicantName || (app as any).name || '';
-  }
   if (key === 'identityNumberType' && value !== 'birth_reg') {
     value = 'nid';
   }
