@@ -1276,6 +1276,30 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
         </div>
       )}
 
+      {/* Voter Area Transfer Certificate (ভোটার এলাকা স্থানান্তর প্রত্যয়ন) */}
+      {type === 'voter_area_transfer' && (
+        <div className="space-y-3">
+          <p className={pClass}>
+            এই মর্মে ভোটার এলাকা স্থানান্তর প্রত্যয়ন প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>
+            {nidBn && <>, জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong></>}, পিতা: <strong>{fatherNameBn || '—'}</strong>,
+            মাতা: <strong>{motherNameBn || '—'}</strong>, গ্রাম: <strong>{villageBn}</strong>,
+            ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>,
+            ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>,
+            জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের একজন স্থায়ী বাসিন্দা।
+            আমি তাহাকে ব্যক্তিগতভাবে চিনি ও অবগত রহিয়াছি। আমার জানামতে তিনি পূর্বে
+            <strong> {(application as any).prevDistrict || application.permanentDistrict || '—'} </strong> জেলার
+            <strong> {(application as any).prevUpazila || application.permanentUpazila || '—'} </strong> উপজেলার
+            <strong> {(application as any).prevVillage || application.voterAreaOld || '—'} </strong> গ্রামে ভোটার তালিকায় অন্তর্ভুক্ত ছিলেন।
+            বর্তমানে তিনি <strong> {(application as any).transferVillage || application.presentVillage || application.village || '—'} </strong> গ্রামে,
+            ডাকঘর: <strong> {(application as any).transferPostOffice || application.presentPost || application.postOffice || '—'} </strong>,
+            উপজেলা: <strong> {(application as any).transferUpazila || application.presentUpazila || settings.upazila || '—'} </strong>,
+            জেলা: <strong> {(application as any).transferDistrict || application.presentDistrict || settings.district || '—'} </strong> ঠিকানায়
+            পরিবারসহ বসবাস করিতেছেন বিধায় বর্তমান ঠিকানায় ভোটার এলাকা স্থানান্তর করিতে ইচ্ছুক।
+            <span className="certificate-closing-sentence"> আমি তাহার জীবনের সার্বিক উন্নতি ও মঙ্গল কামনা করি।</span>
+          </p>
+        </div>
+      )}
+
       {/* 3. Same Name Certificate (একই নামের প্রত্যয়ন) */}
       {type === 'same_name' && (
         <p className={pClass}>
