@@ -2204,8 +2204,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার উপজেলার নাম" value={prevUpazila} onChange={(e) => setPrevUpazila(e.target.value)} required />
               <input className="w-full px-3 py-2 border rounded-lg" placeholder="বর্তমান ভোটার গ্রামের নাম" value={prevVillage} onChange={(e) => setPrevVillage(e.target.value)} required />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত গ্রামের নাম" value={transferVillage} onChange={(e) => setTransferVillage(e.target.value)} required />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত ডাকঘর" value={transferPostOffice} onChange={(e) => setTransferPostOffice(e.target.value)} required />
               <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত উপজেলা" value={transferUpazila} onChange={(e) => setTransferUpazila(e.target.value)} required />
               <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত জেলা" value={transferDistrict} onChange={(e) => setTransferDistrict(e.target.value)} required />
