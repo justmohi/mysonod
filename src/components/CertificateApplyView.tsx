@@ -1062,9 +1062,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               {submittedApp.status === 'Approved' ? 'সনদ প্রস্তুত!' : 'আবেদন সফলভাবে জমা হয়েছে!'}
             </h3>
             <p className="text-xs text-slate-500 mb-3">
-              {isOperator
-                ? `উদ্যোক্তা billing rule অনুযায়ী usage charge ৳${submittedApp.completionCharge ?? 0} কাটা হয়েছে।`
-                : 'সরকারি ফি হিসেবে ওয়ালেট থেকে ২.০০ টাকা কর্তন হয়েছে। এখন আবেদনটি ইউনিয়ন উদ্যোক্তার অনুমোদনের অপেক্ষায় আছে।'}
+              {submittedApp.status === 'Approved'
+                ? (isOperator
+                    ? `উদ্যোক্তা billing rule অনুযায়ী usage charge ৳${submittedApp.completionCharge ?? 0} কাটা হয়েছে।`
+                    : 'আবেদনটি অনুমোদিত হয়েছে।')
+                : (isOperator
+                    ? 'আবেদন জমা হয়েছে। অনুমোদনের সময় প্রযোজ্য উদ্যোক্তা usage charge কাটা হবে।'
+                    : 'সরকারি ফি হিসেবে ওয়ালেট থেকে ২.০০ টাকা কর্তন হয়েছে। এখন আবেদনটি ইউনিয়ন উদ্যোক্তার অনুমোদনের অপেক্ষায় আছে।')}
             </p>
 
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left space-y-2 mb-6 text-sm">
@@ -1156,7 +1160,11 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       {selectedType === 'inheritance' || selectedType === 'succession' ? (
         <WarishApplicationForm
           onSuccess={(app) => {
-            onViewCertificate(app);
+            if (app.status === 'Approved') {
+              onViewCertificate(app);
+            } else {
+              setSubmittedApp(app);
+            }
           }}
         />
       ) : selectedType === 'trade_license' ? (
