@@ -645,7 +645,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   // The family certificate has its own dedicated selector, so avoid rendering two selectors there.
   const needsGuardianSelector = selectedType !== 'family';
   const currentBalance = userProfile?.balance ?? 0;
-  const isBalanceSufficient = currentBalance >= 2.0;
+  // Operators are charged at approval, not at application submission.
+  const isBalanceSufficient = isOperator || currentBalance >= 2.0;
 
   const addHeirRow = () => {
     setHeirs([...heirs, { name: '', relation: 'পুত্র', age: '', nidOrBirth: '' }]);
