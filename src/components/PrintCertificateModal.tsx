@@ -1260,7 +1260,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                 {(() => {
                   const tlLicenseFee = application.licenseFee || 500;
                   const tlVat = application.vatAmount !== undefined ? application.vatAmount : Math.round(tlLicenseFee * 0.15);
-                  const tlProfessionTax = application.professionTax || 200;
+                  const tlProfessionTax = application.professionTax ?? 0;
                   const tlTradeTax = application.tradeTax || 0;
                   const tlTotal = application.totalAmount || (tlLicenseFee + tlVat + tlProfessionTax + tlTradeTax);
                   const tlTotalInWords = lang === 'en' ? numberToWordsEn(tlTotal) : numberToWordsBn(tlTotal);
