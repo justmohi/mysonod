@@ -286,7 +286,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
   // Automatically populate applicant details in the current application form
   const applyApplicantData = (
-    data: CertificateApplication,
+    data: Partial<CertificateApplication> & Partial<CitizenProfile>,
     targetLanguage: 'bn' | 'en' = language
   ) => {
     const isEnglishApplication = targetLanguage === 'en';
@@ -913,8 +913,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           appPayload.sameNameEntries = finalSameNameEntries;
           appPayload.sameNamePerson = finalSameNameEntries[0]?.name || '';
           appPayload.sameNameRelation = finalSameNameEntries[0]?.field || '';
-        } else if (selectedType === 'family') {
-          appPayload.familyGuardianType = familyGuardianType;
         } else if (selectedType === 'married') {
           appPayload.marriageDate = marriageDate;
           appPayload.spouseName2 = spouseName2;
@@ -1532,7 +1530,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={applicantNameBn}
                     onChange={(e) => setApplicantNameBn(e.target.value)}
-                    placeholder={language === 'en' ? 'Applicant Name (English)' : 'আবেদনকারীর নাম (বাংলা)'}
+                    placeholder="আবেদনকারীর নাম (বাংলা)"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                   />
                 </div>
@@ -1939,12 +1937,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {(selectedType === 'income' || selectedType === 'annual_income') && (
           <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
             <h3 className="text-sm font-bold text-emerald-900 uppercase tracking-wider mb-3">
-              ৩. বার্ষিক আয়ের বিবরণী
+              {language === 'en' ? '3. Annual Income Details' : '৩. বার্ষিক আয়ের বিবরণী'}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  সর্বমোট বার্ষিক আয় (টাকায়) *
+                  {language === 'en' ? 'Total Annual Income (BDT) *' : 'সর্বমোট বার্ষিক আয় (টাকায়) *'}
                 </label>
                 <input
                   type="number"
@@ -1957,7 +1955,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  আয়ের প্রধান উৎস *
+                  {language === 'en' ? 'Primary Source of Income *' : 'আয়ের প্রধান উৎস *'}
                 </label>
                 <input
                   type="text"
@@ -1975,12 +1973,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {selectedType === 'monthly_income' && (
           <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
             <h3 className="text-sm font-bold text-emerald-900 uppercase tracking-wider mb-3">
-              ৩. মাসিক আয়ের বিবরণী
+              {language === 'en' ? '3. Monthly Income Details' : '৩. মাসিক আয়ের বিবরণী'}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  সর্বমোট মাসিক আয় (টাকায়) *
+                  {language === 'en' ? 'Total Monthly Income (BDT) *' : 'সর্বমোট মাসিক আয় (টাকায়) *'}
                 </label>
                 <input
                   type="number"
@@ -2670,8 +2668,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               onChange={(e) => setDeclarationAgreed(e.target.checked)}
             />
             <span>
-              {language === 'en' ? 'I hereby declare that all information provided above is true. If any information is found to be false at any time,' : 'আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য। যেকোন সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে'}
-              {language === 'en' ? 'the certificate / attestation may be cancelled and legal action may be taken.' : 'সনদ/প্রত্যয়ন বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা হবে।'}
+              {language === 'en' ? 'I hereby declare that all information provided above is true. If any information is found to be false at any time,' : '{language === 'en' ? 'I hereby declare that all information provided above is true. If any information is found to be false at any time,' : 'আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য। যেকোন সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে'}'}
+              {language === 'en' ? 'the certificate / attestation may be cancelled and legal action may be taken.' : '{language === 'en' ? 'the certificate / attestation may be cancelled and legal action may be taken.' : 'সনদ/প্রত্যয়ন বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা হবে।'}'}
             </span>
           </label>
         </div>
