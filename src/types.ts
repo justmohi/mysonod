@@ -459,6 +459,7 @@ export interface FamilyMemberItem {
   name: string;
   relation: string;
   age: string;
+  dob?: string;
 }
 
 export interface SameNameEntry {
