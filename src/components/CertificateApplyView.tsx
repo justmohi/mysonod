@@ -2001,7 +2001,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="bg-purple-50/50 p-4 rounded-xl border border-purple-100">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-purple-950 uppercase tracking-wider">
-                ৩. পারিবারিক সনদের তথ্য
+                {language === 'en' ? '3. Family Certificate Details' : '৩. পারিবারিক সনদের তথ্য'}
               </h3>
               <button
                 type="button"
@@ -2009,31 +2009,31 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 className="cursor-pointer text-xs bg-purple-600 hover:bg-purple-700 text-white px-2.5 py-1 rounded-md flex items-center gap-1 font-semibold"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>সদস্য যোগ করুন</span>
+                <span>{language === 'en' ? 'Add Member' : 'সদস্য যোগ করুন'}</span>
               </button>
             </div>
 
             <div className="space-y-2">
               {familyMembers.map((member, idx) => (
                 <div key={idx} className="flex flex-wrap md:flex-nowrap items-center gap-2 bg-white p-2.5 rounded-lg border border-purple-200">
-                  <span className="text-xs font-bold text-slate-500 w-5">{toBengaliNumber(idx + 1)}.</span>
+                  <span className="text-xs font-bold text-slate-500 w-5">{language === 'en' ? idx + 1 : toBengaliNumber(idx + 1)}.</span>
                   <input
                     type="text"
-                    placeholder="সদস্যের নাম"
+                    placeholder={language === 'en' ? 'Member Name' : 'সদস্যের নাম'}
                     value={member.name}
                     onChange={(e) => updateFamilyRow(idx, 'name', e.target.value)}
                     className="flex-1 min-w-[140px] px-2 py-1 text-xs border border-slate-300 rounded"
                   />
                   <input
                     type="text"
-                    placeholder="সম্পর্ক"
+                    placeholder={language === 'en' ? 'Relationship' : 'সম্পর্ক'}
                     value={member.relation}
                     onChange={(e) => updateFamilyRow(idx, 'relation', e.target.value)}
                     className="w-28 px-2 py-1 text-xs border border-slate-300 rounded"
                   />
                   <input
                     type="text"
-                    placeholder="বয়স"
+                    placeholder={language === 'en' ? 'Age' : 'বয়স'}
                     value={member.age}
                     onChange={(e) => updateFamilyRow(idx, 'age', e.target.value)}
                     className="w-16 px-2 py-1 text-xs border border-slate-300 rounded"
@@ -2043,7 +2043,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                       type="button"
                       onClick={() => removeFamilyRow(idx)}
                       className="cursor-pointer text-red-500 hover:text-red-700 p-1"
-                      aria-label="সদস্য মুছুন"
+                      aria-label={language === 'en' ? 'Remove member' : 'সদস্য মুছুন'}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
