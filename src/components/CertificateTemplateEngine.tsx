@@ -1160,13 +1160,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
         ) : type === 'family' ? (
           <div className={tableContainerSpacing}>
             <p className={tablePClass}>
-              This is to certify that <strong>{application.applicantNameEn || application.applicantNameBn}</strong>, 
-              NID / Birth Reg No: <strong>{application.nidOrBirthReg}</strong>, 
-              Father/Spouse: <strong>{application.fatherName || '—'}</strong>, 
-              Mother: <strong>{application.motherName || '—'}</strong>, 
-              residing at Village: <strong>{presentVillage}</strong>, Ward No: <strong>{presentWard}</strong>, 
-              Post Office: <strong>{presentPost}</strong>, Upazila: <strong>{presentUpazila}</strong>, 
-              District: <strong>{presentDistrict}</strong>, is a permanent resident of this Union Parishad. As per official inquiry and local testimonies, the following persons are the recognized living lawful members of his/her family:
+              This is to certify that <strong>{application.applicantNameEn || application.applicantNameBn}</strong>, Birth Cert/NID No: <strong>{application.nidOrBirthReg || '—'}</strong>, Father: <strong>{application.fatherNameEn || application.fatherName || '—'}</strong>, Mother: <strong>{application.motherNameEn || application.motherName || '—'}</strong>, Village: <strong>{presentVillage}</strong>, Ward: <strong>{presentWard}</strong>, Post: <strong>{presentPost}</strong>, Upazila: <strong>{presentUpazila}</strong>, District: <strong>{presentDistrict}</strong>. He/She is a permanent resident of this area. According to the investigation, the members of his/her family are as follows:
             </p>
             <div className={`overflow-x-auto ${tableSpacingClass}`}>
               <table className={`w-full border border-slate-400 bg-white/95 ${tableModeClass}`}>
