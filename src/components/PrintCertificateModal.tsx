@@ -933,7 +933,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? "Mother's Name: " : 'মাতার নাম: '}</span>
-                                  <strong className="text-slate-900">{application.motherName || '—'}</strong>
+                                  <strong className="text-slate-900">{lang === 'en' ? (application.motherNameEn || application.motherName || '—') : (application.motherName || '—')}</strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? "Spouse's Name: " : 'স্বামী / স্ত্রীর নাম: '}</span>
