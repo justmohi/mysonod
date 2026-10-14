@@ -1178,6 +1178,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         />
       ) : selectedType === 'trade_license' ? (
         <TradeLicenseApplicationForm
+          language={language}
           onSuccess={() => {
             onNavigate('certificates');
           }}
