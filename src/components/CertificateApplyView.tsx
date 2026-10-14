@@ -1057,7 +1057,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 className="cursor-pointer py-2.5 px-5 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl transition shadow-md flex items-center gap-1.5"
               >
                 <PlusCircle className="w-4 h-4" />
-                <span>এখনই এড ব্যালেন্স করুন</span>
+                <span>{language === 'en' ? 'Add Balance Now' : 'এখনই এড ব্যালেন্স করুন'}</span>
               </button>
             </div>
           </div>
@@ -1086,21 +1086,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left space-y-2 mb-6 text-sm">
               <div className="flex justify-between">
-                <span className="text-slate-600">সনদের নাম:</span>
+                <span className="text-slate-600">{language === 'en' ? 'Certificate:' : 'সনদের নাম:'}</span>
                 <span className="font-bold text-emerald-900">{submittedApp.certificateTitleBn}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">ট্র্যাকিং নম্বর:</span>
+                <span className="text-slate-600">{language === 'en' ? 'Tracking Number:' : 'ট্র্যাকিং নম্বর:'}</span>
                 <span className="font-mono font-bold text-emerald-700 bg-white px-2 py-0.5 rounded border border-emerald-200">
                   {submittedApp.trackingId}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">আবেদনকারী:</span>
+                <span className="text-slate-600">{language === 'en' ? 'Applicant:' : 'আবেদনকারী:'}</span>
                 <span className="font-semibold text-slate-800">{submittedApp.applicantNameBn}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">অবস্থা:</span>
+                <span className="text-slate-600">{language === 'en' ? 'Status:' : 'অবস্থা:'}</span>
                 <span className={`font-bold px-2 py-0.5 rounded text-xs ${
                   submittedApp.status === 'Approved'
                     ? 'text-emerald-700 bg-emerald-200/70'
@@ -1122,7 +1122,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   className="cursor-pointer py-3 px-5 text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl transition shadow-sm flex items-center gap-2"
                 >
                   <Edit3 className="w-5 h-5" />
-                  <span>তথ্য ভুল? এখনই সম্পাদনা করুন</span>
+                  <span>{language === 'en' ? 'Incorrect information? Edit now' : 'তথ্য ভুল? এখনই সম্পাদনা করুন'}</span>
                 </button>
               )}
               {submittedApp.status === 'Approved' && (
@@ -1136,7 +1136,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   className="cursor-pointer py-3 px-6 text-sm font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl transition shadow-lg flex items-center gap-2"
                 >
                   <Printer className="w-5 h-5" />
-                  <span>সনদ দেখুন ও প্রিন্ট করুন</span>
+                  <span>{language === 'en' ? 'View and Print Certificate' : 'সনদ দেখুন ও প্রিন্ট করুন'}</span>
                 </button>
               )}
               <button
@@ -1165,7 +1165,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             checked={language === 'en'}
             onChange={(e) => setLanguage(e.target.checked ? 'en' : 'bn')}
           />
-          <span>ইংরেজিতেও আবেদন করুন</span>
+          <span>{language === 'en' ? 'Apply in English' : 'ইংরেজিতেও আবেদন করুন'}</span>
         </label>
       </div>
 
@@ -1226,19 +1226,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 type="button"
                 onClick={() => onViewCertificate(existingRecordFound, { isDuplicate: true })}
                 className="cursor-pointer bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow-2xs transition flex items-center gap-1.5"
-                title="পূর্বে ইস্যুকৃত সনদের হুবহু অনুলিপি কপি প্রিন্ট করুন"
+                title={language === 'en' ? 'Print an exact duplicate of the previously issued certificate' : 'পূর্বে ইস্যুকৃত সনদের হুবহু অনুলিপি কপি প্রিন্ট করুন'}
               >
                 <Copy className="w-3.5 h-3.5" />
-                <span>ডুপ্লিকেট কপি (Duplicate Copy)</span>
+                <span>{language === 'en' ? 'Duplicate Copy' : 'ডুপ্লিকেট কপি (Duplicate Copy)'}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setEditingExistingApp(existingRecordFound)}
                 className="cursor-pointer bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs px-3 py-1.5 rounded-lg shadow-2xs transition flex items-center gap-1.5"
-                title="ভুল বানান বা তথ্য সংশোধন করুন (বিনা ফিতে)"
+                title={language === 'en' ? 'Correct spelling or information (free of charge)' : 'ভুল বানান বা তথ্য সংশোধন করুন (বিনা ফিতে)'}
               >
                 <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
-                <span>তথ্য সম্পাদন (Edit)</span>
+                <span>{language === 'en' ? 'Edit Information' : 'তথ্য সম্পাদন (Edit)'}</span>
               </button>
               <button
                 type="button"
@@ -1246,7 +1246,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 className="cursor-pointer bg-[#006a4e] hover:bg-[#084d34] text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-2xs transition flex items-center gap-1.5"
               >
                 <Printer className="w-3.5 h-3.5 text-emerald-200" />
-                <span>পূর্বের সনদ দেখুন</span>
+                <span>{language === 'en' ? 'View Previous Certificate' : 'পূর্বের সনদ দেখুন'}</span>
               </button>
               <button
                 type="button"
@@ -1531,7 +1531,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={applicantNameBn}
                     onChange={(e) => setApplicantNameBn(e.target.value)}
-                    placeholder="আবেদনকারীর নাম (বাংলা)"
+                    placeholder={language === 'en' ? 'Applicant Name (English)' : 'আবেদনকারীর নাম (বাংলা)'}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                   />
                 </div>
@@ -1950,7 +1950,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   required
                   value={annualIncome}
                   onChange={(e) => setAnnualIncome(Number(e.target.value))}
-                  placeholder="যেমন: ১৮০০০০"
+                  placeholder={language === 'en' ? 'Example: 180000' : 'যেমন: ১৮০০০০'}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                 />
               </div>
@@ -1963,7 +1963,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   required
                   value={incomeSource}
                   onChange={(e) => setIncomeSource(e.target.value)}
-                  placeholder="যেমন: কৃষি, দোকান ব্যবসা, বেতন"
+                  placeholder={language === 'en' ? 'Example: Agriculture, shop business, salary' : 'যেমন: কৃষি, দোকান ব্যবসা, বেতন'}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                 />
               </div>
@@ -1986,7 +1986,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   required
                   value={monthlyIncome}
                   onChange={(e) => setMonthlyIncome(Number(e.target.value))}
-                  placeholder="যেমন: ১৫০০০"
+                  placeholder={language === 'en' ? 'Example: 15000' : 'যেমন: ১৫০০০'}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                 />
               </div>
@@ -1999,7 +1999,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   required
                   value={incomeSource}
                   onChange={(e) => setIncomeSource(e.target.value)}
-                  placeholder="যেমন: বেসরকারি চাকরি, ব্যবসা, দিনমজুর"
+                  placeholder={language === 'en' ? 'Example: Private job, business, daily labor' : 'যেমন: বেসরকারি চাকরি, ব্যবসা, দিনমজুর'}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                 />
               </div>
@@ -2094,7 +2094,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 required
                 value={previousHusbandName}
                 onChange={(e) => setPreviousHusbandName(e.target.value)}
-                placeholder="মরহুম..."
+                placeholder={language === 'en' ? 'Deceased person name' : 'মরহুম...'}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-rose-500 focus:outline-none"
               />
             </div>
@@ -2222,7 +2222,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </label>
               <textarea
                 className="w-full min-h-[72px] px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
-                placeholder="গ্রাম, ডাকঘর, উপজেলা ও জেলা লিখুন"
+                placeholder={language === 'en' ? 'Enter village, post office, upazila and district' : 'গ্রাম, ডাকঘর, উপজেলা ও জেলা লিখুন'}
                 value={previousAddress}
                 onChange={(e) => setPreviousAddress(e.target.value)}
                 rows={3}
@@ -2230,12 +2230,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               />
             </div>
             <div className="grid grid-cols-1 gap-4">
-              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত গ্রামের নাম" value={transferVillage} onChange={(e) => setTransferVillage(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder={language === 'en' ? 'New village name' : 'স্থানান্তরিত গ্রামের নাম'} value={transferVillage} onChange={(e) => setTransferVillage(e.target.value)} required />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত ডাকঘর" value={transferPostOffice} onChange={(e) => setTransferPostOffice(e.target.value)} required />
-              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত উপজেলা" value={transferUpazila} onChange={(e) => setTransferUpazila(e.target.value)} required />
-              <input className="w-full px-3 py-2 border rounded-lg" placeholder="স্থানান্তরিত জেলা" value={transferDistrict} onChange={(e) => setTransferDistrict(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder={language === 'en' ? 'New post office' : 'স্থানান্তরিত ডাকঘর'} value={transferPostOffice} onChange={(e) => setTransferPostOffice(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder={language === 'en' ? 'New upazila' : 'স্থানান্তরিত উপজেলা'} value={transferUpazila} onChange={(e) => setTransferUpazila(e.target.value)} required />
+              <input className="w-full px-3 py-2 border rounded-lg" placeholder={language === 'en' ? 'New district' : 'স্থানান্তরিত জেলা'} value={transferDistrict} onChange={(e) => setTransferDistrict(e.target.value)} required />
             </div>
           </div>
         )}
@@ -2245,7 +2245,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-3 gap-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="যে তথ্য সংশোধন হবে"
+              placeholder={language === 'en' ? 'Information to be corrected' : 'যে তথ্য সংশোধন হবে'}
               value={correctionField}
               onChange={(e) => setCorrectionField(e.target.value)}
               required
@@ -2253,7 +2253,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="বর্তমান তথ্য"
+              placeholder={language === 'en' ? 'Current information' : 'বর্তমান তথ্য'}
               value={correctionOldValue}
               onChange={(e) => setCorrectionOldValue(e.target.value)}
               required
@@ -2261,7 +2261,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="সঠিক তথ্য"
+              placeholder={language === 'en' ? 'Correct information' : 'সঠিক তথ্য'}
               value={correctionNewValue}
               onChange={(e) => setCorrectionNewValue(e.target.value)}
               required
@@ -2282,14 +2282,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="সম্পর্ক"
+              placeholder={language === 'en' ? 'Relationship' : 'সম্পর্ক'}
               value={guardianRelation}
               onChange={(e) => setGuardianRelation(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="অনুমতির উদ্দেশ্য"
+              placeholder={language === 'en' ? 'Purpose of permission' : 'অনুমতির উদ্দেশ্য'}
               value={permissionPurpose}
               onChange={(e) => setPermissionPurpose(e.target.value)}
               required
@@ -2302,14 +2302,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="জমি/সম্পত্তির বিবরণ"
+              placeholder={language === 'en' ? 'Land / property details' : 'জমি/সম্পত্তির বিবরণ'}
               value={landDescription}
               onChange={(e) => setLandDescription(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="জমির পরিমাণ"
+              placeholder={language === 'en' ? 'Land area / amount' : 'জমির পরিমাণ'}
               value={landAmount}
               onChange={(e) => setLandAmount(e.target.value)}
             />
@@ -2321,14 +2321,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="কৃষির ধরন"
+              placeholder={language === 'en' ? 'Type of agriculture' : 'কৃষির ধরন'}
               value={agricultureType}
               onChange={(e) => setAgricultureType(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="কৃষি জমির পরিমাণ"
+              placeholder={language === 'en' ? 'Agricultural land area' : 'কৃষি জমির পরিমাণ'}
               value={agricultureLand}
               onChange={(e) => setAgricultureLand(e.target.value)}
             />
@@ -2340,21 +2340,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-3 gap-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="মুক্তিযোদ্ধার নাম"
+              placeholder={language === 'en' ? 'Freedom fighter name' : 'মুক্তিযোদ্ধার নাম'}
               value={freedomFighterName}
               onChange={(e) => setFreedomFighterName(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="আবেদনকারীর সম্পর্ক"
+              placeholder={language === 'en' ? 'Applicant relationship' : 'আবেদনকারীর সম্পর্ক'}
               value={freedomFighterRelation}
               onChange={(e) => setFreedomFighterRelation(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="মুক্তিযোদ্ধা নম্বর"
+              placeholder={language === 'en' ? 'Freedom fighter number' : 'মুক্তিযোদ্ধা নম্বর'}
               value={freedomFighterNumber}
               onChange={(e) => setFreedomFighterNumber(e.target.value)}
             />
@@ -2382,14 +2382,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="প্রতিবন্ধিতার ধরন"
+              placeholder={language === 'en' ? 'Type of disability' : 'প্রতিবন্ধিতার ধরন'}
               value={disabilityType}
               onChange={(e) => setDisabilityType(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="বিস্তারিত বিবরণ"
+              placeholder={language === 'en' ? 'Detailed description' : 'বিস্তারিত বিবরণ'}
               value={disabilityDescription}
               onChange={(e) => setDisabilityDescription(e.target.value)}
             />
@@ -2401,7 +2401,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="কতদিন ধরে বেকার"
+              placeholder={language === 'en' ? 'Duration of unemployment' : 'কতদিন ধরে বেকার'}
               value={unemploymentDuration}
               onChange={(e) => setUnemploymentDuration(e.target.value)}
             />
@@ -2413,21 +2413,21 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-3 gap-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="নির্মাণের ধরন"
+              placeholder={language === 'en' ? 'Type of construction' : 'নির্মাণের ধরন'}
               value={constructionType}
               onChange={(e) => setConstructionType(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="নির্মাণের স্থান"
+              placeholder={language === 'en' ? 'Construction location' : 'নির্মাণের স্থান'}
               value={constructionLocation}
               onChange={(e) => setConstructionLocation(e.target.value)}
             />
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="নির্মাণের উদ্দেশ্য"
+              placeholder={language === 'en' ? 'Purpose of construction' : 'নির্মাণের উদ্দেশ্য'}
               value={constructionPurpose}
               onChange={(e) => setConstructionPurpose(e.target.value)}
             />
@@ -2439,14 +2439,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 space-y-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="সনদ প্রদানের উদ্দেশ্য"
+              placeholder={language === 'en' ? 'Purpose of certificate' : 'সনদ প্রদানের উদ্দেশ্য'}
               value={generalPurpose}
               onChange={(e) => setGeneralPurpose(e.target.value)}
             />
 
             <textarea
               className="w-full px-3 py-2 border rounded-lg min-h-[100px]"
-              placeholder="বিস্তারিত তথ্য"
+              placeholder={language === 'en' ? 'Detailed information' : 'বিস্তারিত তথ্য'}
               value={
                 selectedType === 'general'
                   ? certificateDetails
