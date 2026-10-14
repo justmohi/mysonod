@@ -784,7 +784,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           gender,
           maritalStatus: maritalStatus || 'বিবাহিত',
           nidOrBirthReg,
-          identityNumberType: (selectedType === 'citizenship' || selectedType === 'new_voter' || selectedType === 'same_name' || selectedType === 'family') ? identityNumberType : undefined,
+          identityNumberType: (selectedType === 'citizenship' || selectedType === 'nationality' || selectedType === 'new_voter' || selectedType === 'same_name' || selectedType === 'family') ? identityNumberType : undefined,
           mobile: mobile.trim(),
           occupation: occupation || undefined,
           fee: 2.0,
@@ -1651,7 +1651,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   <label className="block text-xs font-semibold text-slate-700">
                     {language === 'en' ? 'National ID / Birth Registration No' : 'এনআইডি / জন্ম নিবন্ধন নম্বর'}
                   </label>
-                  {(selectedType === 'citizenship' || selectedType === 'new_voter' || selectedType === 'family') && (
+                  {(selectedType === 'citizenship' || selectedType === 'nationality' || selectedType === 'new_voter' || selectedType === 'family') && (
                     <select
                       value={identityNumberType}
                       onChange={(e) => setIdentityNumberType(e.target.value as 'nid' | 'birth_reg')}
