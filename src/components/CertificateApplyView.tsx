@@ -263,7 +263,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
   // Dynamic Family Member List
   const [familyMembers, setFamilyMembers] = useState<FamilyMemberItem[]>([
-    { name: '', relation: 'স্ত্রী', age: '' }
+    { name: '', relation: 'স্ত্রী', age: '', dob: '' }
   ]);
 
   // Family certificate guardian selector: Father or Husband.
@@ -661,8 +661,20 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     setHeirs(updated);
   };
 
+  const calculateFamilyMemberAge = (dob: string): string => {
+    if (!dob) return '';
+    const birthDate = new Date(`${dob}T00:00:00`);
+    const today = new Date();
+    if (Number.isNaN(birthDate.getTime()) || birthDate > today) return '';
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const beforeBirthday = today.getMonth() < birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate());
+    if (beforeBirthday) age -= 1;
+    return String(age);
+  };
+
   const addFamilyRow = () => {
-    setFamilyMembers([...familyMembers, { name: '', relation: 'পুত্র', age: '' }]);
+    setFamilyMembers([...familyMembers, { name: '', relation: 'পুত্র', age: '', dob: '' }]);
   };
 
   const removeFamilyRow = (idx: number) => {
@@ -2032,11 +2044,25 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     className="w-28 px-2 py-1 text-xs border border-slate-300 rounded"
                   />
                   <input
+                    type="date"
+                    aria-label={language === 'en' ? 'Date of Birth' : 'জন্ম তারিখ'}
+                    title={language === 'en' ? 'Date of Birth' : 'জন্ম তারিখ'}
+                    value={member.dob || ''}
+                    max={new Date().toISOString().slice(0, 10)}
+                    onChange={(e) => {
+                      const updated = [...familyMembers];
+                      updated[idx] = { ...updated[idx], dob: e.target.value, age: calculateFamilyMemberAge(e.target.value) };
+                      setFamilyMembers(updated);
+                    }}
+                    className="w-36 min-w-[130px] px-2 py-1 text-xs border border-slate-300 rounded"
+                  />
+                  <input
                     type="text"
-                    placeholder={language === 'en' ? 'Age' : 'বয়স'}
-                    value={member.age}
-                    onChange={(e) => updateFamilyRow(idx, 'age', e.target.value)}
-                    className="w-16 px-2 py-1 text-xs border border-slate-300 rounded"
+                    readOnly
+                    aria-label={language === 'en' ? 'Calculated Age' : 'হিসাব করা বয়স'}
+                    placeholder={language === 'en' ? 'Age (years)' : 'বয়স (বছর)'}
+                    value={member.dob ? calculateFamilyMemberAge(member.dob) : (member.age || '')}
+                    className="w-20 px-2 py-1 text-xs border border-slate-300 rounded bg-slate-50"
                   />
                   {familyMembers.length > 1 && (
                     <button
