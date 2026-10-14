@@ -895,6 +895,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               name: pendingSameName
             });
           }
+          appPayload.guardianType = sameNameGuardianType;
           appPayload.fatherName = sameNameGuardianType === 'father' ? fatherName.trim() : '';
           appPayload.spouseName = sameNameGuardianType === 'husband' ? spouseName.trim() : '';
           appPayload.sameNameEntries = finalSameNameEntries;
