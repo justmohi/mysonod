@@ -1200,21 +1200,32 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
           </div>
         ) : (
           <>
-            <p className={pClass}>
-              This is to certify that <strong>{application.applicantNameEn || application.applicantNameBn}</strong>, 
-              Son/Daughter/Spouse of <strong>{application.fatherName || '—'}</strong>, 
-              Mother: <strong>{application.motherName || '—'}</strong>, 
-              Holder of NID / Birth Reg No: <strong>{application.nidOrBirthReg}</strong>, 
-              residing at Village: <strong>{presentVillage}</strong>, Ward No: <strong>{presentWard}</strong>, 
-              Post Office: <strong>{presentPost}</strong>, Upazila: <strong>{presentUpazila}</strong>, 
-              District: <strong>{presentDistrict}</strong>, is a permanent resident and bona fide citizen of Bangladesh under the jurisdiction of this Union Parishad.
-            </p>
-            <p className={pClass}>
-              Upon official enquiry and verification of local civil records, all statements and credentials furnished in respect of <strong>{application.certificateTitleEn || 'this Certificate'}</strong> have been found authentic, lawful, and accurate. To the best of my knowledge, he/she bears good moral character and has not engaged in any unlawful or subversive activity.
-            </p>
-            <p className="pt-2 text-slate-900 font-medium">
-              I wish him/her every happiness, peace, and prosperity in all future endeavours.
-            </p>
+            {isEn && type === 'citizenship' ? (
+              <>
+                <p className={pClass}>
+                  This is to certify that <strong>{application.applicantNameEn || application.applicantNameBn || '—'}</strong>, Date of Birth: <strong>{application.dob ? new Date(application.dob + 'T00:00:00').toLocaleDateString('en-GB') : '—'}</strong>, Birth Cert/NID No: <strong>{nidBn || '—'}</strong>, Father: <strong>{fatherNameBn || '—'}</strong>, Mother: <strong>{motherNameBn || '—'}</strong>, Address: <strong>Holding: {(application as any).presentHolding || (application as any).holdingNo || '—'}, Village: {presentVillage}, Ward: {presentWard}, Post: {presentPost}, Upazila: {presentUpazila}, District: {presentDistrict}</strong>, Present Address: <strong>{(application as any).presentAddressEn || (application as any).presentAddress || [presentUpazila, presentDistrict].filter(Boolean).join(', ')}</strong>, Permanent Address: <strong>Holding: {(application as any).permanentHolding || (application as any).holdingNo || '—'}, Village: {(application as any).permanentVillageEn || (application as any).permanentVillage || presentVillage}, Ward: {String((application as any).permanentWard || presentWard).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())}, Post: {(application as any).permanentPostEn || (application as any).permanentPost || presentPost}, Upazila: {(application as any).permanentUpazilaEn || application.permanentUpazila || presentUpazila}, District: {(application as any).permanentDistrictEn || application.permanentDistrict || presentDistrict}</strong>. He/She is loyal to the state and society. I know him/her personally. He/She is a permanent resident and citizen of Bangladesh by birth.
+                </p>
+                <p className="pt-2 text-slate-900 font-medium">I wish him/her every success in life.</p>
+              </>
+            ) : (
+              <>
+                <p className={pClass}>
+                  This is to certify that <strong>{application.applicantNameEn || application.applicantNameBn}</strong>,
+                  Son/Daughter/Spouse of <strong>{fatherNameBn || '—'}</strong>,
+                  Mother: <strong>{motherNameBn || '—'}</strong>,
+                  Holder of NID / Birth Reg No: <strong>{nidBn || '—'}</strong>,
+                  residing at Village: <strong>{presentVillage}</strong>, Ward No: <strong>{presentWard}</strong>,
+                  Post Office: <strong>{presentPost}</strong>, Upazila: <strong>{presentUpazila}</strong>,
+                  District: <strong>{presentDistrict}</strong>, is a permanent resident and bona fide citizen of Bangladesh under the jurisdiction of this Union Parishad.
+                </p>
+                <p className={pClass}>
+                  Upon official enquiry and verification of local civil records, all statements and credentials furnished in respect of <strong>{application.certificateTitleEn || 'this Certificate'}</strong> have been found authentic, lawful, and accurate. To the best of my knowledge, he/she bears good moral character and has not engaged in any unlawful or subversive activity.
+                </p>
+                <p className="pt-2 text-slate-900 font-medium">
+                  I wish him/her every happiness, peace, and prosperity in all future endeavours.
+                </p>
+              </>
+            )}
           </>
         )}
       </div>
