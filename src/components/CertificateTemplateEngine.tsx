@@ -129,7 +129,7 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
   if (type === 'trade_license') {
     const fee = application.licenseFee || 500;
     const vat = application.vatAmount || 75;
-    const pTax = application.professionTax || 200;
+    const pTax = application.professionTax ?? 0;
     const tTax = application.tradeTax || 0;
     const total = application.totalAmount || (fee + vat + pTax + tTax);
 
