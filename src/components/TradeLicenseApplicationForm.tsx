@@ -494,7 +494,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
           <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-2.5 animate-in fade-in">
             <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
             <div>
-              <p className="font-bold">সতর্কতা:</p>
+              <p className="font-bold">{isEnglish ? 'Warning:' : 'সতর্কতা:'}</p>
               <p>{errorMessage}</p>
             </div>
           </div>
@@ -523,7 +523,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                অর্থবছর (Fiscal Year) <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Fiscal Year' : 'অর্থবছর (Fiscal Year)'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
@@ -534,13 +534,13 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-medium transition"
               />
               <span className="text-[11px] text-slate-500 mt-1 block">
-                চলতি অর্থবছরের মেয়াদকাল নির্দেশ করে (যেমন: ২০২৬-২০২৭)
+                {isEnglish ? 'Indicates the current fiscal year (e.g. 2026–2027)' : 'চলতি অর্থবছরের মেয়াদকাল নির্দেশ করে (যেমন: ২০২৬-২০২৭)'}
               </span>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                লাইসেন্স কর্তৃপক্ষ
+                {isEnglish ? 'Licensing Authority' : 'লাইসেন্স কর্তৃপক্ষ'}
               </label>
               <input
                 type="text"
@@ -552,7 +552,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
 
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                আবেদন প্রক্রিয়া
+                {isEnglish ? 'Application Process' : 'আবেদন প্রক্রিয়া'}
               </label>
               <div className="w-full bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-xs text-emerald-800 font-bold flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-emerald-600" />
@@ -578,7 +578,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* ব্যবসা প্রতিষ্ঠানের নাম */}
             <div className="lg:col-span-2">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ব্যবসা প্রতিষ্ঠানের নাম <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Business Name' : 'ব্যবসা প্রতিষ্ঠানের নাম'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
@@ -593,7 +593,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* ব্যবসায়ের ধরন */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ব্যবসায়ের ধরন <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Business Type' : 'ব্যবসায়ের ধরন'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
@@ -608,7 +608,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* ব্যবসার মূলধন (টাকা) */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ব্যবসার মূলধন (টাকা) <span className="text-slate-500 font-normal">(ঐচ্ছিক)</span>
+                {isEnglish ? 'Business Capital (BDT)' : 'ব্যবসার মূলধন (টাকা)'} <span className="text-slate-500 font-normal">({isEnglish ? 'Optional' : 'ঐচ্ছিক'})</span>
               </label>
               <div className="relative">
                 <input
@@ -623,10 +623,10 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               </div>
             </div>
 
-            {/* ব্যবসা শুরুর তারিখ */}
+            {/* {isEnglish ? 'Business Start Date' : 'ব্যবসা শুরুর তারিখ'} */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ব্যবসা শুরুর তারিখ
+                {isEnglish ? 'Business Start Date' : 'ব্যবসা শুরুর তারিখ'}
               </label>
               <input
                 type="date"
@@ -646,7 +646,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                   className="w-4 h-4 text-[#006A4E] rounded border-slate-300 focus:ring-[#006A4E] cursor-pointer"
                 />
                 <span className="text-xs font-bold text-emerald-950">
-                  প্রিন্টে মূলধন দেখাবে (Show Capital on Certificate)
+                  {isEnglish ? 'Show Capital on Certificate' : 'প্রিন্টে মূলধন দেখাবে (Show Capital on Certificate)'}
                 </span>
               </label>
             </div>
@@ -654,7 +654,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* প্রতিষ্ঠানের ঠিকানা */}
             <div className="lg:col-span-3">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                প্রতিষ্ঠানের ঠিকানা <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Business Address' : 'প্রতিষ্ঠানের ঠিকানা'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
@@ -684,7 +684,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* মালিকের নাম */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                মালিকের নাম <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Owner Name' : 'মালিকের নাম'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
@@ -699,7 +699,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* পিতা / স্বামী বাছাই */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                অভিভাবক হিসেবে <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Guardian Type' : 'অভিভাবক হিসেবে'} <span className="text-red-500 font-bold">*</span>
               </label>
               <select
                 required
@@ -707,22 +707,22 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 onChange={(e) => setOwnerGuardianType(e.target.value as 'father' | 'husband')}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 transition"
               >
-                <option value="father">পিতা</option>
-                <option value="husband">স্বামী</option>
+                <option value="father">{isEnglish ? 'Father' : 'পিতা'}</option>
+                <option value="husband">{isEnglish ? 'Husband' : 'স্বামী'}</option>
               </select>
             </div>
 
             {/* পিতা/স্বামীর নাম */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                {ownerGuardianType === 'father' ? 'পিতার নাম' : 'স্বামীর নাম'} <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? (ownerGuardianType === 'father' ? "Father's Name" : "Husband's Name") : (ownerGuardianType === 'father' ? 'পিতার নাম' : 'স্বামীর নাম')} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={ownerFatherOrHusbandName}
                 onChange={(e) => setOwnerFatherOrHusbandName(e.target.value)}
-                placeholder={ownerGuardianType === 'father' ? 'পিতার নাম লিখুন *' : 'স্বামীর নাম লিখুন *'}
+                placeholder={isEnglish ? (ownerGuardianType === 'father' ? "Enter father's name *" : "Enter husband's name *") : (ownerGuardianType === 'father' ? 'পিতার নাম লিখুন *' : 'স্বামীর নাম লিখুন *')}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 transition"
               />
             </div>
@@ -730,7 +730,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* মাতার নাম */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                মাতার নাম <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? "Mother's Name" : 'মাতার নাম'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="text"
@@ -745,33 +745,33 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* ব্যবসায় প্রকৃতি */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ব্যবসায় প্রকৃতি <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Business Ownership Type' : 'ব্যবসায় প্রকৃতি'} <span className="text-red-500 font-bold">*</span>
               </label>
               <select
                 value={businessNature}
                 onChange={(e) => setBusinessNature(e.target.value)}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-medium transition"
               >
-                <option value="একক মালিকানা">একক মালিকানা (Sole Proprietorship)</option>
-                <option value="যৌথ / অংশীদারি">যৌথ / অংশীদারি (Partnership)</option>
-                <option value="প্রাইভেট লিমিটেড কোম্পানি">প্রাইভেট লিমিটেড কোম্পানি (Private Ltd)</option>
-                <option value="পাবলিক লিমিটেড কোম্পানি">পাবলিক লিমিটেড কোম্পানি (Public Ltd)</option>
-                <option value="সমবায় সমিতি">সমবায় সমিতি (Cooperative)</option>
-                <option value="অন্যান্য">অন্যান্য (Other)</option>
+                <option value="একক মালিকানা">{isEnglish ? 'Sole Proprietorship' : 'একক মালিকানা (Sole Proprietorship)'}</option>
+                <option value="যৌথ / অংশীদারি">{isEnglish ? 'Partnership' : 'যৌথ / অংশীদারি (Partnership)'}</option>
+                <option value="প্রাইভেট লিমিটেড কোম্পানি">{isEnglish ? 'Private Limited Company' : 'প্রাইভেট লিমিটেড কোম্পানি (Private Ltd)'}</option>
+                <option value="পাবলিক লিমিটেড কোম্পানি">{isEnglish ? 'Public Limited Company' : 'পাবলিক লিমিটেড কোম্পানি (Public Ltd)'}</option>
+                <option value="সমবায় সমিতি">{isEnglish ? 'Cooperative' : 'সমবায় সমিতি (Cooperative)'}</option>
+                <option value="অন্যান্য">{isEnglish ? 'Other' : 'অন্যান্য (Other)'}</option>
               </select>
             </div>
 
             {sharedProfileFound && (
               <div className="lg:col-span-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-900">
-                এনআইডি অনুযায়ী পূর্বের সনদ থেকে মালিকের ব্যক্তিগত ও ঠিকানার তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে।
-                অন্য উদ্যোক্তার হিসাব, ট্র্যাকিং বা ব্যবসায়িক তথ্য দেখানো হয়নি।
+                {isEnglish ? 'Owner details and address were auto-filled from the previous certificate using the national ID.' : 'এনআইডি অনুযায়ী পূর্বের সনদ থেকে মালিকের ব্যক্তিগত ও ঠিকানার তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে।'}
+                {isEnglish ? 'Other operators’ account, tracking, and business data are not displayed.' : 'অন্য উদ্যোক্তার হিসাব, ট্র্যাকিং বা ব্যবসায়িক তথ্য দেখানো হয়নি।'}
               </div>
             )}
 
             {/* এনআইডি/জন্ম নিবন্ধন */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                এনআইডি / জন্ম নিবন্ধন নম্বর
+                {isEnglish ? 'National ID / Birth Registration Number' : 'এনআইডি / জন্ম নিবন্ধন নম্বর'}
               </label>
               <input
                 type="text"
@@ -785,7 +785,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* টিন (ঐচ্ছিক) */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ই-টিন নম্বর (TIN - ঐচ্ছিক)
+                {isEnglish ? 'e-TIN Number (Optional)' : 'ই-টিন নম্বর (TIN - ঐচ্ছিক)'}
               </label>
               <input
                 type="text"
@@ -799,7 +799,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* মালিকের ছবি (ঐচ্ছিক) */}
             <div className="lg:col-span-2">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                মালিকের ছবি (ঐচ্ছিক - সর্বোচ্চ ২০০ কেবি)
+                {isEnglish ? 'Owner Photo (Optional - max 200 KB)' : 'মালিকের ছবি (ঐচ্ছিক - সর্বোচ্চ ২০০ কেবি)'}
               </label>
               <div className="flex items-center gap-3">
                 <input
@@ -848,7 +848,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 className="w-4 h-4 text-[#006A4E] rounded border-slate-300 focus:ring-[#006A4E] cursor-pointer"
               />
               <span className="text-xs font-bold text-emerald-950">
-                স্থায়ী ঠিকানা বর্তমান ঠিকানার মতোই (Auto-Sync)
+                {isEnglish ? 'Permanent address same as present address (auto-sync)' : 'স্থায়ী ঠিকানা বর্তমান ঠিকানার মতোই (Auto-Sync)'}
               </span>
             </label>
           </div>
@@ -929,7 +929,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               </span>
               {sameAsPresent && (
                 <span className="text-[10px] text-emerald-700 bg-emerald-100/90 font-bold px-2 py-0.5 rounded border border-emerald-300">
-                  ✓ বর্তমান ঠিকানার সাথে লাইভ সংযুক্ত
+                  {isEnglish ? '✓ Synced live with present address' : '✓ বর্তমান ঠিকানার সাথে লাইভ সংযুক্ত'}
                 </span>
               )}
             </h4>
@@ -1025,7 +1025,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* মেয়াদ শুরু */}
             <div className="lg:col-span-3">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                মেয়াদ শুরু <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Validity Start' : 'মেয়াদ শুরু'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="date"
@@ -1039,7 +1039,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* মেয়াদ শেষ */}
             <div className="lg:col-span-3">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                মেয়াদ শেষ <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'Validity End' : 'মেয়াদ শেষ'} <span className="text-red-500 font-bold">*</span>
               </label>
               <input
                 type="date"
@@ -1053,7 +1053,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* লাইসেন্স ফি (টাকা) */}
             <div className="lg:col-span-3">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                লাইসেন্স ফি (টাকা) <span className="text-red-500 font-bold">*</span>
+                {isEnglish ? 'License Fee (BDT)' : 'লাইসেন্স ফি (টাকা)'} <span className="text-red-500 font-bold">*</span>
               </label>
               <div className="relative">
                 <input
@@ -1072,7 +1072,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* ভ্যাট (১৫%) Auto calculated */}
             <div className="lg:col-span-3">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                ভ্যাট (১৫% - স্বয়ংক্রিয় গণনাকৃত)
+                {isEnglish ? 'VAT (15% - calculated automatically)' : 'ভ্যাট (১৫% - স্বয়ংক্রিয় গণনাকৃত)'}
               </label>
               <div className="relative">
                 <input
@@ -1087,7 +1087,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* পেশা কর */}
             <div className="lg:col-span-3">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                পেশা কর (Profession Tax)
+                {isEnglish ? 'Profession Tax' : 'পেশা কর (Profession Tax)'}
               </label>
               <div className="relative">
                 <input
@@ -1105,7 +1105,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {/* বাণিজ্যিক কর */}
             <div className="lg:col-span-3">
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                বাণিজ্যিক কর (Trade Tax)
+                {isEnglish ? 'Trade Tax' : 'বাণিজ্যিক কর (Trade Tax)'}
               </label>
               <div className="relative">
                 <input
@@ -1125,21 +1125,21 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
           <div className="mt-4 bg-[#006A4E] text-white p-4 rounded-xl flex flex-wrap items-center justify-between gap-4 shadow-md">
             <div>
               <span className="text-xs uppercase text-emerald-200 tracking-wider font-bold block">
-                মোট পরিশোধযোগ্য টাকা (Total Amount)
+                {isEnglish ? 'Total Payable Amount' : 'মোট পরিশোধযোগ্য টাকা (Total Amount)'}
               </span>
               <div className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">
                 {formatCurrencyBn(totalAmount)}
               </div>
               <div className="text-xs text-emerald-100 font-semibold mt-1">
-                কথায়: {numberToWordsBn(totalAmount)}
+                {isEnglish ? <>In words: {numberToWordsEn(totalAmount)} BDT only</> : <>কথায়: {numberToWordsBn(totalAmount)}</>}
               </div>
             </div>
 
             <div className="text-right text-xs text-emerald-200 space-y-0.5">
-              <div>লাইসেন্স ফি: ৳ {toBengaliNumber(licenseFee)}</div>
-              <div>ভ্যাট (১৫%): ৳ {toBengaliNumber(vatAmount)}</div>
-              <div>পেশা কর: ৳ {toBengaliNumber(professionTax)}</div>
-              <div>বাণিজ্যিক কর: ৳ {toBengaliNumber(tradeTax)}</div>
+              <div>{isEnglish ? 'License Fee: BDT' : 'লাইসেন্স ফি: ৳'} {isEnglish ? licenseFee : toBengaliNumber(licenseFee)}</div>
+              <div>{isEnglish ? 'VAT (15%): BDT' : 'ভ্যাট (১৫%): ৳'} {isEnglish ? vatAmount : toBengaliNumber(vatAmount)}</div>
+              <div>{isEnglish ? 'Profession Tax: BDT' : 'পেশা কর: ৳'} {isEnglish ? professionTax : toBengaliNumber(professionTax)}</div>
+              <div>{isEnglish ? 'Trade Tax: BDT' : 'বাণিজ্যিক কর: ৳'} {isEnglish ? tradeTax : toBengaliNumber(tradeTax)}</div>
             </div>
           </div>
         </div>
@@ -1155,7 +1155,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               className="mt-1 w-4 h-4 text-[#006A4E] rounded border-slate-300 focus:ring-[#006A4E] cursor-pointer shrink-0"
             />
             <span className="text-xs sm:text-sm text-slate-800 leading-relaxed font-semibold">
-              আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য ও নির্ভুল। যেকোনো সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে ট্রেড লাইসেন্স বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা যাবে।
+              {isEnglish ? 'I hereby declare that all information provided is true and accurate. If any information is found to be false, the trade license may be cancelled and legal action may be taken.' : 'আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য ও নির্ভুল। যেকোনো সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে ট্রেড লাইসেন্স বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা যাবে।'}
             </span>
           </label>
         </div>
