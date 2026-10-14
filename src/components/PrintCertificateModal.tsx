@@ -879,11 +879,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 p-2.5 text-slate-800 text-[11.5px]">
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Head of Family Name: ' : 'পরিবার প্রধানের নাম: '}</span>
-                                    <strong className="text-slate-950 font-bold">{application.applicantNameBn || '—'}</strong>
+                                    <strong className="text-slate-950 font-bold">{lang === 'en' ? (application.applicantNameEn || application.applicantNameBn || '—') : (application.applicantNameBn || '—')}</strong>
                                   </div>
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? "Father's Name: " : 'পিতার নাম: '}</span>
-                                    <strong className="text-slate-900">{application.fatherName || '—'}</strong>
+                                    <strong className="text-slate-900">{lang === 'en' ? (application.fatherNameEn || application.fatherName || '—') : (application.fatherName || '—')}</strong>
                                   </div>
                                   {application.nidOrBirthReg && (
                                     <div>
@@ -892,12 +892,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                              ? (lang === 'en' ? 'Birth Registration No: ' : 'জন্ম সনদ নং: ')
                                              : (lang === 'en' ? 'National ID No: ' : 'জাতীয় পরিচয়পত্র নং: '))
                                          : (lang === 'en' ? 'NID / Birth Reg: ' : 'জাতীয় পরিচয়পত্র: ')}</span>
-                                      <strong className="font-mono text-slate-900">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
+                                      <strong className="font-mono text-slate-900">{lang === 'en' ? String(application.nidOrBirthReg || '').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.nidOrBirthReg || '')}</strong>
                                     </div>
                                   )}
                                   <div className="sm:col-span-2">
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Address: ' : 'ঠিকানা: '}</span>
-                                    <span className="text-slate-900">গ্রাম: <b>{presentVillage || '—'}</b>, ওয়ার্ড: <b>{toBengaliNumber(presentWard || '০১')}</b>, ডাকঘর: <b>{presentPostOffice}</b>, উপজেলা: <b>{presentUpazila}</b>, জেলা: <b>{presentDistrict}</b></span>
+                                    <span className="text-slate-900">{lang === 'en' ? <>Village: <b>{presentVillageEn || '—'}</b>, Ward: <b>{presentWardEn}</b>, Post Office: <b>{presentPostEn}</b>, Upazila: <b>{presentUpazilaEn}</b>, District: <b>{presentDistrictEn}</b></> : <>গ্রাম: <b>{presentVillage || '—'}</b>, ওয়ার্ড: <b>{toBengaliNumber(presentWard || '০১')}</b>, ডাকঘর: <b>{presentPostOffice}</b>, উপজেলা: <b>{presentUpazila}</b>, জেলা: <b>{presentDistrict}</b></>}</span>
                                   </div>
                                 </div>
                               </div>
