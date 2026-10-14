@@ -2098,7 +2098,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               />
             </div>
             <p className="text-xs text-rose-800 mt-2 bg-rose-100/70 p-2.5 rounded-lg">
-              ঘোষণা: আমি এই মর্মে হলফপূর্বক স্বীকার করিতেছি যে, আমার স্বামীর মৃত্যুর পর অদ্যবধি আমি দ্বিতীয় কোনো বিবাহ বন্ধনে আবদ্ধ হই নাই।
+              {language === 'en' ? 'Declaration: I solemnly affirm that I have not remarried since the death of my husband.' : 'ঘোষণা: আমি এই মর্মে হলফপূর্বক স্বীকার করিতেছি যে, আমার স্বামীর মৃত্যুর পর অদ্যবধি আমি দ্বিতীয় কোনো বিবাহ বন্ধনে আবদ্ধ হই নাই।'}
             </p>
           </div>
         )}
@@ -2364,7 +2364,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {selectedType === 'monthly_income' && (
           <div className="border-t pt-6">
             <label className="block text-xs font-semibold mb-2">
-              মাসিক আয়
+              {language === 'en' ? 'Monthly Income' : 'মাসিক আয়'}
             </label>
             <input
               type="number"
