@@ -1730,7 +1730,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="bg-slate-50/70 p-4 rounded-xl border border-slate-200">
             <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{language === 'en' ? 'Present Address (বর্তমান ঠিকানা) *' : 'বর্তমান ঠিকানা *'}</span>
+              <span>{language === 'en' ? 'Present Address *' : 'বর্তমান ঠিকানা *'}</span>
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
               <div>
@@ -1829,7 +1829,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
                 <Home className="w-3.5 h-3.5 text-emerald-600" />
-                <span>{language === 'en' ? 'Permanent Address (স্থায়ী ঠিকানা) *' : 'স্থায়ী ঠিকানা *'}</span>
+                <span>{language === 'en' ? 'Permanent Address *' : 'স্থায়ী ঠিকানা *'}</span>
                 {sameAsPresent && (
                   <span className="text-[10px] text-emerald-700 bg-emerald-100 font-semibold px-2 py-0.5 rounded-full ml-1">
                     {language === 'en' ? 'Synced with Present' : 'বর্তমান ঠিকানার অনুরূপ'}
@@ -2083,7 +2083,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {(selectedType === 'non_remarriage' || selectedType === 'widow') && (
           <div className="bg-rose-50/50 p-4 rounded-xl border border-rose-100">
             <h3 className="text-sm font-bold text-rose-950 uppercase tracking-wider mb-3">
-              ৩. {selectedType === 'widow' ? 'বিধবা প্রত্যয়ন ও অঙ্গীকার বিবরণী' : 'পুনর্বিবাহ না হওয়ার অঙ্গীকার বিবরণী'}
+              {language === 'en' ? (selectedType === 'widow' ? '3. Widowhood Certificate and Declaration' : '3. Declaration of Non-Remarriage') : `৩. ${selectedType === 'widow' ? 'বিধবা প্রত্যয়ন ও অঙ্গীকার বিবরণী' : 'পুনর্বিবাহ না হওয়ার অঙ্গীকার বিবরণী'}`}
             </h3>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
