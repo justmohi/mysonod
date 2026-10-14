@@ -306,7 +306,8 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2">{isEn ? 'Member Name' : 'সদস্যের নাম'}</th>
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 w-24 text-center">{isEn ? 'Relation' : 'সম্পর্ক'}</th>
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2">{application.identityNumberType === 'birth_reg' ? (isEn ? 'Birth Registration No.' : 'জন্ম সনদ নং') : (isEn ? 'National ID No.' : 'জাতীয় পরিচয়পত্র নং')}</th>
-              <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="text-center w-24">{isEn ? 'Age' : 'বয়স'}</th>
+              <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-center">{isEn ? 'Date of Birth' : 'জন্ম তারিখ'}</th>
+              <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="text-center w-20">{isEn ? 'Age (Years)' : 'বয়স (বছর)'}</th>
             </tr>
           </thead>
           <tbody>
@@ -319,12 +320,13 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
                   <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2 font-mono">
                     {toBengaliNumber((m as any).nidOrBirth || '—')}
                   </td>
-                  <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="text-center">{toBengaliNumber(m.age)} বছর</td>
+                  <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-center">{m.dob ? new Date(`${m.dob}T00:00:00`).toLocaleDateString(isEn ? 'en-GB' : 'bn-BD') : '—'}</td>
+                  <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="text-center">{String(m.dob ? (() => { const birth = new Date(`${m.dob}T00:00:00`); const today = new Date(); let years = today.getFullYear() - birth.getFullYear(); if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) years--; return years >= 0 ? years : ''; })() : (m.age || '—')).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())}{isEn ? ' Years' : ' বছর'}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="p-2 text-center text-slate-500">কোনো সদস্য তালিকা পাওয়া যায়নি</td>
+                <td colSpan={6} className="p-2 text-center text-slate-500">{isEn ? 'No family members added' : 'কোনো সদস্য তালিকা পাওয়া যায়নি'}</td>
               </tr>
             )}
           </tbody>
@@ -1174,7 +1176,8 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                     <th style={dynamicHeaderThStyle} className="border border-slate-400 text-left pl-2">Member Name</th>
                     <th style={dynamicHeaderThStyle} className="border border-slate-400 w-24 text-center">Relation</th>
                     <th style={dynamicHeaderThStyle} className="border border-slate-400 text-left pl-2">NID / Birth Reg No</th>
-                    <th style={dynamicHeaderThStyle} className="border border-slate-400 w-24 text-center">Age</th>
+                    <th style={dynamicHeaderThStyle} className="border border-slate-400 text-center">Date of Birth</th>
+                    <th style={dynamicHeaderThStyle} className="border border-slate-400 w-20 text-center">Age (Years)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1185,7 +1188,8 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                         <td style={dynamicCellTdStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400">{relationLabelEn(m.relation)}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400 text-left pl-2 font-mono">{(m as any).nidOrBirth || '—'}</td>
-                        <td style={dynamicCellTdStyle} className="border border-slate-400">{String(m.age || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())} Years</td>
+                        <td style={dynamicCellTdStyle} className="border border-slate-400 text-center">{m.dob ? new Date(`${m.dob}T00:00:00`).toLocaleDateString('en-GB') : '—'}</td>
+                        <td style={dynamicCellTdStyle} className="border border-slate-400">{String(m.dob ? (() => { const birth = new Date(`${m.dob}T00:00:00`); const today = new Date(); let years = today.getFullYear() - birth.getFullYear(); if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) years--; return years >= 0 ? years : ''; })() : (m.age || '—')).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit))} Years</td>
                       </tr>
                     ))
                   ) : (
@@ -1286,7 +1290,8 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 text-left pl-2">নাম</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-24 text-center">সম্পর্ক</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 text-center">জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন</th>
-                  <th style={dynamicHeaderThStyle} className="border border-slate-400 w-24 text-center">বয়স</th>
+                  <th style={dynamicHeaderThStyle} className="border border-slate-400 text-center">জন্ম তারিখ</th>
+                  <th style={dynamicHeaderThStyle} className="border border-slate-400 w-20 text-center">বয়স (বছর)</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-24 text-center">মন্তব্য</th>
                 </tr>
               </thead>
@@ -1298,7 +1303,8 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                       <td style={dynamicCellTdStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400">{m.relation}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 font-mono">{toBengaliNumber((m as any).nidOrBirth || '—')}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400">{toBengaliNumber(m.age)} বছর</td>
+                      <td style={dynamicCellTdStyle} className="border border-slate-400 text-center">{m.dob ? new Date(`${m.dob}T00:00:00`).toLocaleDateString('bn-BD') : '—'}</td>
+                      <td style={dynamicCellTdStyle} className="border border-slate-400">{toBengaliNumber(m.dob ? (() => { const birth = new Date(`${m.dob}T00:00:00`); const today = new Date(); let years = today.getFullYear() - birth.getFullYear(); if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) years--; return years >= 0 ? years : ''; })() : m.age)} বছর</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 text-slate-600 font-normal">সদস্য</td>
                     </tr>
                   ))
