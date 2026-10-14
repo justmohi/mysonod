@@ -1038,7 +1038,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               পর্যাপ্ত ব্যালেন্স নেই! অনুগ্রহ করে এড ব্যালেন্স করুন।
             </p>
             <p className="text-slate-600 text-xs mb-6">
-              প্রতিটি প্রত্যয়ন পত্রের সরকারি ফি <span className="font-bold text-emerald-800">২.০০ টাকা</span>। আপনার বর্তমান ব্যালেন্স: <span className="font-bold text-red-600">{formatCurrencyBn(currentBalance)}</span>।
+              {language === 'en' ? <>The government fee for each certificate is <span className="font-bold text-emerald-800">BDT 2.00</span>. Your current balance: </> : <>প্রতিটি প্রত্যয়ন পত্রের সরকারি ফি <span className="font-bold text-emerald-800">২.০০ টাকা</span>। আপনার বর্তমান ব্যালেন্স: </>} <span className="font-bold text-red-600">{formatCurrencyBn(currentBalance)}</span>।
             </p>
             <div className="flex gap-3 justify-center">
               <button
@@ -1203,7 +1203,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               type="button"
               onClick={() => setSharedProfileFound(null)}
               className="cursor-pointer text-slate-400 hover:text-slate-700 p-1 text-xs"
-              title="বিজ্ঞপ্তি বন্ধ করুন"
+              title={language === 'en' ? 'Close notice' : 'বিজ্ঞপ্তি বন্ধ করুন'}
             >
               ✕
             </button>
@@ -1252,7 +1252,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 type="button"
                 onClick={() => setExistingRecordFound(null)}
                 className="cursor-pointer text-slate-400 hover:text-slate-700 p-1 text-xs"
-                title="বিজ্ঞপ্তি বন্ধ করুন"
+                title={language === 'en' ? 'Close notice' : 'বিজ্ঞপ্তি বন্ধ করুন'}
               >
                 ✕
               </button>
@@ -1279,43 +1279,43 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={applicantNameBn}
                     onChange={(e) => setApplicantNameBn(e.target.value)}
-                    placeholder="নাম *"
+                    placeholder={language === 'en' ? 'Name *' : 'নাম *'}
                     className="same-name-input"
                   />
                 </div>
 
                 <div>
                   <label className="same-name-field-label">
-                    {identityNumberType === 'birth_reg' ? 'জন্ম সনদ নং' : 'জাতীয় পরিচয়পত্র নং'}
+                    {identityNumberType === 'birth_reg' ? (language === 'en' ? 'Birth Registration No.' : 'জন্ম সনদ নং') : (language === 'en' ? 'National ID No.' : 'জাতীয় পরিচয়পত্র নং')}
                   </label>
                   <select
                     value={identityNumberType}
                     onChange={(e) => setIdentityNumberType(e.target.value as 'nid' | 'birth_reg')}
                     className="same-name-input same-name-select"
                   >
-                    <option value="nid">জাতীয় পরিচয়পত্র নং</option>
-                    <option value="birth_reg">জন্ম সনদ নং</option>
+                    <option value="nid">{language === 'en' ? 'National ID No.' : 'জাতীয় পরিচয়পত্র নং'}</option>
+                    <option value="birth_reg">{language === 'en' ? 'Birth Registration No.' : 'জন্ম সনদ নং'}</option>
                   </select>
                   <input
                     type="text"
                     value={nidOrBirthReg}
                     onChange={(e) => setNidOrBirthReg(e.target.value)}
-                    placeholder={identityNumberType === 'birth_reg' ? 'জন্ম সনদ নম্বর লিখুন' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন'}
+                    placeholder={identityNumberType === 'birth_reg' ? (language === 'en' ? 'Enter birth registration number' : 'জন্ম সনদ নম্বর লিখুন') : (language === 'en' ? 'Enter national ID number' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন')}
                     className="same-name-input"
                   />
                 </div>
 
                 <div>
                   <label className="same-name-field-label">
-                    পিতা / স্বামী বেছে নিন
+                    {language === 'en' ? 'Select Father / Husband' : 'পিতা / স্বামী বেছে নিন'}
                   </label>
                   <select
                     value={sameNameGuardianType}
                     onChange={(e) => setSameNameGuardianType(e.target.value as 'father' | 'husband')}
                     className="same-name-input same-name-select"
                   >
-                    <option value="father">পিতা</option>
-                    <option value="husband">স্বামী</option>
+                    <option value="father">{language === 'en' ? 'Father' : 'পিতা'}</option>
+                    <option value="husband">{language === 'en' ? 'Husband' : 'স্বামী'}</option>
                   </select>
                   <input
                     type="text"
@@ -1327,7 +1327,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                         setSpouseName(e.target.value);
                       }
                     }}
-                    placeholder={sameNameGuardianType === 'father' ? 'পিতার নাম' : 'স্বামীর নাম'}
+                    placeholder={sameNameGuardianType === 'father' ? (language === 'en' ? "Father's Name" : 'পিতার নাম') : (language === 'en' ? "Husband's Name" : 'স্বামীর নাম')}
                     className="same-name-input mt-1.5"
                   />
                 </div>
@@ -1340,7 +1340,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     type="text"
                     value={motherName}
                     onChange={(e) => setMotherName(e.target.value)}
-                    placeholder="মাতার নাম *"
+                    placeholder={language === 'en' ? "Mother's Name *" : 'মাতার নাম *'}
                     className="same-name-input"
                   />
                 </div>
@@ -1354,7 +1354,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={presentVillage}
                     onChange={(e) => handlePresentVillageChange(e.target.value)}
-                    placeholder="গ্রাম/মহল্লা *"
+                    placeholder={language === 'en' ? 'Village / Locality *' : 'গ্রাম/মহল্লা *'}
                     className="same-name-input"
                   />
                 </div>
@@ -1383,7 +1383,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={presentPost}
                     onChange={(e) => handlePresentPostChange(e.target.value)}
-                    placeholder="ডাকঘর *"
+                    placeholder={language === 'en' ? 'Post Office *' : 'ডাকঘর *'}
                     className="same-name-input"
                   />
                 </div>
@@ -1397,7 +1397,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={presentUpazila}
                     onChange={(e) => handlePresentUpazilaChange(e.target.value)}
-                    placeholder="উপজেলা *"
+                    placeholder={language === 'en' ? 'Upazila *' : 'উপজেলা *'}
                     className="same-name-input"
                   />
                 </div>
@@ -1411,14 +1411,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={presentDistrict}
                     onChange={(e) => handlePresentDistrictChange(e.target.value)}
-                    placeholder="জেলা *"
+                    placeholder={language === 'en' ? 'District *' : 'জেলা *'}
                     className="same-name-input"
                   />
                 </div>
 
                 <div>
                   <label className="same-name-field-label">
-                    ছবি (সম্প্রতি তোলা = 30-100 KB)
+                    {language === 'en' ? 'Photo (recent, 30–100 KB)' : 'ছবি (সম্প্রতি তোলা = 30-100 KB)'}
                   </label>
                   <input
                     type="file"
@@ -1430,7 +1430,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
                 <div>
                   <label className="same-name-field-label">
-                    সংযুক্তি (সর্বোচ্চ ৫টি, প্রতিটি ২০-৮০ কেবি)
+                    {language === 'en' ? 'Attachments (up to 5 files, 20–80 KB each)' : 'সংযুক্তি (সর্বোচ্চ ৫টি, প্রতিটি ২০-৮০ কেবি)'}
                   </label>
                   <input
                     type="file"
@@ -1443,23 +1443,23 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
               <div className="same-name-extra-fields">
                 <div className="same-name-extra-stack">
-                  <label className="same-name-field-label">ক্ষেত্র নির্বাচন করুন</label>
+                  <label className="same-name-field-label">{language === 'en' ? 'Select Field' : 'ক্ষেত্র নির্বাচন করুন'}</label>
                   <select
                     value={sameNameField}
                     onChange={(e) => setSameNameField(e.target.value)}
                     className="same-name-input same-name-select"
                   >
-                    <option value="">একটি ক্ষেত্র বেছে নিন</option>
-                    <option value="নিজের নাম">নিজের নাম</option>
-                    <option value="পিতার নাম">পিতার নাম</option>
-                    <option value="স্বামীর নাম">স্বামীর নাম</option>
-                    <option value="মাতার নাম">মাতার নাম</option>
+                    <option value="">{language === 'en' ? 'Choose a field' : 'একটি ক্ষেত্র বেছে নিন'}</option>
+                    <option value="নিজের নাম">{language === 'en' ? 'Own Name' : 'নিজের নাম'}</option>
+                    <option value="পিতার নাম">{language === 'en' ? "Father's Name" : 'পিতার নাম'}</option>
+                    <option value="স্বামীর নাম">{language === 'en' ? "Husband's Name" : 'স্বামীর নাম'}</option>
+                    <option value="মাতার নাম">{language === 'en' ? "Mother's Name" : 'মাতার নাম'}</option>
                   </select>
                   <input
                     type="text"
                     value={sameNamePerson}
                     onChange={(e) => setSameNamePerson(e.target.value)}
-                    placeholder="নাম লিখুন"
+                    placeholder={language === 'en' ? 'Enter name' : 'নাম লিখুন'}
                     className="same-name-input"
                   />
                   <button
@@ -1469,14 +1469,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     className="same-name-add-button disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>যোগ করুন</span>
+                    <span>{language === 'en' ? 'Add' : 'যোগ করুন'}</span>
                   </button>
                 </div>
 
                 {sameNameEntries.length > 0 && (
                   <div className="mt-3 border-t border-slate-200 pt-2">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-bold text-slate-700">যোগ করা তথ্য</span>
+                      <span className="text-xs font-bold text-slate-700">{language === 'en' ? 'Added Information' : 'যোগ করা তথ্য'}</span>
                       <button
                         type="button"
                         onClick={handleSameNameClearAll}
@@ -1499,7 +1499,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                             type="button"
                             onClick={() => handleSameNameRemove(index)}
                             className="shrink-0 rounded-md p-1 text-red-500 hover:bg-red-50 hover:text-red-700"
-                            title="তথ্য মুছে ফেলুন"
+                            title={language === 'en' ? 'Remove information' : 'তথ্য মুছে ফেলুন'}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -1516,7 +1516,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   checked={sameNameDeceased}
                   onChange={(e) => setSameNameDeceased(e.target.checked)}
                 />
-                <span>মৃত ব্যক্তি</span>
+                <span>{language === 'en' ? 'Deceased Person' : 'মৃত ব্যক্তি'}</span>
               </label>
             </>
           ) : (
@@ -1570,14 +1570,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   </div>
                   <div className="flex-1 min-w-0">
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      {familyGuardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *'}
+                      {language === 'en' ? (familyGuardianType === 'father' ? "Father's Name *" : "Husband's Name *") : (familyGuardianType === 'father' ? 'পিতার নাম (বাংলায়) *' : 'স্বামীর নাম (বাংলায়) *')}
                     </label>
                     <input
                       type="text"
                       required
                       value={familyGuardianType === 'father' ? fatherName : spouseName}
                       onChange={(e) => familyGuardianType === 'father' ? setFatherName(e.target.value) : setSpouseName(e.target.value)}
-                      placeholder={familyGuardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
+                      placeholder={language === 'en' ? (familyGuardianType === 'father' ? "Enter father's name" : "Enter husband's name") : (familyGuardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন')}
                       className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     />
                   </div>
@@ -1609,7 +1609,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                             required
                             value={guardianType === 'father' ? fatherName : spouseName}
                             onChange={(e) => guardianType === 'father' ? setFatherName(e.target.value) : setSpouseName(e.target.value)}
-                            placeholder={guardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন'}
+                            placeholder={language === 'en' ? (guardianType === 'father' ? "Enter father's name" : "Enter husband's name") : (guardianType === 'father' ? 'পিতার নাম লিখুন' : 'স্বামীর নাম লিখুন')}
                             className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                           />
                         </div>
@@ -2113,7 +2113,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-3 text-sm">
               <div className="min-w-0">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত্যুর তারিখ *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">{language === 'en' ? 'Date of Death *' : 'মৃত্যুর তারিখ *'}</label>
                 <input
                   type="date"
                   className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
@@ -2124,22 +2124,22 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
 
               <div className="min-w-0">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত্যুর স্থান</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">{language === 'en' ? 'Place of Death' : 'মৃত্যুর স্থান'}</label>
                 <input
                   type="text"
                   className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  placeholder="মৃত্যুর স্থান"
+                  placeholder={language === 'en' ? 'Place of Death' : 'মৃত্যুর স্থান'}
                   value={deathPlace}
                   onChange={(e) => setDeathPlace(e.target.value)}
                 />
               </div>
 
               <div className="min-w-0">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">মৃত্যুর কারণ *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">{language === 'en' ? 'Cause of Death *' : 'মৃত্যুর কারণ *'}</label>
                 <input
                   type="text"
                   className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  placeholder="মৃত্যুর কারণ"
+                  placeholder={language === 'en' ? 'Cause of Death' : 'মৃত্যুর কারণ'}
                   value={deathCause}
                   onChange={(e) => setDeathCause(e.target.value)}
                   required
@@ -2147,22 +2147,22 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
 
               <div className="min-w-0">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">বই নম্বর</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">{language === 'en' ? 'Book Number' : 'বই নম্বর'}</label>
                 <input
                   type="text"
                   className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  placeholder="বই নম্বর"
+                  placeholder={language === 'en' ? 'Book Number' : 'বই নম্বর'}
                   value={deathBookNumber}
                   onChange={(e) => setDeathBookNumber(e.target.value)}
                 />
               </div>
 
               <div className="min-w-0">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">রেজিস্ট্রেশন নম্বর</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">{language === 'en' ? 'Registration Number' : 'রেজিস্ট্রেশন নম্বর'}</label>
                 <input
                   type="text"
                   className="w-full h-[38px] px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  placeholder="রেজিস্ট্রেশন নম্বর"
+                  placeholder={language === 'en' ? 'Registration Number' : 'রেজিস্ট্রেশন নম্বর'}
                   value={deathRegistrationNumber}
                   onChange={(e) => setDeathRegistrationNumber(e.target.value)}
                 />
@@ -2182,7 +2182,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 className="w-full px-3 py-2 border rounded-lg"
                 value={nationality}
                 onChange={(e) => setNationality(e.target.value)}
-                placeholder="বাংলাদেশী"
+                placeholder={language === 'en' ? 'Bangladeshi' : 'বাংলাদেশী'}
               />
             </div>
             <div>
@@ -2193,7 +2193,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 className="w-full px-3 py-2 border rounded-lg"
                 value={religion}
                 onChange={(e) => setReligion(e.target.value)}
-                placeholder="ইসলাম / সনাতন / অন্যান্য"
+                placeholder={language === 'en' ? 'Islam / Hinduism / Other' : 'ইসলাম / সনাতন / অন্যান্য'}
               />
             </div>
           </div>
@@ -2274,7 +2274,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-3 gap-4">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="অভিভাবকের নাম"
+              placeholder={language === 'en' ? 'Guardian Name' : 'অভিভাবকের নাম'}
               value={guardianName}
               onChange={(e) => setGuardianName(e.target.value)}
               required
@@ -2475,7 +2475,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="স্বামী / স্ত্রীর নাম"
+              placeholder={language === 'en' ? 'Spouse Name' : 'স্বামী / স্ত্রীর নাম'}
               value={spouseName2}
               onChange={(e) => setSpouseName2(e.target.value)}
             />
@@ -2487,7 +2487,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6">
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="অভিভাবকের নাম"
+              placeholder={language === 'en' ? 'Guardian Name' : 'অভিভাবকের নাম'}
               value={orphanGuardian}
               onChange={(e) => setOrphanGuardian(e.target.value)}
             />
@@ -2498,19 +2498,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {(selectedType === 'new_voter' || selectedType === 'new_voter_affidavit') && (
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold mb-2">পূর্ববর্তী ঠিকানা / আদি নিবাস</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Previous Address / Place of Origin' : 'পূর্ববর্তী ঠিকানা / আদি নিবাস'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="পূর্ববর্তী বা আদি নিবাসের বিবরণ"
+                placeholder={language === 'en' ? 'Enter previous address or place of origin' : 'পূর্ববর্তী বা আদি নিবাসের বিবরণ'}
                 value={previousAddress}
                 onChange={(e) => setPreviousAddress(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold mb-2">ভোটার হওয়ার উপযুক্ততা ও অঙ্গীকার</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Voter Eligibility and Declaration' : 'ভোটার হওয়ার উপযুক্ততা ও অঙ্গীকার'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="১৮ বছর পূর্ণ হয়েছে ও অন্য কোথাও ভোটার হই নাই"
+                placeholder={language === 'en' ? 'I am at least 18 years old and am not registered as a voter elsewhere' : '১৮ বছর পূর্ণ হয়েছে ও অন্য কোথাও ভোটার হই নাই'}
                 value={generalPurpose}
                 onChange={(e) => setGeneralPurpose(e.target.value)}
               />
@@ -2521,10 +2521,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {/* Character */}
         {selectedType === 'character' && (
           <div className="border-t pt-6">
-            <label className="block text-xs font-semibold mb-2">চারিত্রিক সনদের প্রয়োজনীয়তা ও রেফারেন্স</label>
+            <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Purpose / Reference for Character Certificate' : 'চারিত্রিক সনদের প্রয়োজনীয়তা ও রেফারেন্স'}</label>
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="চাকুরি / ভর্তি / পাসপোর্ট / সাধারণ নাগরিক পরিচয়"
+              placeholder={language === 'en' ? 'Employment / Admission / Passport / General Identification' : 'চাকুরি / ভর্তি / পাসপোর্ট / সাধারণ নাগরিক পরিচয়'}
               value={generalPurpose}
               onChange={(e) => setGeneralPurpose(e.target.value)}
             />
@@ -2535,19 +2535,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {selectedType === 'permanent_resident' && (
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold mb-2">স্থায়ীভাবে বসবাসের মেয়াদকাল</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Duration of Permanent Residence' : 'স্থায়ীভাবে বসবাসের মেয়াদকাল'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="জন্মসূত্রে / বংশানুক্রমে ২০+ বছর"
+                placeholder={language === 'en' ? 'By birth / Ancestral residence for 20+ years' : 'জন্মসূত্রে / বংশানুক্রমে ২০+ বছর'}
                 value={generalPurpose}
                 onChange={(e) => setGeneralPurpose(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold mb-2">পৈতৃক বসতভিটা / হোল্ডিং তথ্য</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Ancestral Residence / Holding Information' : 'পৈতৃক বসতভিটা / হোল্ডিং তথ্য'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="পৈতৃক বসতভিটা ও জমিজমা অত্র ইউনিয়নে বিদ্যমান"
+                placeholder={language === 'en' ? 'Ancestral residence and land are located in this Union Parishad area' : 'পৈতৃক বসতভিটা ও জমিজমা অত্র ইউনিয়নে বিদ্যমান'}
                 value={certificateDetails}
                 onChange={(e) => setCertificateDetails(e.target.value)}
               />
@@ -2558,8 +2558,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {/* Unmarried */}
         {selectedType === 'unmarried' && (
           <div className="border-t pt-6 bg-emerald-50/60 p-4 rounded-xl border border-emerald-200">
-            <h3 className="text-sm font-bold text-emerald-950 mb-2">অবিবাহিত প্রত্যয়ন অঙ্গীকার</h3>
-            <p className="text-xs text-slate-700">আমি এই মর্মে অঙ্গীকার করিতেছি যে, অদ্যবধি আমি কোনো বিবাহ বন্ধনে আবদ্ধ হই নাই এবং বর্তমানে সম্পূর্ণ অবিবাহিত রহিয়াছি।</p>
+            <h3 className="text-sm font-bold text-emerald-950 mb-2">{language === 'en' ? 'Unmarried Status Declaration' : 'অবিবাহিত প্রত্যয়ন অঙ্গীকার'}</h3>
+            <p className="text-xs text-slate-700">{language === 'en' ? 'I hereby solemnly declare that I have never been married and remain unmarried as of this date.' : 'আমি এই মর্মে অঙ্গীকার করিতেছি যে, অদ্যবধি আমি কোনো বিবাহ বন্ধনে আবদ্ধ হই নাই এবং বর্তমানে সম্পূর্ণ অবিবাহিত রহিয়াছি।'}</p>
           </div>
         )}
 
@@ -2567,19 +2567,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {selectedType === 'not_rohingya' && (
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold mb-2">বংশগত নাগরিকত্ব প্রমাণ / রেফারেন্স নং</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Proof of Ancestral Citizenship / Reference No.' : 'বংশগত নাগরিকত্ব প্রমাণ / রেফারেন্স নং'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="পিতার এনআইডি / ভোটার সিরিয়াল / রেফারেন্স"
+                placeholder={language === 'en' ? "Father's NID / Voter Serial / Reference" : 'পিতার এনআইডি / ভোটার সিরিয়াল / রেফারেন্স'}
                 value={generalPurpose}
                 onChange={(e) => setGeneralPurpose(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold mb-2">অঙ্গীকার</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Declaration' : 'অঙ্গীকার'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg bg-slate-50 text-slate-700 cursor-not-allowed"
-                value="জন্মসূত্রে বাংলাদেশী এবং মায়ানমার হতে আগত রোহিঙ্গা নহেন"
+                value={language === 'en' ? 'Bangladeshi by birth and not a Rohingya originating from Myanmar' : 'জন্মসূত্রে বাংলাদেশী এবং মায়ানমার হতে আগত রোহিঙ্গা নহেন'}
                 readOnly
               />
             </div>
@@ -2589,10 +2589,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {/* No Birth Certificate */}
         {selectedType === 'no_birth_certificate' && (
           <div className="border-t pt-6">
-            <label className="block text-xs font-semibold mb-2">ডিজিটাল জন্মসনদ না থাকার কারণ</label>
+            <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Reason for No Digital Birth Certificate' : 'ডিজিটাল জন্মসনদ না থাকার কারণ'}</label>
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="পূর্বে জন্ম নিবন্ধন রেজিস্টারে অন্তর্ভুক্ত না হওয়া / বয়স সংক্রান্ত হলফনামা"
+              placeholder={language === 'en' ? 'Not previously registered in the birth register / age-related affidavit' : 'পূর্বে জন্ম নিবন্ধন রেজিস্টারে অন্তর্ভুক্ত না হওয়া / বয়স সংক্রান্ত হলফনামা'}
               value={generalPurpose}
               onChange={(e) => setGeneralPurpose(e.target.value)}
             />
@@ -2603,19 +2603,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {selectedType === 'financial_insolvency' && (
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold mb-2">আর্থিক অস্বচ্ছলতার কারণ</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Reason for Financial Insolvency' : 'আর্থিক অস্বচ্ছলতার কারণ'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="অভাব-অনটন / দীর্ঘমেয়াদি চিকিৎসা / কোনো স্থায়ী আয় না থাকা"
+                placeholder={language === 'en' ? 'Financial hardship / long-term medical expenses / no regular income' : 'অভাব-অনটন / দীর্ঘমেয়াদি চিকিৎসা / কোনো স্থায়ী আয় না থাকা'}
                 value={generalPurpose}
                 onChange={(e) => setGeneralPurpose(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold mb-2">পরিবারের সদস্য সংখ্যা ও অবস্থা</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Number and Status of Family Members' : 'পরিবারের সদস্য সংখ্যা ও অবস্থা'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="যেমন: ৫ জন সদস্য সম্পূর্ণ আবেদনকারীর উপর নির্ভরশীল"
+                placeholder={language === 'en' ? 'Example: 5 family members are fully dependent on the applicant' : 'যেমন: ৫ জন সদস্য সম্পূর্ণ আবেদনকারীর উপর নির্ভরশীল'}
                 value={certificateDetails}
                 onChange={(e) => setCertificateDetails(e.target.value)}
               />
@@ -2627,19 +2627,19 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {selectedType === 'no_objection' && (
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold mb-2">সংশ্লিষ্ট প্রতিষ্ঠান / অধিদপ্তর</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Relevant Institution / Directorate' : 'সংশ্লিষ্ট প্রতিষ্ঠান / অধিদপ্তর'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="পাসপোর্ট অধিদপ্তর / দূতাবাস / বিভাগীয় কর্তৃপক্ষ"
+                placeholder={language === 'en' ? 'Passport Directorate / Embassy / Divisional Authority' : 'পাসপোর্ট অধিদপ্তর / দূতাবাস / বিভাগীয় কর্তৃপক্ষ'}
                 value={generalPurpose}
                 onChange={(e) => setGeneralPurpose(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold mb-2">এনওসি (NOC)-এর উদ্দেশ্য</label>
+              <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Purpose of No Objection Certificate (NOC)' : 'এনওসি (NOC)-এর উদ্দেশ্য'}</label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
-                placeholder="ই-পাসপোর্ট ইস্যু / বিদেশ গমন / নতুন চাকুরি"
+                placeholder={language === 'en' ? 'E-passport issuance / overseas travel / new employment' : 'ই-পাসপোর্ট ইস্যু / বিদেশ গমন / নতুন চাকুরি'}
                 value={certificateDetails}
                 onChange={(e) => setCertificateDetails(e.target.value)}
               />
@@ -2650,10 +2650,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {/* Childless */}
         {selectedType === 'childless' && (
           <div className="border-t pt-6">
-            <label className="block text-xs font-semibold mb-2">বিবাহিত দাম্পত্য জীবনের মেয়াদকাল</label>
+            <label className="block text-xs font-semibold mb-2">{language === 'en' ? 'Duration of Marriage' : 'বিবাহিত দাম্পত্য জীবনের মেয়াদকাল'}</label>
             <input
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="যেমন: ১০ বছর যাবত কোনো সন্তান-সন্ততি নাই"
+              placeholder={language === 'en' ? 'Example: Married for 10 years with no children' : 'যেমন: ১০ বছর যাবত কোনো সন্তান-সন্ততি নাই'}
               value={generalPurpose}
               onChange={(e) => setGeneralPurpose(e.target.value)}
             />
@@ -2685,12 +2685,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             </div>
             <div>
               <div className="text-xs text-slate-500 font-medium">
-                আপনার বর্তমান ওয়ালেট ব্যালেন্স: <strong className={isBalanceSufficient ? 'text-emerald-700' : 'text-red-600'}>
+                {language === 'en' ? 'Current Wallet Balance:' : 'আপনার বর্তমান ওয়ালেট ব্যালেন্স:'} <strong className={isBalanceSufficient ? 'text-emerald-700' : 'text-red-600'}>
                   {formatCurrencyBn(currentBalance)}
                 </strong>
               </div>
               <div className="text-xs font-bold text-slate-800">
-                আবেদন ফি: ২.০০ টাকা (সাবমিট করলে স্বয়ংক্রিয়ভাবে কর্তন হইবে)
+                {language === 'en' ? 'Application Fee: BDT 2.00 (deducted automatically on submission)' : 'আবেদন ফি: ২.০০ টাকা (সাবমিট করলে স্বয়ংক্রিয়ভাবে কর্তন হইবে)'}
               </div>
             </div>
           </div>
@@ -2702,7 +2702,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 onClick={() => onNavigate('add_balance')}
                 className="cursor-pointer text-xs font-bold text-emerald-700 hover:text-emerald-800 underline"
               >
-                + ব্যালেন্স যোগ করুন
+                {language === 'en' ? '+ Add Balance' : '+ ব্যালেন্স যোগ করুন'}
               </button>
             )}
 
@@ -2719,7 +2719,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>আবেদন দাখিল করুন</span>
+                  <span>{language === 'en' ? 'Submit Application' : 'আবেদন দাখিল করুন'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
