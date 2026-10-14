@@ -36,6 +36,20 @@ export interface TemplateEngineProps {
   settings: any;
 }
 
+const relationLabelEn = (relation?: string): string => {
+  if (!relation) return '—';
+  const labels: Record<string, string> = {
+    'পিতা': 'Father', 'মাতা': 'Mother', 'স্বামী': 'Husband', 'স্ত্রী': 'Wife',
+    'পুত্র': 'Son', 'কন্যা': 'Daughter', 'ছেলে': 'Son', 'মেয়ে': 'Daughter',
+    'ভাই': 'Brother', 'বোন': 'Sister', 'দাদা': 'Paternal Grandfather',
+    'দাদি': 'Paternal Grandmother', 'নানা': 'Maternal Grandfather',
+    'নানি': 'Maternal Grandmother', 'নাতি': 'Grandson', 'নাতনি': 'Granddaughter',
+    'চাচা': 'Paternal Uncle', 'চাচি': 'Paternal Aunt', 'মামা': 'Maternal Uncle',
+    'মামি': 'Maternal Aunt', 'অন্যান্য': 'Other', 'নিজ': 'Self'
+  };
+  return labels[relation.trim()] || relation;
+};
+
 /**
  * Categorize the 38 certificate types into functional layout archetypes
  */
@@ -971,7 +985,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
       ? application.applicantNameBn
       : (application.userName && application.userName !== '-' ? application.userName : '—'));
   const nidBn = application.nidOrBirthReg && application.nidOrBirthReg !== '-'
-    ? toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg)
+    ? (isEn ? String((application as any).nidNumber || application.nidOrBirthReg).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg))
     : '';
   const fatherNameBn = isEn
     ? (application.fatherNameEn || application.fatherName || '')
@@ -1169,9 +1183,9 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                       <tr key={i} className="text-center">
                         <td style={dynamicCellTdStyle} className="border border-slate-400 font-semibold">{i + 1}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
-                        <td style={dynamicCellTdStyle} className="border border-slate-400">{m.relation}</td>
+                        <td style={dynamicCellTdStyle} className="border border-slate-400">{relationLabelEn(m.relation)}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400 text-left pl-2 font-mono">{(m as any).nidOrBirth || '—'}</td>
-                        <td style={dynamicCellTdStyle} className="border border-slate-400">{m.age} Years</td>
+                        <td style={dynamicCellTdStyle} className="border border-slate-400">{String(m.age || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())} Years</td>
                       </tr>
                     ))
                   ) : (
@@ -1236,7 +1250,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                 {application.heirs && application.heirs.length > 0 ? (
                   application.heirs.map((h, i) => (
                     <tr key={i} className="text-center">
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 font-semibold">{toBengaliNumber(i + 1)}</td>
+                      <td style={dynamicCellTdStyle} className="border border-slate-400 font-semibold">{isEn ? i + 1 : toBengaliNumber(i + 1)}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{h.name || '—'}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400">{h.relation || '—'}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 text-left pl-2 font-mono">{h.nidOrBirth && h.nidOrBirth !== '-' ? toBengaliNumber(h.nidOrBirth) : '—'}</td>
