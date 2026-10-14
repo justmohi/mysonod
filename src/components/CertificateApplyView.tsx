@@ -1276,8 +1276,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   <input
                     type="text"
                     required
-                    value={applicantNameBn}
-                    onChange={(e) => setApplicantNameBn(e.target.value)}
+                    value={language === 'en' ? applicantNameEn : applicantNameBn}
+                    onChange={(e) => language === 'en' ? setApplicantNameEn(e.target.value) : setApplicantNameBn(e.target.value)}
                     placeholder={language === 'en' ? 'Name *' : 'নাম *'}
                     className="same-name-input"
                   />
@@ -1991,7 +1991,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  আয়ের প্রধান উৎস *
+                  {language === 'en' ? 'Primary Source of Income *' : 'আয়ের প্রধান উৎস *'}
                 </label>
                 <input
                   type="text"
@@ -2668,8 +2668,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               onChange={(e) => setDeclarationAgreed(e.target.checked)}
             />
             <span>
-              {language === 'en' ? 'I hereby declare that all information provided above is true. If any information is found to be false at any time,' : '{language === 'en' ? 'I hereby declare that all information provided above is true. If any information is found to be false at any time,' : 'আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য। যেকোন সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে'}'}
-              {language === 'en' ? 'the certificate / attestation may be cancelled and legal action may be taken.' : '{language === 'en' ? 'the certificate / attestation may be cancelled and legal action may be taken.' : 'সনদ/প্রত্যয়ন বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা হবে।'}'}
+              {language === 'en' ? 'I hereby declare that all information provided above is true. If any information is found to be false at any time,' : 'আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য। যেকোন সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে'}
+              {language === 'en' ? 'the certificate / attestation may be cancelled and legal action may be taken.' : 'সনদ/প্রত্যয়ন বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা হবে।'}
             </span>
           </label>
         </div>
