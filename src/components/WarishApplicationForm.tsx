@@ -71,7 +71,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
       nidOrBirth: '',
       dob: '',
       age: '',
-      remarks: 'আইনগত ওয়ারিশ'
+      remarks: ''
     }
   ]);
 
@@ -125,7 +125,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         nidOrBirth: '',
         dob: '',
         age: '',
-        remarks: 'আইনগত ওয়ারিশ'
+        remarks: ''
       }
     ]);
   };
