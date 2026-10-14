@@ -137,7 +137,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
   const [validityStart, setValidityStart] = useState<string>(`${currentYear}-07-01`);
   const [validityEnd, setValidityEnd] = useState<string>(`${currentYear + 1}-06-30`);
   const [licenseFee, setLicenseFee] = useState<number>(500);
-  const [professionTax, setProfessionTax] = useState<number>(200);
+  const [professionTax, setProfessionTax] = useState<number>(0);
   const [tradeTax, setTradeTax] = useState<number>(0);
 
   // Auto-calculated VAT (15% of license fee)
