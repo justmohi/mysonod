@@ -142,7 +142,7 @@ export const applyOperatorCompletionChargeInTransaction = async (
     charge: pricing.charge,
     monthKey: pricing.monthKey,
     completedCount: pricing.completedCount,
-    chargeType: pricing.chargeType,
+    chargeType: pricing.chargeType === 'monthly_overage' ? 'monthly_overage' : 'monthly',
     newBalance
   };
 };
