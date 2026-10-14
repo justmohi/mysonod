@@ -949,20 +949,36 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   const type = application.certificateType;
 
   // Shared Address & Legal Variables
-  const presentVillage = application.presentVillage || application.village || 'আমবাড়ীয়া';
-  const presentWard = application.presentWard || application.wardNo || '০১';
-  const presentPost = application.presentPost || application.postOffice || settings.postOffice || '—';
-  const presentUpazila = application.presentUpazila || settings.upazila || '—';
-  const presentDistrict = application.presentDistrict || settings.district || '—';
+  const presentVillage = isEn
+    ? (application.presentVillageEn || application.villageEn || application.presentVillage || application.village || 'Ambariya')
+    : (application.presentVillage || application.village || 'আমবাড়ীয়া');
+  const presentWard = isEn
+    ? String(application.presentWard || application.wardNo || '01').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())
+    : (application.presentWard || application.wardNo || '০১');
+  const presentPost = isEn
+    ? (application.presentPostEn || application.postOfficeEn || settings.postOfficeEn || application.presentPost || application.postOffice || '—')
+    : (application.presentPost || application.postOffice || settings.postOffice || '—');
+  const presentUpazila = isEn
+    ? (application.presentUpazilaEn || settings.upazilaEn || application.presentUpazila || settings.upazila || '—')
+    : (application.presentUpazila || settings.upazila || '—');
+  const presentDistrict = isEn
+    ? (application.presentDistrictEn || settings.districtEn || application.presentDistrict || settings.district || '—')
+    : (application.presentDistrict || settings.district || '—');
 
-  const nameBn = application.applicantNameBn && application.applicantNameBn !== '-' 
-    ? application.applicantNameBn 
-    : (application.userName && application.userName !== '-' ? application.userName : '—');
+  const nameBn = isEn
+    ? (application.applicantNameEn || application.applicantNameBn || application.userName || '—')
+    : (application.applicantNameBn && application.applicantNameBn !== '-'
+      ? application.applicantNameBn
+      : (application.userName && application.userName !== '-' ? application.userName : '—'));
   const nidBn = application.nidOrBirthReg && application.nidOrBirthReg !== '-'
     ? toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg)
     : '';
-  const fatherNameBn = (application as any).fatherNameBn || (application.fatherName && application.fatherName !== '-' ? application.fatherName : '');
-  const motherNameBn = (application as any).motherNameBn || (application.motherName && application.motherName !== '-' ? application.motherName : '—');
+  const fatherNameBn = isEn
+    ? (application.fatherNameEn || application.fatherName || '')
+    : ((application as any).fatherNameBn || (application.fatherName && application.fatherName !== '-' ? application.fatherName : ''));
+  const motherNameBn = isEn
+    ? (application.motherNameEn || application.motherName || '—')
+    : ((application as any).motherNameBn || (application.motherName && application.motherName !== '-' ? application.motherName : '—'));
   const guardianUsesHusband = type === 'same_name'
     ? (application.guardianType === 'husband' || (!fatherNameBn && !!application.spouseName))
     : application.guardianType === 'husband'
@@ -971,7 +987,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
         ? false
         : !fatherNameBn && !!application.spouseName;
   const guardianNameBn = guardianUsesHusband
-    ? (application.spouseName || '—')
+    ? (isEn ? (application.spouseNameEn || application.spouseName || '—') : (application.spouseName || '—'))
     : (fatherNameBn || '—');
   const guardianLabelBn = guardianUsesHusband ? 'স্বামী' : 'পিতা';
   const familyGuardianUsesHusband = application.familyGuardianType === 'husband'
@@ -979,14 +995,16 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
     : application.familyGuardianType === 'father'
       ? false
       : guardianUsesHusband;
-  const familyGuardianLabelBn = familyGuardianUsesHusband ? 'স্বামী' : 'পিতা';
+  const familyGuardianLabelBn = isEn
+    ? (familyGuardianUsesHusband ? "Husband's Name" : "Father's Name")
+    : (familyGuardianUsesHusband ? 'স্বামী' : 'পিতা');
   const familyGuardianNameBn = familyGuardianUsesHusband
-    ? (application.spouseName || '—')
+    ? (isEn ? (application.spouseNameEn || application.spouseName || '—') : (application.spouseName || '—'))
     : (fatherNameBn || '—');
   const villageBn = presentVillage;
-  const wardNoBn = toBengaliNumber(presentWard);
+  const wardNoBn = isEn ? String(presentWard) : toBengaliNumber(presentWard);
   const postOfficeBn = presentPost;
-  const unionNameBn = settings.unionName || '—';
+  const unionNameBn = isEn ? (settings.unionNameEn || settings.unionName || '—') : (settings.unionName || '—');
   const upazilaBn = presentUpazila;
   const districtBn = presentDistrict;
 
