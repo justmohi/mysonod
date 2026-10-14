@@ -1157,7 +1157,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
       {/* Compact reference-style application title bar */}
       <div className="application-titlebar">
         <div className="application-titlebar__title">
-          <span>আবেদন &gt; {language === 'en' ? certMeta.titleEn : certMeta.titleBn}</span>
+          <span>{language === 'en' ? `Application > ${certMeta.titleEn}` : `আবেদন > ${certMeta.titleBn}`}</span>
         </div>
         <label className="application-titlebar__english">
           <input
@@ -1218,7 +1218,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div className="text-xs text-emerald-950">
-                <span>এনআইডি <strong>{existingRecordFound.nidOrBirthReg}</strong>-এর পূর্ববর্তী রেকর্ড থেকে আবেদনকারীর তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে (পূর্বে ইস্যুকৃত: <strong>{existingRecordFound.certificateTitleBn}</strong>, স্মারক: <span className="font-mono font-semibold">{existingRecordFound.trackingId}</span>)।</span>
+                <span>{language === 'en' ? <>Applicant information was auto-filled from the previous record for ID <strong>{existingRecordFound.nidOrBirthReg}</strong> (previous certificate: <strong>{existingRecordFound.certificateTitleEn || existingRecordFound.certificateTitleBn}</strong>, reference: <span className="font-mono font-semibold">{existingRecordFound.trackingId}</span>).</> : <>এনআইডি <strong>{existingRecordFound.nidOrBirthReg}</strong>-এর পূর্ববর্তী রেকর্ড থেকে আবেদনকারীর তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে (পূর্বে ইস্যুকৃত: <strong>{existingRecordFound.certificateTitleBn}</strong>, স্মারক: <span className="font-mono font-semibold">{existingRecordFound.trackingId}</span>)।</>}</span>
               </div>
             </div>
 
@@ -2670,8 +2670,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               onChange={(e) => setDeclarationAgreed(e.target.checked)}
             />
             <span>
-              আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য। যেকোন সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে
-              সনদ/প্রত্যয়ন বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা হবে।
+              {language === 'en' ? 'I hereby declare that all information provided above is true. If any information is found to be false at any time,' : 'আমি এই মর্মে অঙ্গীকার করছি যে, উপরে বর্ণিত তথ্যাবলী সম্পূর্ণ সত্য। যেকোন সময় আমার প্রদত্ত তথ্য অসত্য প্রমাণিত হলে'}
+              {language === 'en' ? 'the certificate / attestation may be cancelled and legal action may be taken.' : 'সনদ/প্রত্যয়ন বাতিল বলে গণ্য হবে এবং আইনানুগ ব্যবস্থা গ্রহণ করা হবে।'}
             </span>
           </label>
         </div>
