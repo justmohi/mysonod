@@ -35,14 +35,17 @@ import {
 } from 'lucide-react';
 
 interface TradeLicenseApplicationFormProps {
+  language?: 'bn' | 'en';
   onSuccess?: (app: CertificateApplication) => void;
   onCancel?: () => void;
 }
 
 export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormProps> = ({
+  language = 'bn',
   onSuccess,
   onCancel
 }) => {
+  const isEnglish = language === 'en';
   const { currentUser, userProfile } = useAuth();
   const { settings } = useUnionSettings();
 
@@ -477,7 +480,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               className="cursor-pointer bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-emerald-600 transition"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>পূর্বের তালিকায় ফিরুন</span>
+              <span>{isEnglish ? 'Back to previous list' : 'পূর্বের তালিকায় ফিরুন'}</span>
             </button>
           )}
         </div>
@@ -513,7 +516,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             <span className="w-1.5 h-6 bg-[#006A4E] rounded-full"></span>
             <h3 className="text-base font-bold text-[#006A4E] flex items-center gap-2">
               <Layers className="w-4 h-4" />
-              <span>সেকশন ১: অফিসিয়াল তথ্য</span>
+              <span>{isEnglish ? 'Section 1: Official Information' : 'সেকশন ১: অফিসিয়াল তথ্য'}</span>
             </h3>
           </div>
 
@@ -527,7 +530,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 required
                 value={fiscalYear}
                 onChange={(e) => setFiscalYear(e.target.value)}
-                placeholder="যেমন: 2026-2027"
+                placeholder={isEnglish ? 'Example: 2026-2027' : 'যেমন: 2026-2027'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-medium transition"
               />
               <span className="text-[11px] text-slate-500 mt-1 block">
@@ -553,7 +556,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               </label>
               <div className="w-full bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-xs text-emerald-800 font-bold flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-emerald-600" />
-                <span>তাৎক্ষণিক অনলাইন অনুমোদন ও ডিজিটাল কপি</span>
+                <span>{isEnglish ? 'Online approval and digital copy' : 'তাৎক্ষণিক অনলাইন অনুমোদন ও ডিজিটাল কপি'}</span>
               </div>
             </div>
           </div>
@@ -567,7 +570,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             <span className="w-1.5 h-6 bg-[#006A4E] rounded-full"></span>
             <h3 className="text-base font-bold text-[#006A4E] flex items-center gap-2">
               <Briefcase className="w-4 h-4" />
-              <span>সেকশন ২: ব্যবসায়িক তথ্য</span>
+              <span>{isEnglish ? 'Section 2: Business Information' : 'সেকশন ২: ব্যবসায়িক তথ্য'}</span>
             </h3>
           </div>
 
@@ -582,7 +585,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 required
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="যেমন: মেসার্স আমবাড়ীয়া ট্রেডার্স / জননী এন্টারপ্রাইজ *"
+                placeholder={isEnglish ? 'Example: Ambaria Traders / Janani Enterprise *' : 'যেমন: মেসার্স আমবাড়ীয়া ট্রেডার্স / জননী এন্টারপ্রাইজ *'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 font-semibold transition"
               />
             </div>
@@ -597,7 +600,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 required
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
-                placeholder="যেমন: মুদি ও মনোহরী, ওষুধ ব্যবসা, খাদ্যশস্য *"
+                placeholder={isEnglish ? 'Example: Grocery, pharmacy, food grains *' : 'যেমন: মুদি ও মনোহরী, ওষুধ ব্যবসা, খাদ্যশস্য *'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 transition"
               />
             </div>
@@ -613,7 +616,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                   min="0"
                   value={businessCapital || ''}
                   onChange={(e) => setBusinessCapital(Number(e.target.value))}
-                  placeholder="ঐচ্ছিক — না দিলেও চলবে"
+                  placeholder={isEnglish ? 'Optional' : 'ঐচ্ছিক — না দিলেও চলবে'}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg pl-8 pr-3 py-2 text-sm text-slate-900 font-semibold transition"
                 />
                 <span className="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">৳</span>
@@ -658,7 +661,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 required
                 value={businessAddress}
                 onChange={(e) => setBusinessAddress(e.target.value)}
-                placeholder="যেমন: আমবাড়ীয়া বাজার, ওয়ার্ড নং ০১, ডাকঘর: হালসা, উপজেলা: মিরপুর, জেলা: কুষ্টিয়া"
+                placeholder={isEnglish ? 'Example: Ambaria Bazar, Ward 01, Post Office: Halsa, Upazila: Mirpur, District: Kushtia' : 'যেমন: আমবাড়ীয়া বাজার, ওয়ার্ড নং ০১, ডাকঘর: হালসা, উপজেলা: মিরপুর, জেলা: কুষ্টিয়া'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 transition"
               />
             </div>
@@ -673,7 +676,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             <span className="w-1.5 h-6 bg-[#006A4E] rounded-full"></span>
             <h3 className="text-base font-bold text-[#006A4E] flex items-center gap-2">
               <User className="w-4 h-4" />
-              <span>সেকশন ৩: মালিকের তথ্য</span>
+              <span>{isEnglish ? 'Section 3: Owner Information' : 'সেকশন ৩: মালিকের তথ্য'}</span>
             </h3>
           </div>
 
@@ -688,7 +691,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 required
                 value={ownerName}
                 onChange={(e) => setOwnerName(e.target.value)}
-                placeholder="মালিকের পূর্ণ নাম *"
+                placeholder={isEnglish ? 'Owner Full Name *' : 'মালিকের পূর্ণ নাম *'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold transition"
               />
             </div>
@@ -734,7 +737,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 required
                 value={ownerMotherName}
                 onChange={(e) => setOwnerMotherName(e.target.value)}
-                placeholder="মাতার নাম *"
+                placeholder={isEnglish ? "Mother's Name *" : 'মাতার নাম *'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 transition"
               />
             </div>
@@ -774,7 +777,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 type="text"
                                 value={ownerNidOrBirth}
                 onChange={(e) => setOwnerNidOrBirth(e.target.value)}
-                placeholder="১০, ১৩ বা ১৭ ডিজিটের এনআইডি বা জন্ম নিবন্ধন *"
+                placeholder={isEnglish ? 'National ID or Birth Registration (10, 13 or 17 digits) *' : '১০, ১৩ বা ১৭ ডিজিটের এনআইডি বা জন্ম নিবন্ধন *'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-mono transition"
               />
             </div>
@@ -788,7 +791,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                 type="text"
                 value={tinNumber}
                 onChange={(e) => setTinNumber(e.target.value)}
-                placeholder="১২ ডিজিটের ই-টিন নম্বর"
+                placeholder={isEnglish ? '12-digit e-TIN number' : '১২ ডিজিটের ই-টিন নম্বর'}
                 className="w-full bg-white border border-slate-300 focus:border-[#006A4E] focus:ring-1 focus:ring-[#006A4E] rounded-lg px-3 py-2 text-sm text-slate-900 font-mono transition"
               />
             </div>
@@ -811,7 +814,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                   className="cursor-pointer bg-white border border-slate-300 hover:border-[#006A4E] rounded-lg px-4 py-2 text-xs text-slate-700 flex items-center gap-2 transition"
                 >
                   <Camera className="w-4 h-4 text-[#006A4E]" />
-                  <span>{photoFileName || 'ছবি নির্বাচন করুন (Choose Photo)'}</span>
+                  <span>{photoFileName || (isEnglish ? 'Choose Photo' : 'ছবি নির্বাচন করুন (Choose Photo)')}</span>
                 </label>
                 {ownerPhotoDataUrl && (
                   <div className="w-9 h-9 rounded-lg border border-emerald-400 overflow-hidden shadow-2xs">
@@ -832,7 +835,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               <span className="w-1.5 h-6 bg-[#006A4E] rounded-full"></span>
               <h3 className="text-base font-bold text-[#006A4E] flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                <span>সেকশন ৪: লাইভ ঠিকানা কপি সিস্টেম (Address Auto-Sync)</span>
+                <span>{isEnglish ? 'Section 4: Address Auto-Sync' : 'সেকশন ৪: লাইভ ঠিকানা কপি সিস্টেম (Address Auto-Sync)'}</span>
               </h3>
             </div>
 
@@ -854,59 +857,59 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
           <div>
             <h4 className="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-              <span>মালিকের বর্তমান ঠিকানা (Present Address)</span>
+              <span>{isEnglish ? 'Owner’s Present Address' : 'মালিকের বর্তমান ঠিকানা (Present Address)'}</span>
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">হোল্ডিং/বাড়ি নং</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Holding / House No.' : 'হোল্ডিং/বাড়ি নং'}</label>
                 <input
                   type="text"
                   value={presentAddress.holdingNo || ''}
                   onChange={(e) => updatePresentField('holdingNo', e.target.value)}
-                  placeholder="যেমন: ১২/ক"
+                  placeholder={isEnglish ? 'Example: 12/A' : 'যেমন: ১২/ক'}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] rounded-md px-2.5 py-1.5 text-xs text-slate-900"
                 />
               </div>
 
               <div className="lg:col-span-2">
-                <label className="block text-slate-700 font-semibold mb-1">গ্রাম/মহল্লা/সড়ক *</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Village / Locality / Road *' : 'গ্রাম/মহল্লা/সড়ক *'}</label>
                 <input
                   type="text"
                   required
                   value={presentAddress.village}
                   onChange={(e) => updatePresentField('village', e.target.value)}
-                  placeholder="গ্রাম বা সড়কের নাম *"
+                  placeholder={isEnglish ? 'Village or road name *' : 'গ্রাম বা সড়কের নাম *'}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] rounded-md px-2.5 py-1.5 text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">ওয়ার্ড নং *</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Ward No. *' : 'ওয়ার্ড নং *'}</label>
                 <select
                   value={presentAddress.wardNo}
                   onChange={(e) => updatePresentField('wardNo', e.target.value)}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] rounded-md px-2 py-1.5 text-xs text-slate-900"
                 >
                   {['০১', '০২', '০৩', '০৪', '০৫', '০৬', '০৭', '০৮', '০৯'].map((w) => (
-                    <option key={w} value={w}>ওয়ার্ড {w}</option>
+                    <option key={w} value={w}>{isEnglish ? `Ward ${w}` : `ওয়ার্ড ${w}`}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">ডাকঘর *</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Post Office *' : 'ডাকঘর *'}</label>
                 <input
                   type="text"
                   required
                   value={presentAddress.postOffice}
                   onChange={(e) => updatePresentField('postOffice', e.target.value)}
-                  placeholder="ডাকঘর *"
+                  placeholder={isEnglish ? 'Post Office *' : 'ডাকঘর *'}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] rounded-md px-2.5 py-1.5 text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">উপজেলা ও জেলা</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Upazila and District' : 'উপজেলা ও জেলা'}</label>
                 <input
                   type="text"
                   disabled
@@ -922,7 +925,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             <h4 className="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-2.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-700"></span>
-                <span>মালিকের স্থায়ী ঠিকানা (Permanent Address)</span>
+                <span>{isEnglish ? 'Owner’s Permanent Address' : 'মালিকের স্থায়ী ঠিকানা (Permanent Address)'}</span>
               </span>
               {sameAsPresent && (
                 <span className="text-[10px] text-emerald-700 bg-emerald-100/90 font-bold px-2 py-0.5 rounded border border-emerald-300">
@@ -933,13 +936,13 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">হোল্ডিং/বাড়ি নং</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Holding / House No.' : 'হোল্ডিং/বাড়ি নং'}</label>
                 <input
                   type="text"
                   disabled={sameAsPresent}
                   value={sameAsPresent ? presentAddress.holdingNo : permanentAddress.holdingNo}
                   onChange={(e) => updatePermanentField('holdingNo', e.target.value)}
-                  placeholder="হোল্ডিং নং"
+                  placeholder={isEnglish ? 'Holding No.' : 'হোল্ডিং নং'}
                   className={`w-full border rounded-md px-2.5 py-1.5 text-xs ${
                     sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-300'
                   }`}
@@ -947,14 +950,14 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               </div>
 
               <div className="lg:col-span-2">
-                <label className="block text-slate-700 font-semibold mb-1">গ্রাম/মহল্লা/সড়ক *</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Village / Locality / Road *' : 'গ্রাম/মহল্লা/সড়ক *'}</label>
                 <input
                   type="text"
                   required
                   disabled={sameAsPresent}
                   value={sameAsPresent ? presentAddress.village : permanentAddress.village}
                   onChange={(e) => updatePermanentField('village', e.target.value)}
-                  placeholder="গ্রাম বা সড়কের নাম *"
+                  placeholder={isEnglish ? 'Village or road name *' : 'গ্রাম বা সড়কের নাম *'}
                   className={`w-full border rounded-md px-2.5 py-1.5 text-xs ${
                     sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-300'
                   }`}
@@ -962,7 +965,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">ওয়ার্ড নং *</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Ward No. *' : 'ওয়ার্ড নং *'}</label>
                 <select
                   disabled={sameAsPresent}
                   value={sameAsPresent ? presentAddress.wardNo : permanentAddress.wardNo}
@@ -972,20 +975,20 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                   }`}
                 >
                   {['০১', '০২', '০৩', '০৪', '০৫', '০৬', '০৭', '০৮', '০৯'].map((w) => (
-                    <option key={w} value={w}>ওয়ার্ড {w}</option>
+                    <option key={w} value={w}>{isEnglish ? `Ward ${w}` : `ওয়ার্ড ${w}`}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">ডাকঘর *</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Post Office *' : 'ডাকঘর *'}</label>
                 <input
                   type="text"
                   required
                   disabled={sameAsPresent}
                   value={sameAsPresent ? presentAddress.postOffice : permanentAddress.postOffice}
                   onChange={(e) => updatePermanentField('postOffice', e.target.value)}
-                  placeholder="ডাকঘর *"
+                  placeholder={isEnglish ? 'Post Office *' : 'ডাকঘর *'}
                   className={`w-full border rounded-md px-2.5 py-1.5 text-xs ${
                     sameAsPresent ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-300'
                   }`}
@@ -993,7 +996,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">উপজেলা ও জেলা</label>
+                <label className="block text-slate-700 font-semibold mb-1">{isEnglish ? 'Upazila and District' : 'উপজেলা ও জেলা'}</label>
                 <input
                   type="text"
                   disabled={sameAsPresent}
@@ -1014,7 +1017,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             <span className="w-1.5 h-6 bg-[#006A4E] rounded-full"></span>
             <h3 className="text-base font-bold text-[#006A4E] flex items-center gap-2">
               <Calculator className="w-4 h-4" />
-              <span>সেকশন ৫: মেয়াদ ও সরকারি ফি (Auto Calculations)</span>
+              <span>{isEnglish ? 'Section 5: Validity and Government Fees' : 'সেকশন ৫: মেয়াদ ও সরকারি ফি (Auto Calculations)'}</span>
             </h3>
           </div>
 
@@ -1059,7 +1062,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                   required
                   value={licenseFee || ''}
                   onChange={(e) => setLicenseFee(Number(e.target.value))}
-                  placeholder="যেমন: ৫০০"
+                  placeholder={isEnglish ? 'Example: 500' : 'যেমন: ৫০০'}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] rounded-lg pl-8 pr-3 py-2 text-sm font-semibold text-slate-900 transition"
                 />
                 <span className="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">৳</span>
@@ -1092,7 +1095,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                   min="0"
                   value={professionTax || ''}
                   onChange={(e) => setProfessionTax(Number(e.target.value))}
-                  placeholder="যেমন: ২০০"
+                  placeholder={isEnglish ? 'Example: 200' : 'যেমন: ২০০'}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] rounded-lg pl-8 pr-3 py-2 text-sm text-slate-900 transition"
                 />
                 <span className="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">৳</span>
@@ -1110,7 +1113,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
                   min="0"
                   value={tradeTax || ''}
                   onChange={(e) => setTradeTax(Number(e.target.value))}
-                  placeholder="যেমন: ০"
+                  placeholder={isEnglish ? 'Example: 0' : 'যেমন: ০'}
                   className="w-full bg-white border border-slate-300 focus:border-[#006A4E] rounded-lg pl-8 pr-3 py-2 text-sm text-slate-900 transition"
                 />
                 <span className="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">৳</span>
@@ -1161,7 +1164,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-xs text-slate-600 flex items-center gap-1.5">
             <FileCheck className="w-4 h-4 text-emerald-600" />
-            <span>পোর্টাল প্রসেসিং ফি: <b>২.০০ টাকা</b> (তাৎক্ষণিক অনুমোদন ও ডিজিটাল প্রিন্ট কপি প্রস্তুত)</span>
+            <span>{isEnglish ? <>Portal Processing Fee: <b>BDT 2.00</b> (digital print copy preparation)</> : <>পোর্টাল প্রসেসিং ফি: <b>২.০০ টাকা</b> (তাৎক্ষণিক অনুমোদন ও ডিজিটাল প্রিন্ট কপি প্রস্তুত)</>}</span>
           </div>
 
           <button
@@ -1172,12 +1175,12 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             {isSubmitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin text-white" />
-                <span>ট্রেড লাইসেন্স ইস্যু হচ্ছে...</span>
+                <span>{isEnglish ? 'Issuing Trade License...' : 'ট্রেড লাইসেন্স ইস্যু হচ্ছে...'}</span>
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-5 h-5" />
-                <span>আবেদন জমা দিন (Submit Application)</span>
+                <span>{isEnglish ? 'Submit Application' : 'আবেদন জমা দিন (Submit Application)'}</span>
               </>
             )}
           </button>
