@@ -1272,7 +1272,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               <div className="same-name-reference-grid">
                 <div>
                   <label className="same-name-field-label">
-                    নাম
+                    {language === 'en' ? 'Name' : 'নাম'}
                   </label>
                   <input
                     type="text"
@@ -1334,7 +1334,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
                 <div>
                   <label className="same-name-field-label">
-                    মাতা
+                    {language === 'en' ? 'Mother' : 'মাতা'}
                   </label>
                   <input
                     type="text"
@@ -1347,7 +1347,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
                 <div>
                   <label className="same-name-field-label">
-                    গ্রাম/মহল্লা
+                    {language === 'en' ? 'Village / Locality' : 'গ্রাম/মহল্লা'}
                   </label>
                   <input
                     type="text"
@@ -1361,7 +1361,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
                 <div>
                   <label className="same-name-field-label">
-                    ওয়ার্ড
+                    {language === 'en' ? 'Ward' : 'ওয়ার্ড'}
                   </label>
                   <select
                     value={presentWard}
@@ -1376,7 +1376,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
                 <div>
                   <label className="same-name-field-label">
-                    ডাকঘর
+                    {language === 'en' ? 'Post Office' : 'ডাকঘর'}
                   </label>
                   <input
                     type="text"
@@ -1390,7 +1390,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
  
                 <div>
                   <label className="same-name-field-label">
-                    উপজেলা
+                    {language === 'en' ? 'Upazila' : 'উপজেলা'}
                   </label>
                   <input
                     type="text"
@@ -1404,7 +1404,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
                 <div>
                   <label className="same-name-field-label">
-                    জেলা
+                    {language === 'en' ? 'District' : 'জেলা'}
                   </label>
                   <input
                     type="text"
@@ -1482,7 +1482,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                         onClick={handleSameNameClearAll}
                         className="text-xs font-semibold text-red-500 hover:text-red-700"
                       >
-                        সব মুছুন
+                        {language === 'en' ? 'Remove All' : 'সব মুছুন'}
                       </button>
                     </div>
                     <div className="space-y-1.5">
@@ -2087,7 +2087,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             </h3>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                প্রয়াত স্বামীর নাম *
+                {language === 'en' ? "Deceased Husband's Name *" : 'প্রয়াত স্বামীর নাম *'}
               </label>
               <input
                 type="text"
@@ -2108,7 +2108,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {selectedType === 'death' && (
           <div className="border-t pt-5">
             <h3 className="text-sm font-bold text-slate-800 mb-4">
-              মৃত্যু সংক্রান্ত তথ্য
+              {language === 'en' ? 'Death Information' : 'মৃত্যু সংক্রান্ত তথ্য'}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-3 text-sm">
@@ -2176,7 +2176,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-6 grid md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold mb-2">
-                জাতীয়তা
+                {language === 'en' ? 'Nationality' : 'জাতীয়তা'}
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
@@ -2187,7 +2187,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
             </div>
             <div>
               <label className="block text-xs font-semibold mb-2">
-                ধর্ম (ঐচ্ছিক)
+                {language === 'en' ? 'Religion (Optional)' : 'ধর্ম (ঐচ্ছিক)'}
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-lg"
@@ -2203,7 +2203,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         {(selectedType === 'community' || selectedType === 'indigenous') && (
           <div className="border-t pt-6">
             <label className="block text-xs font-semibold mb-2">
-              সম্প্রদায় / জনগোষ্ঠীর নাম
+              {language === 'en' ? 'Community / Ethnic Group Name' : 'সম্প্রদায় / জনগোষ্ঠীর নাম'}
             </label>
             <input
               className="w-full px-3 py-2 border rounded-lg"
@@ -2218,7 +2218,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <div className="border-t pt-4 space-y-4">
             <div className="rounded-lg border border-emerald-700 bg-white p-4">
               <label className="block text-sm font-semibold text-emerald-800 mb-2">
-                পূর্ববর্তী ঠিকানা / অন্যান্য তথ্য
+                {language === 'en' ? 'Previous Address / Other Information' : 'পূর্ববর্তী ঠিকানা / অন্যান্য তথ্য'}
               </label>
               <textarea
                 className="w-full min-h-[72px] px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
