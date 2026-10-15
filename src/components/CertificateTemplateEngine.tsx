@@ -265,7 +265,7 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
                   <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300">
                     {h.dob ? `${formatBengaliDate(h.dob)} ${h.age ? `(${toBengaliNumber(h.age)} বছর)` : ''}` : (h.age ? `${toBengaliNumber(h.age)} বছর` : '—')}
                   </td>
-                  <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="text-center text-slate-700">{h.remarks || 'ওয়ারিশ'}</td>
+                  <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="text-center text-slate-700">{h.remarks || ''}</td>
                 </tr>
               ))
             ) : (
@@ -1142,7 +1142,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                         <td style={dynamicCellTdStyle} className="border border-slate-400">{h.relation}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400 text-left pl-2 font-mono">{h.nidOrBirth || '—'}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400">{h.dob || `${h.age || '—'} Years`}</td>
-                        <td style={dynamicCellTdStyle} className="border border-slate-400 text-slate-700">{h.remarks || 'Lawful Heir'}</td>
+                        <td style={dynamicCellTdStyle} className="border border-slate-400 text-slate-700">{h.remarks || ''}</td>
                       </tr>
                     ))
                   ) : (
@@ -1264,7 +1264,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                       <td style={dynamicCellTdStyle} className="border border-slate-400">{h.relation || '—'}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 text-left pl-2 font-mono">{h.nidOrBirth && h.nidOrBirth !== '-' ? toBengaliNumber(h.nidOrBirth) : '—'}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400">{h.dob ? `${formatBengaliDate(h.dob)} ${h.age ? `(${toBengaliNumber(h.age)} বছর)` : ''}` : (h.age ? `${toBengaliNumber(h.age)} বছর` : '—')}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 text-slate-700">{h.remarks || 'ওয়ারিশ'}</td>
+                      <td style={dynamicCellTdStyle} className="border border-slate-400 text-slate-700">{h.remarks || ''}</td>
                     </tr>
                   ))
                 ) : (
