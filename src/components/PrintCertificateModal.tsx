@@ -786,7 +786,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   </div>
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Relation with Deceased: ' : 'মৃত ব্যক্তির সাথে সম্পর্ক: '}</span>
-                                    <strong className="text-slate-900">{application.applicantRelation && application.applicantRelation !== '-' ? application.applicantRelation : 'আইনগত ওয়ারিশ'}</strong>
+                                    <strong className="text-slate-900">{application.applicantRelation && application.applicantRelation !== '-' && application.applicantRelation !== 'আইনগত ওয়ারিশ' ? application.applicantRelation : '—'}</strong>
                                   </div>
                                   <div>
                                     <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Application Tracking No: ' : 'আবেদন ট্র্যাকিং আইডি: '}</span>
