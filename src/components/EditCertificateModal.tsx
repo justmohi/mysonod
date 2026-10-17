@@ -423,7 +423,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           nidOrBirth: item.nidOrBirth || '',
           dob: item.dob || '',
           age: item.age || '',
-          remarks: item.remarks || ''
+          remarks: String(item.remarks || '').trim() === 'আইনগত ওয়ারিশ' ? '' : String(item.remarks || '').trim() === 'আইনগত ওয়ারিশ' ? '' : (item.remarks || '')
         }))
       : [{ name: '', relation: '', nidOrBirth: '', dob: '', age: '', remarks: '' }]
   );
@@ -505,7 +505,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           nidOrBirth: String(item.nidOrBirth || '').trim(),
           dob: String(item.dob || '').trim(),
           age: String(item.age || '').trim(),
-          remarks: String(item.remarks || '').trim()
+          remarks: String(item.remarks || '').trim() === 'আইনগত ওয়ারিশ' ? '' : String(item.remarks || '').trim()
         }));
 
       let familyMembers: unknown;
