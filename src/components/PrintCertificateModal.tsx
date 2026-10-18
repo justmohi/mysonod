@@ -620,7 +620,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                     {/* Form Content Layer */}
                     <div className={`certificate-content relative z-10 h-full flex flex-col flex-1 ${application.certificateType === 'family' ? 'justify-start gap-2' : 'justify-between'}`}>
                       {/* Central Content Section Wrapped in Flexible Auto-Spreading Container */}
-                      <div className="main-content-wrapper">
+                      <div className={`main-content-wrapper ${application.certificateType === 'family' ? 'family-application-flow' : ''}`}>
                         {/* Header: Union Info & Logos */}
                         <div className="flex items-start justify-between gap-3 pb-2.5 border-b-2 border-[#0d5c3a]">
                         {/* Left: Govt Logo */}
