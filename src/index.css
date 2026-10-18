@@ -502,6 +502,20 @@ select option {
   min-height: 0;
 }
 
+/* Family application copy: keep fields compact at the top instead of distributing them across the full A4 page. */
+.family-application-flow {
+  flex: 0 0 auto !important;
+  flex-grow: 0 !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin-bottom: 0 !important;
+  min-height: 0 !important;
+}
+
+.family-application-flow > * {
+  flex-shrink: 0;
+}
+
 /* Standard main-certificate flow: keep body, signature and footer in the visible A4 area. */
 .main-certificate-content {
   justify-content: flex-start !important;
@@ -708,6 +722,19 @@ select option {
     justify-content: space-between !important;
     box-sizing: border-box !important;
     flex: 1 !important;
+  }
+
+  .family-application-flow {
+    flex: 0 0 auto !important;
+    flex-grow: 0 !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    margin-bottom: 0 !important;
+    min-height: 0 !important;
+  }
+
+  .family-application-flow > * {
+    flex-shrink: 0 !important;
   }
 
   .main-content-wrapper {
