@@ -170,7 +170,16 @@ const EDITABLE_FIELDS: EditableField[] = [
     section: 'certificate'
   },
   { key: 'deceasedIdNumber', label: 'মৃত ব্যক্তির ID নম্বর', section: 'certificate' },
-  { key: 'deceasedFatherOrHusbandType', label: 'সম্পর্কের ধরন (পিতা / স্বামী)', section: 'certificate' },
+  {
+    key: 'deceasedFatherOrHusbandType',
+    label: 'সম্পর্কের ধরন (পিতা / স্বামী)',
+    type: 'select',
+    options: [
+      { value: 'father', label: 'পিতা' },
+      { value: 'husband', label: 'স্বামী' }
+    ],
+    section: 'certificate'
+  },
   { key: 'deceasedFatherOrHusbandName', label: 'মৃত ব্যক্তির পিতা / স্বামীর নাম', section: 'certificate' },
   { key: 'applicantRelation', label: 'আবেদনকারীর সম্পর্ক', section: 'certificate' },
   { key: 'deceasedPhotoUrl', label: 'মৃত ব্যক্তির ছবির URL', type: 'textarea', section: 'certificate' },
