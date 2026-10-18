@@ -448,10 +448,11 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
       ? application.familyMembers.map((member: any) => ({
           name: String(member?.name || ''),
           relation: String(member?.relation || ''),
+          nidOrBirth: String(member?.nidOrBirth || member?.voterNumber || member?.nid || ''),
           dob: String(member?.dob || ''),
           age: String(member?.age || '')
         }))
-      : [{ name: '', relation: '', dob: '', age: '' }]
+      : [{ name: '', relation: '', nidOrBirth: '', dob: '', age: '' }]
   );
   const [sameNameEntries, setSameNameEntries] = useState<SameNameEntry[]>(() => {
     const stored = Array.isArray(application.sameNameEntries)
@@ -537,6 +538,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           ...member,
           name: String(member.name || '').trim(),
           relation: String(member.relation || '').trim(),
+          nidOrBirth: String(member.nidOrBirth || '').trim(),
           dob: String(member.dob || '').trim(),
           age: String(member.age || '').trim()
         }));
@@ -1055,7 +1057,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                 <div className="mb-3 flex justify-end">
                   <button
                     type="button"
-                    onClick={() => setFamilyMembersDrafts(prev => [...prev, { name: '', relation: '', dob: '', age: '' }])}
+                    onClick={() => setFamilyMembersDrafts(prev => [...prev, { name: '', relation: '', nidOrBirth: '', dob: '', age: '' }])}
                     className="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-800"
                   >
                     + সদস্য যোগ করুন
@@ -1067,6 +1069,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                       <th className="border border-emerald-600 px-2 py-2">ক্রমিক</th>
                       <th className="border border-emerald-600 px-2 py-2 text-left">সদস্যের নাম</th>
                       <th className="border border-emerald-600 px-2 py-2 text-left">সম্পর্ক</th>
+                      <th className="border border-emerald-600 px-2 py-2 text-left">ভোটার নম্বর / NID / জন্ম নিবন্ধন</th>
                       <th className="border border-emerald-600 px-2 py-2">জন্ম তারিখ</th>
                       <th className="border border-emerald-600 px-2 py-2">বয়স</th>
                       <th className="border border-emerald-600 px-2 py-2">অ্যাকশন</th>
@@ -1075,7 +1078,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                       {familyMembersDrafts.map((member, index) => (
                         <tr key={index} className="odd:bg-white even:bg-slate-50">
                           <td className="border border-slate-200 px-2 py-1 text-center">{index + 1}</td>
-                          {(['name', 'relation', 'dob', 'age'] as const).map(key => (
+                          {(['name', 'relation', 'nidOrBirth', 'dob', 'age'] as const).map(key => (
                             <td key={key} className="border border-slate-200 p-1">
                               <input
                                 type={key === 'dob' ? 'date' : 'text'}
@@ -1083,7 +1086,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                                 onChange={e => setFamilyMembersDrafts(prev => prev.map((row, rowIndex) =>
                                   rowIndex === index ? { ...row, [key]: e.target.value } : row
                                 ))}
-                                placeholder={{ name: 'সদস্যের নাম', relation: 'সম্পর্ক', dob: '', age: 'বয়স' }[key]}
+                                placeholder={{ name: 'সদস্যের নাম', relation: 'সম্পর্ক', nidOrBirth: 'ভোটার নম্বর / NID', dob: '', age: 'বয়স' }[key]}
                                 className="w-full min-w-[90px] rounded-md border border-slate-300 bg-white px-2 py-1.5 text-slate-800 outline-none focus:border-emerald-500"
                               />
                             </td>
