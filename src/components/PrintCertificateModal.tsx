@@ -604,7 +604,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
               >
                 {/* Outer Double Border Frame */}
                 <div className="certificate-border border-[3px] border-[#0d5c3a] p-1.5 rounded-xl relative overflow-hidden bg-[#FCFBF7]">
-                  <div className={`certificate-border-inner border-2 border-[#d97706] ${isUltraCompactTable ? 'p-2 sm:p-2.5' : (isHighRowTable ? 'p-2.5 sm:p-3.5' : (isTableCertificate ? 'p-3 sm:p-4' : 'p-4 sm:p-5'))} rounded-lg relative bg-[#FCFBF7] h-full flex flex-col justify-between flex-1`}>
+                  <div className={`certificate-border-inner border-2 border-[#d97706] ${isUltraCompactTable ? 'p-2 sm:p-2.5' : (isHighRowTable ? 'p-2.5 sm:p-3.5' : (isTableCertificate ? 'p-3 sm:p-4' : 'p-4 sm:p-5'))} rounded-lg relative bg-[#FCFBF7] h-full flex flex-col flex-1 ${application.certificateType === 'family' ? 'justify-start gap-2' : 'justify-between'}`}>
                     
                     {/* Center Watermark Logo Overlay across all 38 certificate print templates */}
                       {watermarkSrc ? (
@@ -618,7 +618,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                       ) : null}
 
                     {/* Form Content Layer */}
-                    <div className="certificate-content relative z-10 h-full flex flex-col justify-between flex-1">
+                    <div className={`certificate-content relative z-10 h-full flex flex-col flex-1 ${application.certificateType === 'family' ? 'justify-start gap-2' : 'justify-between'}`}>
                       {/* Central Content Section Wrapped in Flexible Auto-Spreading Container */}
                       <div className="main-content-wrapper">
                         {/* Header: Union Info & Logos */}
