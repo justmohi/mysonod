@@ -443,8 +443,15 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
         }))
       : [{ name: '', relation: '', nidOrBirth: '', dob: '', age: '', remarks: '' }]
   );
-  const [familyMembersJson, setFamilyMembersJson] = useState(
-    JSON.stringify(application.familyMembers || [], null, 2)
+  const [familyMembersDrafts, setFamilyMembersDrafts] = useState<Array<Record<string, any>>>(() =>
+    Array.isArray(application.familyMembers) && application.familyMembers.length
+      ? application.familyMembers.map((member: any) => ({
+          name: String(member?.name || ''),
+          relation: String(member?.relation || ''),
+          dob: String(member?.dob || ''),
+          age: String(member?.age || '')
+        }))
+      : [{ name: '', relation: '', dob: '', age: '' }]
   );
   const [sameNameEntries, setSameNameEntries] = useState<SameNameEntry[]>(() => {
     const stored = Array.isArray(application.sameNameEntries)
@@ -524,12 +531,15 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           remarks: String(item.remarks || '').trim() === 'আইনগত ওয়ারিশ' ? '' : String(item.remarks || '').trim()
         }));
 
-      let familyMembers: unknown;
-      try {
-        familyMembers = familyMembersJson.trim() ? JSON.parse(familyMembersJson) : [];
-      } catch {
-        throw new Error('পারিবারিক সদস্যের তথ্যের ফরম্যাট সঠিক নয়।');
-      }
+      const familyMembers = familyMembersDrafts
+        .filter(member => String(member.name || '').trim())
+        .map(member => ({
+          ...member,
+          name: String(member.name || '').trim(),
+          relation: String(member.relation || '').trim(),
+          dob: String(member.dob || '').trim(),
+          age: String(member.age || '').trim()
+        }));
 
       const allowedKeys = new Set(getRelevantEditFields(application).map(field => field.key));
       const normalizedSameNameEntries = sameNameEntries
@@ -1042,13 +1052,54 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                   </div>
                   <h4 className="text-sm font-extrabold text-slate-900">৫. পরিবারের সদস্য তালিকা</h4>
                 </div>
-                <textarea
-                  value={familyMembersJson}
-                  onChange={e => setFamilyMembersJson(e.target.value)}
-                  rows={6}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-[11px] leading-5 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-                  placeholder="পরিবারের সদস্য তথ্য"
-                />
+                <div className="mb-3 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setFamilyMembersDrafts(prev => [...prev, { name: '', relation: '', dob: '', age: '' }])}
+                    className="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-800"
+                  >
+                    + সদস্য যোগ করুন
+                  </button>
+                </div>
+                <div className="overflow-x-auto rounded-xl border border-slate-300 bg-white">
+                  <table className="min-w-[650px] w-full border-collapse text-xs">
+                    <thead><tr className="bg-emerald-700 text-white">
+                      <th className="border border-emerald-600 px-2 py-2">ক্রমিক</th>
+                      <th className="border border-emerald-600 px-2 py-2 text-left">সদস্যের নাম</th>
+                      <th className="border border-emerald-600 px-2 py-2 text-left">সম্পর্ক</th>
+                      <th className="border border-emerald-600 px-2 py-2">জন্ম তারিখ</th>
+                      <th className="border border-emerald-600 px-2 py-2">বয়স</th>
+                      <th className="border border-emerald-600 px-2 py-2">অ্যাকশন</th>
+                    </tr></thead>
+                    <tbody>
+                      {familyMembersDrafts.map((member, index) => (
+                        <tr key={index} className="odd:bg-white even:bg-slate-50">
+                          <td className="border border-slate-200 px-2 py-1 text-center">{index + 1}</td>
+                          {(['name', 'relation', 'dob', 'age'] as const).map(key => (
+                            <td key={key} className="border border-slate-200 p-1">
+                              <input
+                                type={key === 'dob' ? 'date' : 'text'}
+                                value={member[key] || ''}
+                                onChange={e => setFamilyMembersDrafts(prev => prev.map((row, rowIndex) =>
+                                  rowIndex === index ? { ...row, [key]: e.target.value } : row
+                                ))}
+                                placeholder={{ name: 'সদস্যের নাম', relation: 'সম্পর্ক', dob: '', age: 'বয়স' }[key]}
+                                className="w-full min-w-[90px] rounded-md border border-slate-300 bg-white px-2 py-1.5 text-slate-800 outline-none focus:border-emerald-500"
+                              />
+                            </td>
+                          ))}
+                          <td className="border border-slate-200 px-1 text-center">
+                            <button
+                              type="button"
+                              onClick={() => setFamilyMembersDrafts(prev => prev.length > 1 ? prev.filter((_, rowIndex) => rowIndex !== index) : [{ name: '', relation: '', dob: '', age: '' }])}
+                              className="rounded-md px-2 py-1 text-red-600 hover:bg-red-50"
+                            >মুছুন</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </section>
             ) : null}
 
