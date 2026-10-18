@@ -389,6 +389,13 @@ const readValue = (app: CertificateApplication, key: string) => {
   if (key === 'familyGuardianType' && !value) {
     value = app.fatherName ? 'father' : (app.spouseName ? 'husband' : 'father');
   }
+  // Legacy Warish records may keep the deceased person's guardian name in fatherName.
+  if (key === 'deceasedFatherOrHusbandName' && !String(value ?? '').trim()) {
+    value = (app as any).fatherName || (app as any).spouseName || '';
+  }
+  if (key === 'deceasedFatherOrHusbandType' && !String(value ?? '').trim()) {
+    value = (app as any).guardianType === 'husband' ? 'husband' : 'father';
+  }
   if (key === 'attachmentUrls' && Array.isArray(value)) {
     return value.join('\n');
   }
@@ -562,6 +569,15 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
 
       const updatePayload: Record<string, any> = {
         ...editableValues,
+        // Keep the deceased guardian fields and legacy aliases in sync so the
+        // edited father/husband name is reflected by all certificate renderers.
+        ...(allowedKeys.has('deceasedFatherOrHusbandName') ? {
+          deceasedFatherOrHusbandName: String(formData.deceasedFatherOrHusbandName ?? '').trim(),
+          fatherName: String(formData.deceasedFatherOrHusbandName ?? '').trim()
+        } : {}),
+        ...(allowedKeys.has('deceasedFatherOrHusbandType') ? {
+          deceasedFatherOrHusbandType: formData.deceasedFatherOrHusbandType === 'husband' ? 'husband' : 'father'
+        } : {}),
         ...(applicantNameBn ? { applicantNameBn, userName: applicantNameBn } : {}),
         ...(applicantNameEn ? { applicantNameEn } : {}),
         heirs,
