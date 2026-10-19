@@ -96,6 +96,27 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
   // Present Address Fields
   const [presentVillage, setPresentVillage] = useState('');
+  const [villageSuggestions, setVillageSuggestions] = useState<string[]>([]);
+
+  // Share village suggestions across certificate forms in this browser.
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('mysonod-village-suggestions') || '[]');
+      if (Array.isArray(saved)) setVillageSuggestions(saved.filter((v): v is string => typeof v === 'string'));
+    } catch {
+      setVillageSuggestions([]);
+    }
+  }, []);
+
+  const rememberVillage = (value: string) => {
+    const villageName = value.trim();
+    if (!villageName) return;
+    setVillageSuggestions(prev => {
+      const next = [villageName, ...prev.filter(v => v.trim().toLocaleLowerCase() !== villageName.toLocaleLowerCase())].slice(0, 100);
+      try { localStorage.setItem('mysonod-village-suggestions', JSON.stringify(next)); } catch { /* storage may be unavailable */ }
+      return next;
+    });
+  };
   const [presentWard, setPresentWard] = useState('০১');
   const [presentPost, setPresentPost] = useState('হালসা-৭০৩১');
   const [presentUpazila, setPresentUpazila] = useState('মিরপুর');
@@ -129,6 +150,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const handlePresentVillageChange = (val: string) => {
     setPresentVillage(val);
     setVillage(val);
+    rememberVillage(val);
     if (sameAsPresent) setPermanentVillage(val);
   };
 
@@ -1167,6 +1189,10 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         </label>
       </div>
 
+      <datalist id="mysonod-village-suggestions">
+        {villageSuggestions.map((name, index) => <option key={`${name}-${index}`} value={name} />)}
+      </datalist>
+
       {/* Main Application Form */}
       {selectedType === 'inheritance' || selectedType === 'succession' ? (
         <WarishApplicationForm
@@ -1352,6 +1378,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     type="text"
                     required
                     value={presentVillage}
+                    list="mysonod-village-suggestions"
+                    onBlur={(e) => rememberVillage(e.target.value)}
                     onChange={(e) => handlePresentVillageChange(e.target.value)}
                     placeholder={language === 'en' ? 'Village / Locality *' : 'গ্রাম/মহল্লা *'}
                     className="same-name-input"
@@ -1740,6 +1768,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   type="text"
                   required
                   value={presentVillage}
+                  list="mysonod-village-suggestions"
+                  onBlur={(e) => rememberVillage(e.target.value)}
                   onChange={(e) => handlePresentVillageChange(e.target.value)}
                   placeholder={language === 'en' ? 'Village name' : 'গ্রাম বা মহল্লার নাম'}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
