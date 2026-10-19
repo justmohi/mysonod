@@ -47,6 +47,22 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   const [guardianName, setGuardianName] = useState('');
   const [motherName, setMotherName] = useState('');
   const [village, setVillage] = useState('');
+  const [villageSuggestions, setVillageSuggestions] = useState<string[]>([]);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('mysonod-village-suggestions') || '[]');
+      if (Array.isArray(saved)) setVillageSuggestions(saved.filter((v): v is string => typeof v === 'string'));
+    } catch { setVillageSuggestions([]); }
+  }, []);
+  const rememberVillage = (value: string) => {
+    const name = value.trim();
+    if (!name) return;
+    setVillageSuggestions(prev => {
+      const next = [name, ...prev.filter(v => v.toLocaleLowerCase() !== name.toLocaleLowerCase())].slice(0, 100);
+      try { localStorage.setItem('mysonod-village-suggestions', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
   const [wardNo, setWardNo] = useState('০১');
   const [postOffice, setPostOffice] = useState(settings.postOffice || 'হালসা-৭০৩১');
   const [deceasedDate, setDeceasedDate] = useState('');
@@ -204,7 +220,10 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
       }
     }, 350);
 
-    return () => {
+    const villageDatalist = <datalist id="mysonod-village-suggestions">{villageSuggestions.map((name, index) => <option key={`${name}-${index}`} value={name} />)}</datalist>;
+
+  return (
+    {villageDatalist}) => {
       cancelled = true;
       clearTimeout(timer);
     };
@@ -521,7 +540,9 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
                 type="text"
                 required
                 value={village}
-                onChange={(e) => setVillage(e.target.value)}
+                list="mysonod-village-suggestions"
+                onBlur={(e) => rememberVillage(e.target.value)}
+                onChange={(e) => { setVillage(e.target.value); rememberVillage(e.target.value); }}
                 placeholder="গ্রাম/মহল্লা *"
                 className="w-full bg-[#E0FFFF] border border-cyan-800/40 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-md px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 transition"
               />
