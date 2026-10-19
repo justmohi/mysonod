@@ -1525,6 +1525,14 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           lang={lang}
                           settings={settings}
                         />
+                        {application.dob && (
+                          <div className="mt-1 text-sm font-semibold text-slate-900">
+                            <span>{lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}</span>
+                            <span>{lang === 'en'
+                              ? new Date(`${application.dob}T00:00:00`).toLocaleDateString('en-GB')
+                              : formatBengaliDate(application.dob)}</span>
+                          </div>
+                        )}
                       </div>
                     </>
                   );
