@@ -4,6 +4,7 @@ import { UnionSettingsProvider } from './context/UnionSettingsContext';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
+import { CertificateApplicationStats } from './components/CertificateApplicationStats';
 import { CertificateApplyView } from './components/CertificateApplyView';
 import { AllCertificatesView } from './components/AllCertificatesView';
 import { AddBalanceView } from './components/AddBalanceView';
@@ -108,6 +109,8 @@ function AppContent() {
 
             {/* Main Content Area */}
             <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+              {currentView === 'certificate_stats' && <CertificateApplicationStats />}
+
               {currentView === 'dashboard' && (
                 <Dashboard 
                   onNavigate={handleNavigate} 
