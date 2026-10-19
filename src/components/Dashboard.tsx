@@ -356,8 +356,85 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
   const approvedCount = applications.filter(a => a.status === 'Approved').length;
   const pendingCount = applications.filter(a => a.status === 'Pending').length;
 
+  // Application activity summary based on the application's submission timestamp.
+  const today = new Date();
+  const isSameLocalDay = (value: string) => {
+    const date = new Date(value);
+    return !Number.isNaN(date.getTime()) &&
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate();
+  };
+  const isCurrentMonth = (value: string) => {
+    const date = new Date(value);
+    return !Number.isNaN(date.getTime()) &&
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth();
+  };
+  const todayApplications = applications.filter(app => isSameLocalDay(app.createdAt));
+  const monthApplications = applications.filter(app => isCurrentMonth(app.createdAt));
+  const summarizeByCertificate = (items: CertificateApplication[]) => {
+    const counts = new Map<string, number>();
+    items.forEach(app => {
+      const title = app.certificateTitleBn || CERTIFICATE_CATALOG[app.certificateType]?.titleBn || 'অন্যান্য সনদ';
+      counts.set(title, (counts.get(title) || 0) + 1);
+    });
+    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'bn'));
+  };
+  const todayCertificateCounts = summarizeByCertificate(todayApplications);
+  const monthCertificateCounts = summarizeByCertificate(monthApplications);
+
   return (
     <div className="space-y-6">
+      {/* Certificate application activity summary */}
+      <section className="rounded-2xl border border-emerald-100 bg-white p-4 sm:p-5 shadow-xs space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900">সনদ আবেদন পরিসংখ্যান</h2>
+            <p className="mt-1 text-xs sm:text-sm text-slate-500">আজ এবং চলতি মাসে জমা হওয়া আবেদনের হিসাব</p>
+          </div>
+          <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">
+            {today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </span>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-slate-200 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-slate-700">আজকের আবেদন</p>
+                <p className="mt-1 text-xs text-slate-500">আজ জমা হয়েছে</p>
+              </div>
+              <div className="text-3xl font-extrabold text-emerald-700">{toBengaliNumber(todayApplications.length)}</div>
+            </div>
+            <div className="mt-3 border-t border-slate-100 pt-3 space-y-2">
+              {todayCertificateCounts.length ? todayCertificateCounts.map(([title, count]) => (
+                <div key={title} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="text-slate-700">{title}</span>
+                  <span className="min-w-8 rounded-md bg-emerald-50 px-2 py-1 text-center font-bold text-emerald-800">{toBengaliNumber(count)}</span>
+                </div>
+              )) : <p className="text-xs text-slate-400">আজ এখনো কোনো আবেদন জমা হয়নি।</p>}
+            </div>
+          </div>
+          <div className="rounded-xl border border-slate-200 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-slate-700">এই মাসের আবেদন</p>
+                <p className="mt-1 text-xs text-slate-500">চলতি মাসে জমা হয়েছে</p>
+              </div>
+              <div className="text-3xl font-extrabold text-blue-700">{toBengaliNumber(monthApplications.length)}</div>
+            </div>
+            <div className="mt-3 border-t border-slate-100 pt-3 space-y-2">
+              {monthCertificateCounts.length ? monthCertificateCounts.map(([title, count]) => (
+                <div key={title} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="text-slate-700">{title}</span>
+                  <span className="min-w-8 rounded-md bg-blue-50 px-2 py-1 text-center font-bold text-blue-800">{toBengaliNumber(count)}</span>
+                </div>
+              )) : <p className="text-xs text-slate-400">এই মাসে এখনো কোনো আবেদন জমা হয়নি।</p>}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Home certificate service grid — mirrors the main certificate selection page */}
       <section className="rounded-2xl bg-transparent">
         <div className="flex flex-wrap items-end justify-between gap-3 mb-4 px-1">
