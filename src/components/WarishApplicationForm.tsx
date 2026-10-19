@@ -220,10 +220,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
       }
     }, 350);
 
-    const villageDatalist = <datalist id="mysonod-village-suggestions">{villageSuggestions.map((name, index) => <option key={`${name}-${index}`} value={name} />)}</datalist>;
-
-  return (
-    {villageDatalist}) => {
+    return () => {
       cancelled = true;
       clearTimeout(timer);
     };
@@ -422,6 +419,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
     <div className="w-full font-bangla">
       {/* Main Form Body */}
       <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <datalist id="mysonod-village-suggestions">{villageSuggestions.map((name, index) => <option key={`${name}-${index}`} value={name} />)}</datalist>
         
         {/* Error Alert */}
         {errorMessage && (
