@@ -50,7 +50,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   const [villageSuggestions, setVillageSuggestions] = useState<string[]>([]);
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem('mysonod-village-suggestions') || '[]');
+      const saved = JSON.parse(localStorage.getItem('mysonod-village-suggestions-v2') || '[]');
       if (Array.isArray(saved)) setVillageSuggestions(saved.filter((v): v is string => typeof v === 'string'));
     } catch { setVillageSuggestions([]); }
   }, []);
@@ -59,7 +59,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
     if (!name) return;
     setVillageSuggestions(prev => {
       const next = [name, ...prev.filter(v => v.toLocaleLowerCase() !== name.toLocaleLowerCase())].slice(0, 100);
-      try { localStorage.setItem('mysonod-village-suggestions', JSON.stringify(next)); } catch {}
+      try { localStorage.setItem('mysonod-village-suggestions-v2', JSON.stringify(next)); } catch {}
       return next;
     });
   };
@@ -401,6 +401,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         }
       });
 
+      rememberVillage(village);
       setSuccessMessage(`ওয়ারিশ সনদের আবেদন সফলভাবে জমা হয়েছে। ট্র্যাকিং নম্বর: ${trackingId}। অনুমোদনের পর সনদ প্রিন্ট করা যাবে।`);
 
       if (onSuccess) {
@@ -539,8 +540,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
                 required
                 value={village}
                 list="mysonod-village-suggestions"
-                onBlur={(e) => rememberVillage(e.target.value)}
-                onChange={(e) => { setVillage(e.target.value); rememberVillage(e.target.value); }}
+                onChange={(e) => setVillage(e.target.value)}
                 placeholder="গ্রাম/মহল্লা *"
                 className="w-full bg-[#E0FFFF] border border-cyan-800/40 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-md px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 transition"
               />
