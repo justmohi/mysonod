@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
+  BarChart3,
   FileText, 
   ChevronDown, 
   ChevronRight, 
@@ -87,6 +88,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Navigation List */}
         <div className="flex-1 overflow-y-auto pt-4 pb-4 px-3 space-y-1 text-sm md:pt-4">
+          {/* Certificate application statistics — separate page above Dashboard */}
+          <button
+            onClick={() => { onNavigate('certificate_stats'); onCloseMobile(); }}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition font-medium cursor-pointer ${
+              currentView === 'certificate_stats'
+                ? 'bg-emerald-600/50 text-white font-semibold shadow-xs border border-emerald-500/40'
+                : 'text-emerald-100/90 hover:bg-emerald-800/50 hover:text-white'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4 text-emerald-300" />
+            <span>সনদ আবেদন পরিসংখ্যান</span>
+          </button>
+
           {/* Dashboard */}
           <button
             onClick={() => { onNavigate('dashboard'); onCloseMobile(); }}
