@@ -101,7 +101,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   // Share village suggestions across certificate forms in this browser.
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem('mysonod-village-suggestions') || '[]');
+      const saved = JSON.parse(localStorage.getItem('mysonod-village-suggestions-v2') || '[]');
       if (Array.isArray(saved)) setVillageSuggestions(saved.filter((v): v is string => typeof v === 'string'));
     } catch {
       setVillageSuggestions([]);
@@ -113,7 +113,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
     if (!villageName) return;
     setVillageSuggestions(prev => {
       const next = [villageName, ...prev.filter(v => v.trim().toLocaleLowerCase() !== villageName.toLocaleLowerCase())].slice(0, 100);
-      try { localStorage.setItem('mysonod-village-suggestions', JSON.stringify(next)); } catch { /* storage may be unavailable */ }
+      try { localStorage.setItem('mysonod-village-suggestions-v2', JSON.stringify(next)); } catch { /* storage may be unavailable */ }
       return next;
     });
   };
@@ -150,7 +150,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   const handlePresentVillageChange = (val: string) => {
     setPresentVillage(val);
     setVillage(val);
-    rememberVillage(val);
     if (sameAsPresent) setPermanentVillage(val);
   };
 
@@ -1006,6 +1005,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
         return cleanedApplication;
       }).then((newApp) => {
+        rememberVillage(presentVillage);
         clearCurrentApplicationData();
         setCurrentApplicationData(newApp as CertificateApplication);
         onNavigate('certificates');
@@ -1379,7 +1379,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     required
                     value={presentVillage}
                     list="mysonod-village-suggestions"
-                    onBlur={(e) => rememberVillage(e.target.value)}
                     onChange={(e) => handlePresentVillageChange(e.target.value)}
                     placeholder={language === 'en' ? 'Village / Locality *' : 'গ্রাম/মহল্লা *'}
                     className="same-name-input"
@@ -1769,7 +1768,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   required
                   value={presentVillage}
                   list="mysonod-village-suggestions"
-                  onBlur={(e) => rememberVillage(e.target.value)}
                   onChange={(e) => handlePresentVillageChange(e.target.value)}
                   placeholder={language === 'en' ? 'Village name' : 'গ্রাম বা মহল্লার নাম'}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
