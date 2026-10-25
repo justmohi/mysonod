@@ -950,6 +950,18 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                               lang="bn"
                               spellCheck={false}
                               autoComplete="off"
+                              onInput={e => {
+                                // Keep this field uncontrolled while typing so Bijoy Bayanno can
+                                // finish composing conjunct characters without React resetting it.
+                                const name = e.currentTarget.value;
+                                setHeirDrafts(prev => {
+                                  const row = prev[index];
+                                  if (!row || row.name === name) return prev;
+                                  const next = [...prev];
+                                  next[index] = { ...row, name };
+                                  return next;
+                                });
+                              }}
                               onBlur={e => {
                                 const name = e.currentTarget.value;
                                 setHeirDrafts(prev =>
