@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
@@ -80,6 +80,8 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   const [applicantNid, setApplicantNid] = useState('');
 
   // 3. Dynamic Warish List Table State
+  const composingHeirNameRef = useRef(false);
+
   const [heirs, setHeirs] = useState<HeirItem[]>([
     {
       name: '',
@@ -714,7 +716,16 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
                         autoCapitalize="off"
                         spellCheck={false}
                         value={heir.name}
-                        onChange={(e) => handleUpdateHeir(index, 'name', e.target.value)}
+                        onCompositionStart={() => { composingHeirNameRef.current = true; }}
+                        onCompositionEnd={(e) => {
+                          composingHeirNameRef.current = false;
+                          handleUpdateHeir(index, 'name', e.currentTarget.value);
+                        }}
+                        onChange={(e) => {
+                          if (!composingHeirNameRef.current && !e.nativeEvent.isComposing) {
+                            handleUpdateHeir(index, 'name', e.target.value);
+                          }
+                        }}
                         placeholder="ওয়ারিশের নাম *"
                         className="w-full bg-[#E0FFFF] border border-cyan-800/30 focus:border-blue-600 rounded px-2.5 py-1.5 text-xs text-slate-900"
                       />
