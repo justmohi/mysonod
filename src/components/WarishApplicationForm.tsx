@@ -707,6 +707,12 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
                       <input
                         type="text"
                         required
+                        lang="bn"
+                        inputMode="text"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
                         value={heir.name}
                         onChange={(e) => handleUpdateHeir(index, 'name', e.target.value)}
                         placeholder="ওয়ারিশের নাম *"
