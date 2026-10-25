@@ -946,14 +946,18 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                           <td className="border border-slate-300 p-1">
                             <input
                               type="text"
-                              value={item.name || ''}
-                              onChange={e =>
+                              defaultValue={item.name || ''}
+                              lang="bn"
+                              spellCheck={false}
+                              autoComplete="off"
+                              onBlur={e => {
+                                const name = e.currentTarget.value;
                                 setHeirDrafts(prev =>
                                   prev.map((row, rowIndex) =>
-                                    rowIndex === index ? { ...row, name: e.target.value } : row
+                                    rowIndex === index ? { ...row, name } : row
                                   )
-                                )
-                              }
+                                );
+                              }}
                               placeholder="ওয়ারিশের নাম"
                               className="w-full rounded-md border border-cyan-300 bg-[#E0FFFF] px-2 py-1.5 text-[11px] text-slate-800 outline-none focus:border-blue-500"
                             />
