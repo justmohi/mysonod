@@ -361,7 +361,7 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
 
   const allowed = new Set<string>(isWarishCertificate ? warishKeys : [
     ...commonFields,
-    ...(['citizenship', 'new_voter'].includes(application.certificateType) ? ['identityNumberType'] : []),
+    ...(['citizenship', 'new_voter', 'character'].includes(application.certificateType) ? ['identityNumberType'] : []),
     ...(GUARDIAN_SELECTOR_EDIT_TYPES.has(application.certificateType) ? ['guardianType'] : []),
     ...PRESENT_EDIT_KEYS,
     ...(application.certificateType === 'same_name' ? [] : PERMANENT_EDIT_KEYS),
