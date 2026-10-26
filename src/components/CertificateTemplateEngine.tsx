@@ -730,6 +730,14 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
             <span className="text-slate-600 block">সম্পর্ক:</span>
             <b>{application.guardianRelation || 'পিতা/মাতা'}</b>
           </div>
+          {application.nidOrBirthReg && (
+            <div>
+              <span className="text-slate-600 block">
+                {application.identityNumberType === 'birth_reg' ? 'জন্ম সনদ নং:' : 'জাতীয় পরিচয়পত্র নং:'}
+              </span>
+              <b className="text-slate-900">{application.nidOrBirthReg}</b>
+            </div>
+          )}
           <div>
             <span className="text-slate-600 block">অনুমতির উদ্দেশ্য:</span>
             <b>{application.permissionPurpose || 'শিক্ষা ও ভ্রমণের উদ্দেশ্যে'}</b>
