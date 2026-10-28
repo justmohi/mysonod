@@ -1312,7 +1312,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             </p>
                           ) : (
                             <p className="text-justify [text-align-last:left]">
-                              স্থানীয় সরকার (ইউনিয়ন পরিষদ) আইন, ২০০৯ (২০০৯ সনের ৬১ নং আইন) ধারা ৬৬ তে প্রদত্ত ক্ষমতাবলে সরকার প্রণীত আদেশ কর তফসিল, ২০১৩ এর ৬ ও ১৭ নং অনুচ্ছেদ অনুযায়ী ব্যবসা, বৃত্তি, পেশা বা শিল্প প্রতিষ্ঠানের উপর আরোপিত কর আদায়ের লক্ষ্যে নির্ধারিত শর্তে নিম্ন বর্ণিত ব্যক্তি বা প্রতিষ্ঠানের অনুকূলে এই ট্রেড লাইসেন্সটি ইস্যু করা হল :
+                              Under Section 66 of the Local Government (Union Parishads) Act, 2009 (Act No. 61 of 2009), and the applicable tax schedule, this trade license is issued to the person or enterprise named below, subject to the prescribed conditions, for lawful business activities within the jurisdiction of this Union Parishad.
                             </p>
                           )}
                         </div>
