@@ -728,6 +728,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
                         className="w-full bg-[#E0FFFF] border border-cyan-800/30 focus:border-blue-600 rounded px-2 py-1.5 text-xs text-slate-900 font-medium"
                       >
                         <option value="স্ত্রী">স্ত্রী</option>
+                        <option value="২য় স্ত্রী">২য় স্ত্রী</option>
                         <option value="স্বামী">স্বামী</option>
                         <option value="পুত্র">পুত্র</option>
                         <option value="কন্যা">কন্যা</option>
