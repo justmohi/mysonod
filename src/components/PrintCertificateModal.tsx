@@ -1278,7 +1278,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                   if (application.certificateType === 'trade_license') {
                     return (
-                      <div className="space-y-2 my-1 font-bangla text-slate-900">
+                      <div className={`space-y-2 my-1 text-slate-900 ${lang === 'en' ? 'font-sans' : 'font-bangla'}`}>
                         {/* Header: License No box (Top Left), Date (Top Right), Centered Pill/Badge Title "TRADE LICENSE" */}
                         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b-2 border-[#006A4E] pb-2">
                           <div className="px-1 py-1 text-xs font-bold text-slate-950">
@@ -1290,7 +1290,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                           <div className="inline-block bg-white text-[#006A4E] px-4 py-1 border-y-2 border-[#006A4E] text-center">
                             <h2 className="text-base sm:text-xl font-extrabold tracking-wider uppercase">
-                              ট্রেড লাইসেন্স
+                              {lang === 'en' ? 'TRADE LICENSE' : 'ট্রেড লাইসেন্স'}
                             </h2>
                           </div>
 
@@ -1320,7 +1320,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         {/* Key-Value Alignment Section */}
                         <div className="border border-slate-400 overflow-hidden bg-transparent">
                           <div className="bg-transparent text-[#006A4E] px-2 py-1 text-xs font-bold border-b border-slate-300 flex justify-between items-center">
-                            <span>১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি (Business & Licensee Particulars)</span>
+                            <span>{lang === 'en' ? '1. Business & Licensee Particulars' : '১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি'}</span>
                             <span className="font-mono text-xs bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
                               {lang === 'en' ? 'Fiscal Year: ' : 'অর্থবছর: '}
                               {application.fiscalYear || '2026-2027'}
@@ -1368,7 +1368,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {lang === 'en' ? "Nature of Business:" : "ব্যবসায়ের প্রকৃতি:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1">{application.businessNature || 'একক মালিকানা'}</strong>
+                              <strong className="text-slate-900 font-bold flex-1">{lang === 'en' ? (({ 'একক মালিকানা': 'Sole Proprietorship', 'যৌথ / অংশীদারি': 'Partnership', 'প্রাইভেট লিমিটেড কোম্পানি': 'Private Limited Company', 'পাবলিক লিমিটেড কোম্পানি': 'Public Limited Company', 'সমবায় সমিতি': 'Cooperative', 'অন্যান্য': 'Other' } as Record<string, string>)[application.businessNature || 'একক মালিকানা'] || application.businessNature || 'Sole Proprietorship') : (application.businessNature || 'একক মালিকানা')}</strong>
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
@@ -1386,7 +1386,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {lang === 'en' ? "Category / Type of Trade:" : "ব্যবসায়ের ধরন:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1">{application.businessType || 'সাধারণ ব্যবসা'}</strong>
+                              <strong className="text-slate-900 font-bold flex-1">{application.businessType || (lang === 'en' ? 'General Business' : 'সাধারণ ব্যবসা')}</strong>
                             </div>
 
                             <div className="flex items-center gap-1 border-b border-slate-100 pb-1">
@@ -1413,7 +1413,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   {lang === 'en' ? "Invested Capital:" : "ব্যবসার মূলধন:"}
                                 </span>
                                 <strong className="text-emerald-900 font-bold flex-1">
-                                  {formatCurrencyBn(application.businessCapital)}
+                                  {lang === 'en' ? String(application.businessCapital || 0).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(application.businessCapital)}
                                 </strong>
                               </div>
                             )}
@@ -1437,9 +1437,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span>{lang === 'en' ? 'Present Address:' : 'মালিকের বর্তমান ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>গ্রাম/সড়ক: <b>{application.presentVillage || application.village}</b></div>
-                              <div>ওয়ার্ড নং: <b>{toBengaliNumber(application.presentWard || application.wardNo)}</b> | ডাকঘর: <b>{application.presentPost || application.postOffice}</b></div>
-                              <div>উপজেলা: <b>{application.presentUpazila || settings.upazila || upazilaFallbackBn}</b> | জেলা: <b>{application.presentDistrict || settings.district || districtFallbackBn}</b></div>
+                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{application.presentVillage || application.village || '—'}</b></div>
+                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(application.presentWard || application.wardNo || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.presentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{application.presentPost || application.postOffice || '—'}</b></div>
+                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{application.presentUpazila || settings.upazila || upazilaFallbackBn}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{application.presentDistrict || settings.district || districtFallbackBn}</b></div>
                             </div>
                           </div>
 
@@ -1449,9 +1449,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span>{lang === 'en' ? 'Permanent Address:' : 'মালিকের স্থায়ী ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>গ্রাম/সড়ক: <b>{application.permanentVillage || application.village}</b></div>
-                              <div>ওয়ার্ড নং: <b>{toBengaliNumber(application.permanentWard || application.wardNo)}</b> | ডাকঘর: <b>{application.permanentPost || application.postOffice}</b></div>
-                              <div>উপজেলা: <b>{application.permanentUpazila || settings.upazila || upazilaFallbackBn}</b> | জেলা: <b>{application.permanentDistrict || settings.district || upazilaFallbackBn}</b></div>
+                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{application.permanentVillage || application.village || '—'}</b></div>
+                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(application.permanentWard || application.wardNo || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.permanentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{application.permanentPost || application.postOffice || '—'}</b></div>
+                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{application.permanentUpazila || settings.upazila || upazilaFallbackBn}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{application.permanentDistrict || settings.district || upazilaFallbackBn}</b></div>
                             </div>
                           </div>
                         </div>
@@ -1480,12 +1480,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             </thead>
                             <tbody>
                               <tr className="divide-x divide-slate-200 text-slate-900 font-semibold bg-transparent text-xs sm:text-[13px]">
-                                <td className="py-1.5 px-1">{formatCurrencyBn(tlLicenseFee)}</td>
-                                <td className="py-2.5 px-2">{formatCurrencyBn(tlVat)}</td>
-                                <td className="py-2.5 px-2">{formatCurrencyBn(tlProfessionTax)}</td>
-                                <td className="py-2.5 px-2">{formatCurrencyBn(tlTradeTax)}</td>
+                                <td className="py-1.5 px-1">{lang === 'en' ? String(tlLicenseFee).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlLicenseFee)}</td>
+                                <td className="py-2.5 px-2">{lang === 'en' ? String(tlVat).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlVat)}</td>
+                                <td className="py-2.5 px-2">{lang === 'en' ? String(tlProfessionTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlProfessionTax)}</td>
+                                <td className="py-2.5 px-2">{lang === 'en' ? String(tlTradeTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlTradeTax)}</td>
                                 <td className="py-2.5 px-2 font-bold text-emerald-950 bg-emerald-50/25">
-                                  {formatCurrencyBn(tlTotal)}
+                                  {lang === 'en' ? String(tlTotal).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlTotal)}
                                 </td>
                               </tr>
                               <tr className="bg-emerald-50/25 border-t border-emerald-300">
