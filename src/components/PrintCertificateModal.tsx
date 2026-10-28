@@ -1256,6 +1256,17 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   </>
                 )}
 
+                {application.dob && (
+                  <div className="mb-1 px-1 text-xs sm:text-sm font-semibold text-slate-800">
+                    {lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}
+                    <strong className="text-slate-950">
+                      {lang === 'en'
+                        ? new Date(`${application.dob}T00:00:00`).toLocaleDateString('en-GB')
+                        : formatBengaliDate(application.dob)}
+                    </strong>
+                  </div>
+                )}
+
                 {/* Specialized Trade License Document Layout vs Standard Certificate Layout */}
                 {(() => {
                   const tlLicenseFee = application.licenseFee || 500;
