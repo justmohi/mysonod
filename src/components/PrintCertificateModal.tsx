@@ -1437,9 +1437,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span>{lang === 'en' ? 'Present Address:' : 'মালিকের বর্তমান ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{application.presentVillage || application.village || '—'}</b></div>
-                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(application.presentWard || application.wardNo || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.presentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{application.presentPost || application.postOffice || '—'}</b></div>
-                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{application.presentUpazila || settings.upazila || upazilaFallbackBn}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{application.presentDistrict || settings.district || districtFallbackBn}</b></div>
+                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{lang === 'en' ? (presentVillageEn || '—') : (application.presentVillage || application.village || '—')}</b></div>
+                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(presentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.presentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{lang === 'en' ? (presentPostEn || '—') : (application.presentPost || application.postOffice || '—')}</b></div>
+                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{lang === 'en' ? presentUpazilaEn : (application.presentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{lang === 'en' ? presentDistrictEn : (application.presentDistrict || settings.district || districtFallbackBn)}</b></div>
                             </div>
                           </div>
 
@@ -1449,9 +1449,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span>{lang === 'en' ? 'Permanent Address:' : 'মালিকের স্থায়ী ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{application.permanentVillage || application.village || '—'}</b></div>
-                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(application.permanentWard || application.wardNo || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.permanentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{application.permanentPost || application.postOffice || '—'}</b></div>
-                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{application.permanentUpazila || settings.upazila || upazilaFallbackBn}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{application.permanentDistrict || settings.district || upazilaFallbackBn}</b></div>
+                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{lang === 'en' ? (permanentVillageEn || '—') : (application.permanentVillage || application.village || '—')}</b></div>
+                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(permanentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.permanentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{lang === 'en' ? (permanentPostEn || '—') : (application.permanentPost || application.postOffice || '—')}</b></div>
+                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{lang === 'en' ? permanentUpazilaEn : (application.permanentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{lang === 'en' ? permanentDistrictEn : (application.permanentDistrict || settings.district || districtFallbackBn)}</b></div>
                             </div>
                           </div>
                         </div>
