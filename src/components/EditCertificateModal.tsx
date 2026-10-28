@@ -988,6 +988,7 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
                             >
                               <option value="">নির্বাচন করুন</option>
                               <option value="স্ত্রী">স্ত্রী</option>
+                              <option value="২য় স্ত্রী">২য় স্ত্রী</option>
                               <option value="স্বামী">স্বামী</option>
                               <option value="পুত্র">পুত্র</option>
                               <option value="কন্যা">কন্যা</option>
