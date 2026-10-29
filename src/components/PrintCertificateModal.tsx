@@ -955,10 +955,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                     <strong className="font-mono text-slate-950 font-bold">{toBengaliNumber(application.nidOrBirthReg || '')}</strong>
                                   </div>
                                 )}
-                                <div>
-                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}</span>
-                                  <strong className="text-slate-900">{application.dob ? formatBengaliDate(application.dob) : '—'}</strong>
-                                </div>
+                                {application.certificateType !== 'citizenship' && (
+                                  <div>
+                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}</span>
+                                    <strong className="text-slate-900">{application.dob ? (lang === 'en' ? new Date(`${application.dob}T00:00:00`).toLocaleDateString('en-GB') : formatBengaliDate(application.dob)) : '—'}</strong>
+                                  </div>
+                                )}
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Tracking ID: ' : 'আবেদন ট্র্যাকিং নং: '}</span>
                                   <strong className="font-mono text-emerald-950 font-bold">{application.trackingId}</strong>
