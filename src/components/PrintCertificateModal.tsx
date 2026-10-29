@@ -921,6 +921,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Name (Bangla): ' : 'আবেদনকারীর নাম (বাংলা): '}</span>
                                   <strong className="text-slate-950 font-bold">{application.applicantNameBn || '—'}</strong>
                                 </div>
+                                {application.certificateType === 'citizenship' && (
+                                  <div>
+                                    <span className="text-slate-600 font-semibold">{lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}</span>
+                                    <strong className="text-slate-900">{application.dob ? (lang === 'en' ? new Date(`${application.dob}T00:00:00`).toLocaleDateString('en-GB') : formatBengaliDate(application.dob)) : '—'}</strong>
+                                  </div>
+                                )}
                                 {lang === 'en' && (
                                   <div>
                                     <span className="text-slate-600 font-semibold">Name (English): </span>
@@ -1256,7 +1262,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   </>
                 )}
 
-                {application.dob && (
+                {application.dob && application.certificateType !== 'citizenship' && (
                   <div className="mb-1 px-1 text-xs sm:text-sm font-semibold text-slate-800">
                     {lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}
                     <strong className="text-slate-950">
