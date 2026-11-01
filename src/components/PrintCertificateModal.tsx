@@ -1231,18 +1231,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           {application.trackingId}
                         </span>
                       </div>
-                      <div>
-                        {(application.certificateType === 'citizenship' || application.certificateType === 'new_voter')
-                          ? (application.identityNumberType === 'birth_reg'
-                              ? (lang === 'en' ? 'Birth Registration No: ' : 'জন্ম সনদ নং: ')
-                              : (lang === 'en' ? 'National ID No: ' : 'জাতীয় পরিচয়পত্র নং: '))
-                          : (lang === 'en' ? 'NID / Birth Reg No: ' : 'এনআইডি / জন্ম নিবন্ধন: ')}
-                        <span className="font-mono font-bold text-slate-900">
-                          {lang === 'en'
-                            ? ((application as any).nidNumber || application.nidOrBirthReg)
-                            : toBengaliNumber((application as any).nidNumber || application.nidOrBirthReg)}
-                        </span>
-                      </div>
                     </div>
   
                     <div className="text-right space-y-0.5">
@@ -1262,17 +1250,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                     </div>
                   </div>
                   </>
-                )}
-
-                {application.dob && application.certificateType !== 'citizenship' && (
-                  <div className="mb-1 px-1 text-xs sm:text-sm font-semibold text-slate-800">
-                    {lang === 'en' ? 'Date of Birth: ' : 'জন্ম তারিখ: '}
-                    <strong className="text-slate-950">
-                      {lang === 'en'
-                        ? new Date(`${application.dob}T00:00:00`).toLocaleDateString('en-GB')
-                        : formatBengaliDate(application.dob)}
-                    </strong>
-                  </div>
                 )}
 
                 {/* Specialized Trade License Document Layout vs Standard Certificate Layout */}
