@@ -373,6 +373,9 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
     if (isWarishCertificate) return true;
     const value = readValue(application, field.key);
     if (field.key === 'identityNumberType') return true;
+    // Citizenship applications must allow DOB to be added even when it was
+    // left blank in the original application.
+    if (application.certificateType === 'citizenship' && field.key === 'dob') return true;
     if (Array.isArray(value)) return value.length > 0;
     return String(value ?? '').trim() !== '';
   });
