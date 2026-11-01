@@ -1595,7 +1595,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                 {/* Bottom Bar:
                     - Left Box: QR Code + Digital Verification URL block
                     - Center Notice (Red Text Box): "বিঃদ্রঃ তথ্য গোপন বা ভুল দিলে আবেদনকারী দায়ী থাকিবেন এবং এই সনদপত্রটি আইনগতভাবে বাতিল বলিয়া গণ্য হইবে।"
-                    - Right Footer: "MySonod পোর্টাল | স্মারক: MS-2026-AMB-27643"
+                    - Right Footer: "MySonod পোর্টাল | সনদ নং: MS-2026-AMB-27643"
                 */}
                 <div className={`certificate-footer shrink-0 ${isUltraCompactTable ? 'mt-1 pt-1' : (isTableCertificate ? 'mt-1.5 pt-1.5' : 'mt-3.5 pt-2.5')} border-t border-emerald-900/30 flex flex-wrap items-center justify-between gap-3`}>
                   {/* Left Box: QR Code + Digital Verification URL block */}
