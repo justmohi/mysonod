@@ -1341,12 +1341,12 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en'
+                                {true
                                   ? (application.guardianType === 'husband' ? "Husband Name:" : "Father Name:")
                                   : (application.guardianType === 'husband' ? "স্বামীর নাম:" : "পিতার নাম:")}
                               </span>
                               <span className="text-slate-900 font-semibold flex-1">
-                                {application.ownerFatherOrHusbandName || application.fatherName || '—'}
+                                {application.ownerFatherOrHusbandName || application.fatherName || application.spouseName || '—'}
                               </span>
                             </div>
 
@@ -1371,7 +1371,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 {true ? "NID / Birth Reg No:" : "এনআইডি / জন্ম নিবন্ধন নং:"}
                               </span>
                               <span className="font-mono font-bold text-slate-900 flex-1">
-                                {lang === 'en' 
+                                {true 
                                   ? (application.ownerNidOrBirth || application.nidOrBirthReg) 
                                   : (application.ownerNidOrBirth || application.nidOrBirthReg || '').toString().replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())}
                               </span>
@@ -1389,9 +1389,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 {true ? "License Validity:" : "লাইসেন্সের মেয়াদকাল:"}
                               </span>
                               <strong className="min-w-0 whitespace-nowrap text-[10px] text-emerald-900 font-bold">
-                                {lang === 'en' 
+                                {true 
                                   ? `${application.validityStart || '01-07-2026'} to ${application.validityEnd || '30-06-2027'}`
-                                  : `${application.validityStart || '০১-০৭-২০২৬'} হতে ${application.validityEnd || '৩০-০৬-২০২৭'}`}
+                                  : `${application.validityStart || '01-07-2026'} হতে ${application.validityEnd || '30-06-2027'}`}
                               </strong>
                             </div>
 
