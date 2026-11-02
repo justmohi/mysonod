@@ -1286,15 +1286,15 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                       <div className={`space-y-2 my-1 text-slate-900 ${true ? 'font-sans' : 'font-bangla'}`}>
                         {/* Header: License No box (Top Left), Date (Top Right), Centered Pill/Badge Title "TRADE LICENSE" */}
                         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b-2 border-[#006A4E] pb-2">
-                          <div className="px-1 py-1 text-xs font-bold text-slate-950">
-                            <span className="text-[10px] text-emerald-700 block font-bold uppercase tracking-wider">
+                          <div className="px-1 py-1 text-[13px] font-bold text-slate-950">
+                            <span className="text-[11px] text-emerald-700 block font-bold uppercase tracking-wider">
                               {true ? 'License No:' : 'লাইসেন্স নং:'}
                             </span>
-                            <span className="font-mono text-sm text-emerald-900">{application.trackingId}</span>
+                            <span className="font-mono text-base text-emerald-900">{application.trackingId}</span>
                           </div>
 
                           <div className="inline-block bg-white text-[#006A4E] px-4 py-1 border-y-2 border-[#006A4E] text-center">
-                            <h2 className="text-base sm:text-xl font-extrabold tracking-wider uppercase">
+                            <h2 className="text-lg sm:text-2xl font-extrabold tracking-wider uppercase">
                               {true ? 'TRADE LICENSE' : 'ট্রেড লাইসেন্স'}
                             </h2>
                           </div>
@@ -1303,14 +1303,14 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             <span className="text-[10px] text-emerald-700 block font-bold uppercase tracking-wider">
                               {true ? 'Issue Date:' : 'ইস্যুর তারিখ:'}
                             </span>
-                            <span className="text-xs sm:text-sm">
+                            <span className="text-sm sm:text-base">
                               {true ? formattedDateEn : formatBengaliDate(issueDateIso)}
                             </span>
                           </div>
                         </div>
 
                         {/* Legal Preamble Text */}
-                        <div className="px-2 py-1.5 border-b border-slate-300 text-justify text-[11px] leading-relaxed text-slate-800">
+                        <div className="px-2.5 py-2 border-b border-slate-300 text-justify text-[12px] leading-relaxed text-slate-800">
                           {true ? (
                             <p className="text-justify [text-align-last:left]">
                               Under the conditions prescribed by the Government under section 66 of the Local Government (Union Councils) Act, 2009 (Act No. 61 of 2009), this Trade License is hereby granted to the undermentioned person/enterprise for conducting lawful commercial operations within the jurisdiction of this Union Parishad.
@@ -1324,15 +1324,15 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                         {/* Key-Value Alignment Section */}
                         <div className="relative border border-slate-400 overflow-hidden bg-transparent">
-                          <div className="bg-transparent text-[#006A4E] px-2 py-1 text-xs font-bold border-b border-slate-300 flex justify-between items-center">
+                          <div className="bg-transparent text-[#006A4E] px-2.5 py-1.5 text-[13px] font-bold border-b border-slate-300 flex justify-between items-center">
                             <span>{true ? '1. Business & Licensee Particulars' : '১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি'}</span>
-                            <span className="font-mono text-xs bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
+                            <span className="font-mono text-[12px] bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
                               {true ? 'Fiscal Year: ' : 'অর্থবছর: '}
                               {application.fiscalYear || '2026-2027'}
                             </span>
                           </div>
 
-                          <div className="px-2 py-2 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-1 text-[11px] sm:text-xs">
+                          <div className="px-2.5 py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-1.5 text-[12px] sm:text-[13px]">
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true ? "Business Name:" : "ব্যবসা প্রতিষ্ঠানের নাম:"}
@@ -1399,7 +1399,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-32 shrink-0 text-slate-600 font-medium">
                                 {true ? "License Validity:" : "লাইসেন্সের মেয়াদকাল:"}
                               </span>
-                              <strong className="min-w-0 whitespace-nowrap text-[10px] text-emerald-900 font-bold">
+                              <strong className="min-w-0 whitespace-nowrap text-[12px] text-emerald-900 font-bold">
                                 {(() => {
                                   const startDate = String(application.validityStart || '01-07-2026');
                                   const endDate = String(application.validityEnd || '30-06-2027');
@@ -1440,7 +1440,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
 
                         {/* Dual Column Address Section: Left (Present) and Right (Permanent) */}
-                        <div className="grid grid-cols-2 gap-3 text-[10px]">
+                        <div className="grid grid-cols-2 gap-3 text-[11px]">
                           <div className="border border-emerald-300/70 rounded-xl p-3 bg-transparent shadow-2xs" style={{ borderRadius: '0.75rem', border: '1px solid rgba(110, 231, 183, 0.7)', backgroundColor: 'transparent', padding: '0.75rem' }}>
                             <h4 className="font-bold text-[#006A4E] border-b border-emerald-200 pb-1 mb-1.5 flex items-center gap-1.5">
                               <MapPin className="w-3.5 h-3.5 text-emerald-700" />
@@ -1468,13 +1468,13 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                         {/* Financial Fee Table (Green Header Box) */}
                         <div className="border border-slate-500 overflow-hidden bg-transparent">
-                          <table className="w-full text-xs text-center border-collapse">
+                          <table className="w-full text-[12px] text-center border-collapse">
                             <thead>
                               <tr className="bg-[#006A4E] text-white font-bold">
-                                <th className="py-1.5 px-1 border-r border-slate-500">
+                                <th className="py-2 px-1.5 border-r border-slate-500 text-[11px] leading-tight">
                                   {true ? 'Trade License Fee' : 'ট্রেড লাইসেন্স ফি'}
                                 </th>
-                                <th className="py-2.5 px-2 border-r border-emerald-600">
+                                <th className="py-2 px-1.5 border-r border-emerald-600 text-[11px] leading-tight">
                                   {true ? 'VAT (15%)' : 'ভ্যাট (১৫%)'}
                                 </th>
                                 <th className="py-2.5 px-2 border-r border-emerald-600">
@@ -1491,7 +1491,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             <tbody>
                               <tr className="divide-x divide-slate-200 text-slate-900 font-semibold bg-transparent text-xs sm:text-[13px]">
                                 <td className="py-1.5 px-1">{true ? String(tlLicenseFee).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlLicenseFee)}</td>
-                                <td className="py-2.5 px-2">{true ? String(tlVat).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlVat)}</td>
+                                <td className="py-2 px-2 text-[13px]">{true ? String(tlVat).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlVat)}</td>
                                 <td className="py-2.5 px-2">{true ? String(tlProfessionTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlProfessionTax)}</td>
                                 <td className="py-2.5 px-2">{true ? String(tlTradeTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlTradeTax)}</td>
                                 <td className="py-2.5 px-2 font-bold text-emerald-950 bg-emerald-50/25">
@@ -1499,7 +1499,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 </td>
                               </tr>
                               <tr className="bg-emerald-50/25 border-t border-emerald-300">
-                                <td colSpan={5} className="py-1.5 px-2 text-left font-bold text-emerald-950 text-[11px] sm:text-xs">
+                                <td colSpan={5} className="py-2 px-2 text-left font-bold text-emerald-950 text-[12px] sm:text-[13px]">
                                   <span className="text-slate-600 mr-2">
                                     {true ? 'Total (In Words):' : 'মোট টাকা (কথায়):'}
                                   </span>
