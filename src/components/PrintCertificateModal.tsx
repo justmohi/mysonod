@@ -1337,6 +1337,14 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <strong className="text-slate-900 font-bold flex-1">
                                 {application.ownerName || application.userName || application.applicantNameBn || '—'}
                               </strong>
+                              {application.ownerPhotoUrl && (
+                                <img
+                                  src={application.ownerPhotoUrl}
+                                  alt="License owner"
+                                  className="ml-2 h-20 w-16 shrink-0 rounded border border-slate-400 object-cover"
+                                  crossOrigin="anonymous"
+                                />
+                              )}
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
