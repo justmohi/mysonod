@@ -334,11 +334,16 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const fatherNameBn = (application as any).fatherNameBn || application.fatherName || '—';
   const motherNameBn = (application as any).motherNameBn || application.motherName || '—';
   // Match the main certificate: show the selected guardian, not father-first fallback.
+  const hasFatherName = Boolean(
+    application.fatherName && application.fatherName !== '-' ||
+    (application as any).fatherNameBn && (application as any).fatherNameBn !== '-'
+  );
+  const hasSpouseName = Boolean(application.spouseName && application.spouseName !== '-');
   const guardianUsesHusband = application.guardianType === 'husband'
     ? true
     : application.guardianType === 'father'
       ? false
-      : !application.fatherName && !!application.spouseName;
+      : !hasFatherName && hasSpouseName;
   const guardianNameBn = guardianUsesHusband
     ? (application.spouseName || '—')
     : (fatherNameBn || '—');
