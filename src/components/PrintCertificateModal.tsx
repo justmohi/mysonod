@@ -1546,7 +1546,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                     <div className="border-t-2 border-slate-900 pt-1 font-bold text-slate-950 text-xs">
                       {true ? "Verifier's Signature" : "যাচাইকারীর স্বাক্ষর"}
                     </div>
-                    <div className="text-[10px] text-slate-600">ইউপি সচিব / প্রশাসনিক কর্মকর্তা</div>
+                    <div className="text-[10px] text-slate-600">Union Parishad Secretary / Administrative Officer</div>
                   </div>
 
                   {/* Official Seal (Center) */}
