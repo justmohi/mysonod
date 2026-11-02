@@ -1173,19 +1173,19 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                   {/* Center Aligned Government Header */}
                   <div className="flex-1 text-center px-1 sm:px-2">
-                    {lang === 'en' ? (
+                    {(application.certificateType === 'trade_license' || lang === 'en') ? (
                       <>
                         <h3 className={`${isUltraCompactTable ? 'text-[9.5px]' : (isTableCertificate ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm')} font-bold text-red-700 tracking-wider uppercase`}>
                           GOVERNMENT OF THE PEOPLE'S REPUBLIC OF BANGLADESH
                         </h3>
                         <h1 className={`${isUltraCompactTable ? 'text-base sm:text-lg mt-0 leading-tight' : (isTableCertificate ? 'text-lg sm:text-xl md:text-2xl mt-0' : 'text-xl sm:text-2xl md:text-3xl mt-0.5')} font-extrabold text-[#0d5c3a] tracking-tight leading-tight`}>
-                          {settings.unionNameEn || settings.unionName || unionNameFallbackEn}
+                          {settings.unionNameEn || unionNameFallbackEn}
                         </h1>
                         <p className={`${isUltraCompactTable ? 'text-[9.5px] mt-0 leading-tight' : (isTableCertificate ? 'text-[10.5px] sm:text-xs mt-0.5' : 'text-xs sm:text-sm mt-1')} font-semibold text-slate-800`}>
-                          Post Office: {settings.postOfficeEn || settings.postOffice || postOfficeFallbackEn}, Upazila: {settings.upazilaEn || settings.upazila || upazilaFallbackEn}, District: {settings.districtEn || settings.district || districtFallbackEn}.
+                          Post Office: {settings.postOfficeEn || postOfficeFallbackEn}, Upazila: {settings.upazilaEn || upazilaFallbackEn}, District: {settings.districtEn || districtFallbackEn}.
                         </p>
                         <div className={`flex flex-wrap items-center justify-center gap-x-2.5 gap-y-0.5 ${isUltraCompactTable ? 'mt-0 text-[9px]' : (isTableCertificate ? 'mt-0.5 text-[10px]' : 'mt-1 text-[11px]')} font-medium text-slate-700`}>
-                          <span>Chairman: <strong className="text-emerald-950 font-bold">{settings.chairmanNameEn || settings.chairmanName || chairmanFallbackEn}</strong></span>
+                          <span>Chairman: <strong className="text-emerald-950 font-bold">{settings.chairmanNameEn || chairmanFallbackEn}</strong></span>
                           <span>•</span>
                           <span>Email: <strong className="font-mono text-slate-800">{settings.officialEmail || officialEmailFallback}</strong></span>
                           <span>•</span>
