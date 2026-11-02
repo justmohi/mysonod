@@ -1313,7 +1313,15 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
 
                         {/* Key-Value Alignment Section */}
-                        <div className="border border-slate-400 overflow-hidden bg-transparent">
+                        <div className="relative border border-slate-400 overflow-hidden bg-transparent">
+                          {application.ownerPhotoUrl && (
+                            <img
+                              src={application.ownerPhotoUrl}
+                              alt="License owner"
+                              className="absolute right-2 top-[38px] z-10 h-14 w-11 rounded border border-slate-400 object-cover"
+                              crossOrigin="anonymous"
+                            />
+                          )}
                           <div className="bg-transparent text-[#006A4E] px-2 py-1 text-xs font-bold border-b border-slate-300 flex justify-between items-center">
                             <span>{true ? '1. Business & Licensee Particulars' : '১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি'}</span>
                             <span className="font-mono text-xs bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
@@ -1334,17 +1342,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true ? "Owner's Name:" : "মালিকের নাম:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1">
+                              <strong className="text-slate-900 font-bold flex-1 pr-12">
                                 {application.ownerName || application.userName || application.applicantNameBn || '—'}
                               </strong>
-                              {application.ownerPhotoUrl && (
-                                <img
-                                  src={application.ownerPhotoUrl}
-                                  alt="License owner"
-                                  className="ml-2 h-20 w-16 shrink-0 rounded border border-slate-400 object-cover"
-                                  crossOrigin="anonymous"
-                                />
-                              )}
+
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
