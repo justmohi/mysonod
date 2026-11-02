@@ -75,7 +75,6 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   // 2. Applicant Information Fields (আবেদনকারীর তথ্য)
   const [applicantNameBn, setApplicantNameBn] = useState('');
   const [applicantNameEn, setApplicantNameEn] = useState('');
-  const [applicantRelation, setApplicantRelation] = useState('ছেলে');
   const [applicantMobile, setApplicantMobile] = useState('');
   const [applicantNid, setApplicantNid] = useState('');
 
@@ -287,7 +286,6 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
       const finalGuardianName = guardianName.trim() || '-';
       const finalMotherName = motherName.trim() || '-';
       const finalMobile = applicantMobile.trim();
-      const finalApplicantRelation = applicantRelation.trim() || '-';
       const finalDeceasedIdNumber = deceasedIdNumber.trim() || '-';
       const finalDeceasedDate = deceasedDate || '-';
 
@@ -309,7 +307,6 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
         maritalStatus: 'বিবাহিত',
         nidOrBirthReg: applicantNid.trim(),
         mobile: finalMobile,
-        applicantRelation: finalApplicantRelation,
         // Address
         presentVillage: village.trim(),
         presentWard: wardNo,
