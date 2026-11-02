@@ -333,7 +333,16 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
     : '';
   const fatherNameBn = (application as any).fatherNameBn || application.fatherName || '—';
   const motherNameBn = (application as any).motherNameBn || application.motherName || '—';
-  const guardianNameBn = application.spouseName || (application as any).fatherNameBn || application.fatherName || '—';
+  // Match the main certificate: show the selected guardian, not father-first fallback.
+  const guardianUsesHusband = application.guardianType === 'husband'
+    ? true
+    : application.guardianType === 'father'
+      ? false
+      : !application.fatherName && !!application.spouseName;
+  const guardianNameBn = guardianUsesHusband
+    ? (application.spouseName || '—')
+    : (fatherNameBn || '—');
+  const guardianLabelBn = guardianUsesHusband ? 'স্বামীর নাম:' : 'পিতার নাম:';
   const villageBn = presentVillage || application.village || '—';
   const wardNoBn = toBengaliNumber(presentWard || application.wardNo || '০১');
   const postOfficeBn = presentPostOffice || settings.postOffice || postOfficeFallbackBn;
@@ -934,8 +943,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                   </div>
                                 )}
                                 <div>
-                                  <span className="text-slate-600 font-semibold">{application.fatherName ? (lang === 'en' ? "Father's Name: " : 'পিতার নাম: ') : application.spouseName ? (lang === 'en' ? "Husband's Name: " : 'স্বামীর নাম: ') : (lang === 'en' ? "Father / Husband Name: " : 'পিতা / স্বামীর নাম: ')}</span>
-                                  <strong className="text-slate-900">{application.fatherName || application.spouseName || '—'}</strong>
+                                  <span className="text-slate-600 font-semibold">{lang === 'en' ? (guardianUsesHusband ? "Husband's Name: " : "Father's Name: ") : guardianLabelBn}</span>
+                                  <strong className="text-slate-900">{guardianNameBn}</strong>
                                 </div>
                                 <div>
                                   <span className="text-slate-600 font-semibold">{lang === 'en' ? "Mother's Name: " : 'মাতার নাম: '}</span>
