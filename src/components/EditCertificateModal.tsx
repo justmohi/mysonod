@@ -373,6 +373,8 @@ function getRelevantEditFields(application: CertificateApplication): EditableFie
     if (isWarishCertificate) return true;
     const value = readValue(application, field.key);
     if (field.key === 'identityNumberType') return true;
+    // Trade license owner photo must remain editable even when no photo was uploaded.
+    if (application.certificateType === 'trade_license' && field.key === 'ownerPhotoUrl') return true;
     // Citizenship applications must allow DOB to be added even when it was
     // left blank in the original application.
     if (application.certificateType === 'citizenship' && field.key === 'dob') return true;
@@ -679,7 +681,45 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
           {field.label}
         </label>
 
-        {field.type === 'textarea' ? (
+        {field.key === 'ownerPhotoUrl' && application.certificateType === 'trade_license' ? (
+          <div className="space-y-2">
+            {value ? (
+              <div className="flex items-center gap-3">
+                <img src={value} alt="Owner photo" className="h-20 w-20 rounded-lg border border-slate-300 object-cover" />
+                <button
+                  type="button"
+                  onClick={() => updateField('ownerPhotoUrl', '')}
+                  className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-50"
+                >
+                  ছবি সরান
+                </button>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500">এখনো কোনো ছবি আপলোড করা হয়নি।</p>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={e => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (file.size > 200 * 1024) {
+                  setErrorMsg('ছবির আকার সর্বোচ্চ ২০০ কেবি হতে হবে।');
+                  e.target.value = '';
+                  return;
+                }
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  if (typeof reader.result === 'string') updateField('ownerPhotoUrl', reader.result);
+                };
+                reader.readAsDataURL(file);
+                e.target.value = '';
+              }}
+              className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800"
+            />
+            <p className="text-[10px] text-slate-500">JPG / PNG / WEBP • সর্বোচ্চ ২০০ KB</p>
+          </div>
+        ) : field.type === 'textarea' ? (
           <textarea
             value={value}
             onChange={e => updateField(field.key, e.target.value)}
