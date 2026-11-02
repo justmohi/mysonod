@@ -1400,9 +1400,13 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 {true ? "License Validity:" : "লাইসেন্সের মেয়াদকাল:"}
                               </span>
                               <strong className="min-w-0 whitespace-nowrap text-[10px] text-emerald-900 font-bold">
-                                {true 
-                                  ? `${application.validityStart || '01-07-2026'} to ${application.validityEnd || '30-06-2027'}`
-                                  : `${application.validityStart || '01-07-2026'} হতে ${application.validityEnd || '30-06-2027'}`}
+                                {(() => {
+                                  const startDate = String(application.validityStart || '01-07-2026');
+                                  const endDate = String(application.validityEnd || '30-06-2027');
+                                  const startYear = startDate.match(/\d{4}/)?.[0] || '2026';
+                                  const endYear = endDate.match(/\d{4}/)?.[0] || '2027';
+                                  return `${startYear}-${endYear}`;
+                                })()}
                               </strong>
                             </div>
 
