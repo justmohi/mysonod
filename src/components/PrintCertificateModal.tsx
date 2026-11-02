@@ -1269,39 +1269,39 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   const tlProfessionTax = application.professionTax ?? 0;
                   const tlTradeTax = application.tradeTax || 0;
                   const tlTotal = application.totalAmount || (tlLicenseFee + tlVat + tlProfessionTax + tlTradeTax);
-                  const tlTotalInWords = lang === 'en' ? numberToWordsEn(tlTotal) : numberToWordsBn(tlTotal);
+                  const tlTotalInWords = true ? numberToWordsEn(tlTotal) : numberToWordsBn(tlTotal);
 
                   if (application.certificateType === 'trade_license') {
                     return (
-                      <div className={`space-y-2 my-1 text-slate-900 ${lang === 'en' ? 'font-sans' : 'font-bangla'}`}>
+                      <div className={`space-y-2 my-1 text-slate-900 ${true ? 'font-sans' : 'font-bangla'}`}>
                         {/* Header: License No box (Top Left), Date (Top Right), Centered Pill/Badge Title "TRADE LICENSE" */}
                         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b-2 border-[#006A4E] pb-2">
                           <div className="px-1 py-1 text-xs font-bold text-slate-950">
                             <span className="text-[10px] text-emerald-700 block font-bold uppercase tracking-wider">
-                              {lang === 'en' ? 'License No:' : 'লাইসেন্স নং:'}
+                              {true ? 'License No:' : 'লাইসেন্স নং:'}
                             </span>
                             <span className="font-mono text-sm text-emerald-900">{application.trackingId}</span>
                           </div>
 
                           <div className="inline-block bg-white text-[#006A4E] px-4 py-1 border-y-2 border-[#006A4E] text-center">
                             <h2 className="text-base sm:text-xl font-extrabold tracking-wider uppercase">
-                              {lang === 'en' ? 'TRADE LICENSE' : 'ট্রেড লাইসেন্স'}
+                              {true ? 'TRADE LICENSE' : 'ট্রেড লাইসেন্স'}
                             </h2>
                           </div>
 
                           <div className="px-1 py-1 text-xs font-bold text-slate-950 text-right">
                             <span className="text-[10px] text-emerald-700 block font-bold uppercase tracking-wider">
-                              {lang === 'en' ? 'Issue Date:' : 'ইস্যুর তারিখ:'}
+                              {true ? 'Issue Date:' : 'ইস্যুর তারিখ:'}
                             </span>
                             <span className="text-xs sm:text-sm">
-                              {lang === 'en' ? formattedDateEn : formatBengaliDate(issueDateIso)}
+                              {true ? formattedDateEn : formatBengaliDate(issueDateIso)}
                             </span>
                           </div>
                         </div>
 
                         {/* Legal Preamble Text */}
                         <div className="px-2 py-1.5 border-b border-slate-300 text-justify text-[11px] leading-relaxed text-slate-800">
-                          {lang === 'en' ? (
+                          {true ? (
                             <p className="text-justify [text-align-last:left]">
                               Under the conditions prescribed by the Government under section 66 of the Local Government (Union Councils) Act, 2009 (Act No. 61 of 2009), this Trade License is hereby granted to the undermentioned person/enterprise for conducting lawful commercial operations within the jurisdiction of this Union Parishad.
                             </p>
@@ -1315,9 +1315,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         {/* Key-Value Alignment Section */}
                         <div className="border border-slate-400 overflow-hidden bg-transparent">
                           <div className="bg-transparent text-[#006A4E] px-2 py-1 text-xs font-bold border-b border-slate-300 flex justify-between items-center">
-                            <span>{lang === 'en' ? '1. Business & Licensee Particulars' : '১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি'}</span>
+                            <span>{true ? '1. Business & Licensee Particulars' : '১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি'}</span>
                             <span className="font-mono text-xs bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
-                              {lang === 'en' ? 'Fiscal Year: ' : 'অর্থবছর: '}
+                              {true ? 'Fiscal Year: ' : 'অর্থবছর: '}
                               {application.fiscalYear || '2026-2027'}
                             </span>
                           </div>
@@ -1325,14 +1325,14 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           <div className="px-2 py-2 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-1 text-[11px] sm:text-xs">
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "Business Name:" : "ব্যবসা প্রতিষ্ঠানের নাম:"}
+                                {true ? "Business Name:" : "ব্যবসা প্রতিষ্ঠানের নাম:"}
                               </span>
                               <strong className="text-emerald-950 font-bold flex-1">{application.businessName || '—'}</strong>
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "Owner's Name:" : "মালিকের নাম:"}
+                                {true ? "Owner's Name:" : "মালিকের নাম:"}
                               </span>
                               <strong className="text-slate-900 font-bold flex-1">
                                 {application.ownerName || application.userName || application.applicantNameBn || '—'}
@@ -1352,7 +1352,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "Mother's Name:" : "মাতার নাম:"}
+                                {true ? "Mother's Name:" : "মাতার নাম:"}
                               </span>
                               <span className="text-slate-900 font-semibold flex-1">
                                 {application.ownerMotherName || application.motherName || '—'}
@@ -1361,32 +1361,32 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "Nature of Business:" : "ব্যবসায়ের প্রকৃতি:"}
+                                {true ? "Nature of Business:" : "ব্যবসায়ের প্রকৃতি:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1">{lang === 'en' ? (({ 'একক মালিকানা': 'Sole Proprietorship', 'যৌথ / অংশীদারি': 'Partnership', 'প্রাইভেট লিমিটেড কোম্পানি': 'Private Limited Company', 'পাবলিক লিমিটেড কোম্পানি': 'Public Limited Company', 'সমবায় সমিতি': 'Cooperative', 'অন্যান্য': 'Other' } as Record<string, string>)[application.businessNature || 'একক মালিকানা'] || application.businessNature || 'Sole Proprietorship') : (application.businessNature || 'একক মালিকানা')}</strong>
+                              <strong className="text-slate-900 font-bold flex-1">{true ? (({ 'একক মালিকানা': 'Sole Proprietorship', 'যৌথ / অংশীদারি': 'Partnership', 'প্রাইভেট লিমিটেড কোম্পানি': 'Private Limited Company', 'পাবলিক লিমিটেড কোম্পানি': 'Public Limited Company', 'সমবায় সমিতি': 'Cooperative', 'অন্যান্য': 'Other' } as Record<string, string>)[application.businessNature || 'একক মালিকানা'] || application.businessNature || 'Sole Proprietorship') : (application.businessNature || 'একক মালিকানা')}</strong>
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "NID / Birth Reg No:" : "এনআইডি / জন্ম নিবন্ধন নং:"}
+                                {true ? "NID / Birth Reg No:" : "এনআইডি / জন্ম নিবন্ধন নং:"}
                               </span>
                               <span className="font-mono font-bold text-slate-900 flex-1">
                                 {lang === 'en' 
                                   ? (application.ownerNidOrBirth || application.nidOrBirthReg) 
-                                  : toBengaliNumber(application.ownerNidOrBirth || application.nidOrBirthReg)}
+                                  : (application.ownerNidOrBirth || application.nidOrBirthReg || '').toString().replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())}
                               </span>
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "Category / Type of Trade:" : "ব্যবসায়ের ধরন:"}
+                                {true ? "Category / Type of Trade:" : "ব্যবসায়ের ধরন:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1">{application.businessType || (lang === 'en' ? 'General Business' : 'সাধারণ ব্যবসা')}</strong>
+                              <strong className="text-slate-900 font-bold flex-1">{application.businessType || (true ? 'General Business' : 'সাধারণ ব্যবসা')}</strong>
                             </div>
 
                             <div className="flex items-center gap-1 border-b border-slate-100 pb-1">
                               <span className="w-32 shrink-0 text-slate-600 font-medium">
-                                {lang === 'en' ? "License Validity:" : "লাইসেন্সের মেয়াদকাল:"}
+                                {true ? "License Validity:" : "লাইসেন্সের মেয়াদকাল:"}
                               </span>
                               <strong className="min-w-0 whitespace-nowrap text-[10px] text-emerald-900 font-bold">
                                 {lang === 'en' 
@@ -1397,7 +1397,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                             <div className="flex border-b border-slate-100 pb-1 sm:col-span-2">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                {lang === 'en' ? "Business Address:" : "ব্যবসা প্রতিষ্ঠানের ঠিকানা:"}
+                                {true ? "Business Address:" : "ব্যবসা প্রতিষ্ঠানের ঠিকানা:"}
                               </span>
                               <span className="text-slate-900 font-semibold flex-1">{application.businessAddress || '—'}</span>
                             </div>
@@ -1405,10 +1405,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             {application.showCapitalOnPrint !== false && (
                               <div className="flex border-b border-slate-100 pb-1">
                                 <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                  {lang === 'en' ? "Invested Capital:" : "ব্যবসার মূলধন:"}
+                                  {true ? "Invested Capital:" : "ব্যবসার মূলধন:"}
                                 </span>
                                 <strong className="text-emerald-900 font-bold flex-1">
-                                  {lang === 'en' ? String(application.businessCapital || 0).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(application.businessCapital)}
+                                  {true ? String(application.businessCapital || 0).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(application.businessCapital)}
                                 </strong>
                               </div>
                             )}
@@ -1416,7 +1416,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             {application.tinNumber && (
                               <div className="flex border-b border-slate-100 pb-1">
                                 <span className="w-44 text-slate-600 shrink-0 font-medium">
-                                  {lang === 'en' ? "e-TIN Number:" : "ই-টিন নম্বর:"}
+                                  {true ? "e-TIN Number:" : "ই-টিন নম্বর:"}
                                 </span>
                                 <span className="font-mono font-bold text-slate-900 flex-1">{application.tinNumber}</span>
                               </div>
@@ -1429,24 +1429,24 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                           <div className="border border-emerald-300/70 rounded-xl p-3 bg-transparent shadow-2xs" style={{ borderRadius: '0.75rem', border: '1px solid rgba(110, 231, 183, 0.7)', backgroundColor: 'transparent', padding: '0.75rem' }}>
                             <h4 className="font-bold text-[#006A4E] border-b border-emerald-200 pb-1 mb-1.5 flex items-center gap-1.5">
                               <MapPin className="w-3.5 h-3.5 text-emerald-700" />
-                              <span>{lang === 'en' ? 'Present Address:' : 'মালিকের বর্তমান ঠিকানা:'}</span>
+                              <span>{true ? 'Present Address:' : 'মালিকের বর্তমান ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{lang === 'en' ? (presentVillageEn || '—') : (application.presentVillage || application.village || '—')}</b></div>
-                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(presentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.presentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{lang === 'en' ? (presentPostEn || '—') : (application.presentPost || application.postOffice || '—')}</b></div>
-                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{lang === 'en' ? presentUpazilaEn : (application.presentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{lang === 'en' ? presentDistrictEn : (application.presentDistrict || settings.district || districtFallbackBn)}</b></div>
+                              <div>{true ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{true ? (presentVillageEn || '—') : (application.presentVillage || application.village || '—')}</b></div>
+                              <div>{true ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{true ? String(presentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.presentWard || application.wardNo)}</b> | {true ? 'Post Office:' : 'ডাকঘর:'} <b>{true ? (presentPostEn || '—') : (application.presentPost || application.postOffice || '—')}</b></div>
+                              <div>{true ? 'Upazila:' : 'উপজেলা:'} <b>{true ? presentUpazilaEn : (application.presentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {true ? 'District:' : 'জেলা:'} <b>{true ? presentDistrictEn : (application.presentDistrict || settings.district || districtFallbackBn)}</b></div>
                             </div>
                           </div>
 
                           <div className="border border-emerald-300/70 rounded-xl p-3 bg-transparent">
                             <h4 className="font-bold text-[#006A4E] border-b border-emerald-200 pb-1 mb-1.5 flex items-center gap-1.5">
                               <Home className="w-3.5 h-3.5 text-emerald-700" />
-                              <span>{lang === 'en' ? 'Permanent Address:' : 'মালিকের স্থায়ী ঠিকানা:'}</span>
+                              <span>{true ? 'Permanent Address:' : 'মালিকের স্থায়ী ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>{lang === 'en' ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{lang === 'en' ? (permanentVillageEn || '—') : (application.permanentVillage || application.village || '—')}</b></div>
-                              <div>{lang === 'en' ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{lang === 'en' ? String(permanentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.permanentWard || application.wardNo)}</b> | {lang === 'en' ? 'Post Office:' : 'ডাকঘর:'} <b>{lang === 'en' ? (permanentPostEn || '—') : (application.permanentPost || application.postOffice || '—')}</b></div>
-                              <div>{lang === 'en' ? 'Upazila:' : 'উপজেলা:'} <b>{lang === 'en' ? permanentUpazilaEn : (application.permanentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {lang === 'en' ? 'District:' : 'জেলা:'} <b>{lang === 'en' ? permanentDistrictEn : (application.permanentDistrict || settings.district || districtFallbackBn)}</b></div>
+                              <div>{true ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{true ? (permanentVillageEn || '—') : (application.permanentVillage || application.village || '—')}</b></div>
+                              <div>{true ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{true ? String(permanentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.permanentWard || application.wardNo)}</b> | {true ? 'Post Office:' : 'ডাকঘর:'} <b>{true ? (permanentPostEn || '—') : (application.permanentPost || application.postOffice || '—')}</b></div>
+                              <div>{true ? 'Upazila:' : 'উপজেলা:'} <b>{true ? permanentUpazilaEn : (application.permanentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {true ? 'District:' : 'জেলা:'} <b>{true ? permanentDistrictEn : (application.permanentDistrict || settings.district || districtFallbackBn)}</b></div>
                             </div>
                           </div>
                         </div>
@@ -1457,36 +1457,36 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             <thead>
                               <tr className="bg-[#006A4E] text-white font-bold">
                                 <th className="py-1.5 px-1 border-r border-slate-500">
-                                  {lang === 'en' ? 'Trade License Fee' : 'ট্রেড লাইসেন্স ফি'}
+                                  {true ? 'Trade License Fee' : 'ট্রেড লাইসেন্স ফি'}
                                 </th>
                                 <th className="py-2.5 px-2 border-r border-emerald-600">
-                                  {lang === 'en' ? 'VAT (15%)' : 'ভ্যাট (১৫%)'}
+                                  {true ? 'VAT (15%)' : 'ভ্যাট (১৫%)'}
                                 </th>
                                 <th className="py-2.5 px-2 border-r border-emerald-600">
-                                  {lang === 'en' ? 'Profession Tax' : 'পেশা কর'}
+                                  {true ? 'Profession Tax' : 'পেশা কর'}
                                 </th>
                                 <th className="py-2.5 px-2 border-r border-emerald-600">
-                                  {lang === 'en' ? 'Trade Tax' : 'বাণিজ্যিক কর'}
+                                  {true ? 'Trade Tax' : 'বাণিজ্যিক কর'}
                                 </th>
                                 <th className="py-1.5 px-1 bg-[#006A4E]">
-                                  {lang === 'en' ? 'Total Amount' : 'মোট টাকা'}
+                                  {true ? 'Total Amount' : 'মোট টাকা'}
                                 </th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr className="divide-x divide-slate-200 text-slate-900 font-semibold bg-transparent text-xs sm:text-[13px]">
-                                <td className="py-1.5 px-1">{lang === 'en' ? String(tlLicenseFee).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlLicenseFee)}</td>
-                                <td className="py-2.5 px-2">{lang === 'en' ? String(tlVat).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlVat)}</td>
-                                <td className="py-2.5 px-2">{lang === 'en' ? String(tlProfessionTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlProfessionTax)}</td>
-                                <td className="py-2.5 px-2">{lang === 'en' ? String(tlTradeTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlTradeTax)}</td>
+                                <td className="py-1.5 px-1">{true ? String(tlLicenseFee).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlLicenseFee)}</td>
+                                <td className="py-2.5 px-2">{true ? String(tlVat).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlVat)}</td>
+                                <td className="py-2.5 px-2">{true ? String(tlProfessionTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlProfessionTax)}</td>
+                                <td className="py-2.5 px-2">{true ? String(tlTradeTax).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlTradeTax)}</td>
                                 <td className="py-2.5 px-2 font-bold text-emerald-950 bg-emerald-50/25">
-                                  {lang === 'en' ? String(tlTotal).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(tlTotal)}
+                                  {true ? String(tlTotal).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : String(tlTotal)}
                                 </td>
                               </tr>
                               <tr className="bg-emerald-50/25 border-t border-emerald-300">
                                 <td colSpan={5} className="py-1.5 px-2 text-left font-bold text-emerald-950 text-[11px] sm:text-xs">
                                   <span className="text-slate-600 mr-2">
-                                    {lang === 'en' ? 'Total (In Words):' : 'মোট টাকা (কথায়):'}
+                                    {true ? 'Total (In Words):' : 'মোট টাকা (কথায়):'}
                                   </span>
                                   <span>{tlTotalInWords}</span>
                                 </td>
@@ -1544,7 +1544,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   <div className="text-center min-w-[170px]">
                     <div className="h-10"></div>
                     <div className="border-t-2 border-slate-900 pt-1 font-bold text-slate-950 text-xs">
-                      {lang === 'en' ? "Verifier's Signature" : "যাচাইকারীর স্বাক্ষর"}
+                      {true ? "Verifier's Signature" : "যাচাইকারীর স্বাক্ষর"}
                     </div>
                     <div className="text-[10px] text-slate-600">ইউপি সচিব / প্রশাসনিক কর্মকর্তা</div>
                   </div>
@@ -1565,10 +1565,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                   <div className="text-center min-w-[190px]">
                     <div className="h-10"></div>
                     <div className="border-t-2 border-slate-900 pt-1 font-bold text-slate-950 text-xs">
-                      {lang === 'en' ? "Authorized Signature" : "অনুমোদনকারীর স্বাক্ষর ও সীল"}
+                      {true ? "Authorized Signature" : "অনুমোদনকারীর স্বাক্ষর ও সীল"}
                     </div>
                     <div className="text-[10px] text-slate-600">
-                      {lang === 'en' ? "Chairman / Approving Authority" : "চেয়ারম্যান, ইউনিয়ন পরিষদ"}
+                      {true ? "Chairman / Approving Authority" : "চেয়ারম্যান, ইউনিয়ন পরিষদ"}
                     </div>
                   </div>
                 </div>
