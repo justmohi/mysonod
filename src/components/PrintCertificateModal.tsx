@@ -1216,11 +1216,21 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                   {/* Right Side: Union Council Logo (Logo 2 or Dynamic URL) */}
                   <div className={`shrink-0 flex flex-col items-center justify-center ${isTableCertificate ? 'pt-0' : 'pt-1'}`}>
-                    {settings.unionLogoUrl ? (
-                      <img 
-                        src={settings.unionLogoUrl} 
-                        alt="Union Council Seal" 
-                        className={`${isUltraCompactTable ? 'w-12 h-12' : (isTableCertificate ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-20 h-20 sm:w-24 sm:h-24')} object-contain drop-shadow-xs`} 
+                    {application.certificateType === 'trade_license' && application.ownerPhotoUrl ? (
+                      <img
+                        src={application.ownerPhotoUrl}
+                        alt="Trade license owner"
+                        className="h-20 w-16 sm:h-24 sm:w-20 rounded-sm border-2 border-[#0d5c3a] bg-white p-0.5 object-cover object-center"
+                        crossOrigin="anonymous"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    ) : settings.unionLogoUrl ? (
+                      <img
+                        src={settings.unionLogoUrl}
+                        alt="Union Council Seal"
+                        className={`${isUltraCompactTable ? 'w-12 h-12' : (isTableCertificate ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-20 h-20 sm:w-24 sm:h-24')} object-contain drop-shadow-xs`}
                         onError={(e) => {
                           (e.target as HTMLElement).style.display = 'none';
                         }}
@@ -1314,14 +1324,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
 
                         {/* Key-Value Alignment Section */}
                         <div className="relative border border-slate-400 overflow-hidden bg-transparent">
-                          {application.ownerPhotoUrl && (
-                            <img
-                              src={application.ownerPhotoUrl}
-                              alt="License owner"
-                              className="absolute right-2 top-[38px] z-10 h-14 w-11 rounded border border-slate-400 object-cover"
-                              crossOrigin="anonymous"
-                            />
-                          )}
                           <div className="bg-transparent text-[#006A4E] px-2 py-1 text-xs font-bold border-b border-slate-300 flex justify-between items-center">
                             <span>{true ? '1. Business & Licensee Particulars' : '১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি'}</span>
                             <span className="font-mono text-xs bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
@@ -1342,7 +1344,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true ? "Owner's Name:" : "মালিকের নাম:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1 pr-12">
+                              <strong className="text-slate-900 font-bold flex-1">
                                 {application.ownerName || application.userName || application.applicantNameBn || '—'}
                               </strong>
 
