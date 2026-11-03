@@ -1365,3 +1365,103 @@ select option {
     transform: none !important;
   }
 }
+
+/* Application form overflow safeguards — screen UI only. */
+@media screen {
+  #app-shell main .application-titlebar,
+  #app-shell main .application-form {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  #app-shell main .application-titlebar {
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 10px 14px;
+  }
+
+  #app-shell main .application-titlebar__title {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+  }
+
+  #app-shell main .application-titlebar__english {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    flex-shrink: 0;
+  }
+
+  #app-shell main .application-form,
+  #app-shell main .application-form * {
+    box-sizing: border-box;
+  }
+
+  #app-shell main .application-form .grid > *,
+  #app-shell main .application-form .flex > *,
+  #app-shell main .application-form .application-basic-grid > * {
+    min-width: 0;
+  }
+
+  #app-shell main .application-form input,
+  #app-shell main .application-form select,
+  #app-shell main .application-form textarea {
+    max-width: 100%;
+  }
+
+  #app-shell main .application-form label,
+  #app-shell main .application-form p,
+  #app-shell main .application-form span {
+    overflow-wrap: anywhere;
+  }
+
+  #app-shell main .application-form button {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #app-shell main .application-form .application-declaration__label,
+  #app-shell main .application-form .application-fee-row {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  #app-shell main .application-form table {
+    max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #app-shell main .application-titlebar {
+    align-items: flex-start;
+    gap: 8px 12px;
+    padding: 10px 12px;
+  }
+
+  #app-shell main .application-titlebar__title {
+    flex: 1 1 180px;
+    font-size: 14px;
+  }
+
+  #app-shell main .application-titlebar__english {
+    flex: 0 1 auto;
+    font-size: 12px;
+  }
+
+  #app-shell main .application-form {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  #app-shell main .application-form .application-fee-row > *,
+  #app-shell main .application-form .application-fee-row button {
+    min-width: 0;
+  }
+}
+
