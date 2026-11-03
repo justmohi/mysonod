@@ -997,7 +997,7 @@ select option {
   }
 
   #app-shell header .bg-\[\#0e6245\] {
-    background: linear-gradient(100deg, #07583f 0%, #0c7355 58%, #0b6658 100%) !important;
+    background: linear-gradient(100deg, #17243d 0%, #111d33 58%, #0b1528 100%) !important;
   }
 
   #app-shell aside {
@@ -1222,7 +1222,7 @@ select option {
   }
 
   #app-shell > header > div:first-child {
-    background: linear-gradient(100deg, #07583f, #0b6b51 58%, #087d75) !important;
+    background: linear-gradient(100deg, #17243d 0%, #111d33 58%, #0b1528 100%) !important;
   }
 
   #app-shell aside {
