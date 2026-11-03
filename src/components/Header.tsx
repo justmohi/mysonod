@@ -29,9 +29,9 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
   const isBalanceLow = balance < 2.0;
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-xl">
       {/* Top Banner with Union Name, Helpline, and Government Branding */}
-      <div className="bg-[#0e6245] text-white px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm">
+      <div className="bg-gradient-to-r from-[#073b2b] via-[#0e6245] to-[#126b4c] text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm">
         <div className="flex items-center space-x-2">
           <span className="font-semibold tracking-wide flex items-center gap-1.5">
             <Building2 className="w-4 h-4 text-emerald-300 inline" />
@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
       </div>
 
       {/* Notice Ticker Bar */}
-      <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-1.5 flex items-center overflow-hidden text-xs text-emerald-950">
+      <div className="bg-emerald-50/90 border-b border-emerald-100/80 px-4 py-2 flex items-center overflow-hidden text-xs text-emerald-950">
         <div className="flex items-center gap-1.5 font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded mr-3 shrink-0 uppercase tracking-wider text-[11px] animate-pulse">
           <Bell className="w-3 h-3" />
           <span>জরুরি নোটিশ</span>
@@ -82,9 +82,9 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
       </div>
 
       {/* Main Header Navigation Bar */}
-      <div className="px-4 py-3 flex items-center justify-between">
+      <div className="px-3 sm:px-5 py-3.5 flex items-center justify-between gap-2">
         {/* Left Side: Mobile Menu Button & App Identity */}
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
             onClick={onOpenMobileMenu}
             className="md:hidden p-2 text-slate-600 hover:text-emerald-700 hover:bg-slate-100 rounded-lg"
@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
             onClick={() => onNavigate('dashboard')} 
             className="cursor-pointer flex items-center gap-2.5"
           >
-            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md shadow-emerald-900/10 border border-emerald-100 overflow-hidden">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white flex items-center justify-center shadow-md shadow-emerald-900/10 border border-emerald-100 overflow-hidden">
               <img
                 src="/mysonod-logo.webp"
                 alt="MySonod"
@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
               />
             </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900 leading-tight">MySonod</h1>
+                <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 leading-tight">MySonod</h1>
                 <p className="text-xs text-slate-500 font-medium hidden sm:block">
                   {settings.unionName ? `${settings.unionName} ডিজিটাল সেন্টার` : 'ইউনিয়ন ডিজিটাল সেন্টার অনলাইন সেবা পোর্টাল'}
                 </p>
@@ -114,14 +114,14 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
         </div>
 
         {/* Right Side: Wallet Balance & User Profile */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Real-time Wallet Balance Badge (Mandatory Requirement) */}
-          <div className={`flex items-center rounded-xl p-1.5 pl-3 border transition-all ${
+          <div className={`flex items-center rounded-2xl p-1.5 sm:pl-3 border transition-all ${
             isBalanceLow 
               ? 'bg-red-50 border-red-300 text-red-900 ring-2 ring-red-400/20' 
               : 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
           }`}>
-            <div className="flex items-center gap-2 mr-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 mr-1.5 sm:mr-2">
               <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
                 isBalanceLow ? 'bg-red-200 text-red-700' : 'bg-emerald-600 text-white shadow-xs'
               }`}>
@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenMobileMenu, cu
           </div>
 
           {/* User Profile & Quick Actions */}
-          <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+          <div className="flex items-center gap-1 sm:gap-2 border-l border-slate-200 pl-2 sm:pl-3">
             <div className="hidden lg:block text-right">
               <span className="text-xs font-bold text-slate-800 block truncate max-w-[120px]">
                 {userProfile?.name || currentUser?.displayName || currentUser?.email?.split('@')[0] || 'নাগরিক'}
