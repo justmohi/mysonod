@@ -359,7 +359,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
   return (
     <div className="dashboard-redesign space-y-7">
       {/* Home certificate service grid — mirrors the main certificate selection page */}
-      <section className="rounded-2xl bg-transparent">
+      <section className="dashboard-services rounded-2xl bg-transparent">
         <div className="flex flex-wrap items-end justify-between gap-3 mb-4 px-1">
           <div>
             <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">
@@ -402,7 +402,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
       </section>
 
       {/* Required Stat Cards: Total Balance & Last Top-up + Application Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="dashboard-stats-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Stat Card 1: Total Balance (Crucial Prompt Requirement) */}
         <div className="group rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between">
           <div>
@@ -479,7 +479,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
       </div>
 
       {/* Monthly Analytics Bar Chart (Chart.js - Prompt Requirement) */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm">
+      <div className="dashboard-analytics-card rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div>
             <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -504,7 +504,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
 
 
       {/* Recent Applications Section */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+      <div className="dashboard-recent-card bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-base font-bold text-slate-900">
