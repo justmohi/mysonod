@@ -1043,7 +1043,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           }}
         />
       )}
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="w-full max-w-6xl min-w-0 mx-auto space-y-6">
       {/* Insufficient Balance Alert Modal */}
       {insufficientBalanceAlert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
