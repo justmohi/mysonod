@@ -1465,3 +1465,124 @@ select option {
   }
 }
 
+/* Print / duplicate modal controls: keep every action reachable inside viewport. */
+@media screen {
+  #print-modal-root {
+    box-sizing: border-box;
+    align-items: flex-start;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+  }
+
+  #print-modal-shell {
+    width: 100%;
+    max-width: 1120px;
+    min-width: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    box-sizing: border-box;
+  }
+
+  #print-modal-shell > .no-print {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #print-modal-shell > .no-print > div {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  #print-modal-shell > .no-print > div > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #print-modal-shell .inline-flex.rounded-xl {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #print-modal-shell .inline-flex.rounded-xl button {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #print-modal-shell .no-print button {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #print-modal-shell #dual-print-container {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #print-modal-shell #application-print-area,
+  #print-modal-shell #certificate-print-area {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #print-modal-root {
+    padding: 8px;
+  }
+
+  #print-modal-shell {
+    border-radius: 12px;
+  }
+
+  #print-modal-shell > .no-print > div {
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 8px;
+  }
+
+  #print-modal-shell > .no-print > div:first-child > div:first-child {
+    flex: 1 1 100%;
+  }
+
+  #print-modal-shell > .no-print > div:first-child > div:last-child {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  #print-modal-shell > .no-print > div:nth-child(2) {
+    align-items: stretch;
+  }
+
+  #print-modal-shell .inline-flex.rounded-xl {
+    width: 100%;
+  }
+
+  #print-modal-shell .inline-flex.rounded-xl button {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  #print-modal-shell > .no-print > div:nth-child(2) > div:last-child {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  #print-modal-shell > .no-print > div:nth-child(2) > div:last-child > button,
+  #print-modal-shell > .no-print > div:nth-child(2) > div:last-child > .relative {
+    flex: 1 1 auto;
+  }
+
+  #print-modal-shell > .no-print > div:nth-child(2) > div:last-child > .relative > button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
