@@ -450,7 +450,7 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
   };
 
   return (
-    <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden font-bangla">
+    <div className="trade-license-application max-w-5xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden font-bangla">
       {/* Top Banner Header with Forest Green Theme */}
       <div className="bg-[#006A4E] text-white p-5 sm:p-6 border-b border-[#005C36]">
         <div className="flex flex-wrap items-center justify-between gap-4">
