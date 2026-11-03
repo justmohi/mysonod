@@ -190,50 +190,44 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header Bar */}
-      <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="all-certificates-page space-y-6">
+      {/* Page introduction */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#073b2b] via-[#0d5c3a] to-[#147653] p-6 text-white shadow-lg shadow-emerald-950/10 sm:p-8">
+        <div className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full border-[24px] border-white/5" />
+        <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block mb-1">
-              ডিজিটাল রেকর্ড রুম
+            <span className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wide text-emerald-50">
+              <ShieldCheck className="h-3.5 w-3.5" /> DIGITAL RECORD ROOM
             </span>
-            <h2 className="text-2xl font-bold text-slate-900">
-              সকল প্রত্যয়ন পত্র ও লাইসেন্স
-            </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              আপনার দাখিলকৃত ও অনুমোদিত সকল সনদের বিস্তারিত তালিকা ও প্রিন্ট কপি
+            <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">সকল প্রত্যয়ন পত্র ও লাইসেন্স</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/85">
+              {isStaff ? 'সকল আবেদন যাচাই, সম্পাদনা ও অনুমোদনের রেকর্ড এক জায়গায় পরিচালনা করুন।' : 'আপনার দাখিলকৃত ও অনুমোদিত সকল সনদের অবস্থা এবং প্রিন্ট কপি দেখুন।'}
             </p>
           </div>
-
-          <button
-            onClick={() => onNavigate('apply')}
-            className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-xs"
-          >
-            <Plus className="w-4 h-4" />
-            <span>নতুন আবেদন করুন</span>
+          <button onClick={() => onNavigate('apply')} className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-emerald-900 shadow-sm transition hover:bg-emerald-50">
+            <Plus className="h-4 w-4" /> নতুন আবেদন করুন
           </button>
         </div>
+      </div>
 
-        {/* Filters and Search Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-4 border-t border-slate-100">
-          <div className="sm:col-span-2 relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="আবেদনকারীর নাম, এনআইডি অথবা ট্র্যাকিং আইডি দিয়ে খুঁজুন..."
-              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+      {/* Search and filters */}
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-extrabold text-slate-800">আবেদন খুঁজুন ও ফিল্টার করুন</h3>
+            <p className="mt-0.5 text-xs text-slate-500">নাম, পরিচয়পত্র বা ট্র্যাকিং নম্বর দিয়ে রেকর্ড খুঁজুন</p>
           </div>
-
-          <div className="relative">
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-            >
+          <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">
+            মোট {toBengaliNumber(filteredApps.length)} / {toBengaliNumber(applications.length)} টি
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="relative sm:col-span-2">
+            <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="আবেদনকারীর নাম, এনআইডি অথবা ট্র্যাকিং আইডি দিয়ে খুঁজুন..." className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-3 text-sm text-slate-800 transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/10" />
+          </div>
+          <div>
+            <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 transition focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/10">
               <option value="all">সনদের ধরণ: সকল</option>
               {(Object.keys(CERTIFICATE_CATALOG) as CertificateType[]).map(t => (
                 <option key={t} value={t}>{CERTIFICATE_CATALOG[t].titleBn}</option>
@@ -244,7 +238,7 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
       </div>
 
       {/* Applications Grid / Table */}
-      <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200">
+      <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm sm:p-5">
         {loading ? (
           <div className="text-center py-12">
             <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
@@ -263,9 +257,9 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b border-slate-200">
+          <div className="overflow-x-auto rounded-xl border border-slate-100">
+            <table className="w-full min-w-[1050px] text-xs text-left">
+              <thead className="border-b border-slate-200 bg-slate-50/90 text-[10px] font-extrabold uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
                   <th className="py-3 px-3">সনদের নাম</th>
@@ -279,12 +273,12 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredApps.map((app) => (
-                  <tr key={app.id} className="hover:bg-slate-50/80">
+                  <tr key={app.id} className="transition-colors hover:bg-emerald-50/40">
                     <td className="py-3 px-3 font-mono font-bold text-emerald-800">
                       {app.trackingId}
                     </td>
                     <td className="py-3 px-3">
-                      <span className="font-semibold text-slate-900 block">{app.certificateTitleBn}</span>
+                      <span className="block font-bold text-slate-800">{app.certificateTitleBn}</span>
                       <span className="text-[10px] text-slate-400">ফি: {formatCurrencyBn(app.fee)}</span>
                     </td>
                     <td className="py-3 px-3 font-medium text-slate-800">
