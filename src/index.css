@@ -1516,3 +1516,147 @@ select option {
   }
 }
 
+/* Application Form UI refresh — presentation only; keep all form logic and fields intact. */
+@media screen {
+  #app-shell main .application-form,
+  #app-shell main .trade-license-application,
+  #app-shell main .warish-application {
+    min-width: 0;
+    color: #18313b;
+  }
+
+  #app-shell main .application-form {
+    max-width: 100%;
+    padding: 20px;
+    border: 1px solid #dce8e9;
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(17, 55, 64, .055);
+  }
+
+  #app-shell main .application-titlebar {
+    min-height: 54px;
+    padding: 12px 18px;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    background: linear-gradient(105deg, #07583f 0%, #087653 62%, #0d9488 100%);
+    box-shadow: 0 6px 18px rgba(7, 88, 63, .14);
+  }
+
+  #app-shell main .application-form .bg-slate-50\/70,
+  #app-shell main .trade-license-application form > .bg-slate-50\/70,
+  #app-shell main .warish-application form > .bg-slate-50\/70 {
+    background: #fbfdfd !important;
+    border: 1px solid #dce8e9 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 3px 12px rgba(17, 55, 64, .035) !important;
+  }
+
+  #app-shell main .trade-license-application form > .bg-slate-50\/70,
+  #app-shell main .warish-application form > .bg-slate-50\/70 {
+    padding: 18px;
+  }
+
+  #app-shell main .trade-license-application form > .bg-slate-50\/70 > div:first-child,
+  #app-shell main .warish-application form > .bg-slate-50\/70 > div:first-child {
+    border-bottom-color: #dce8e9;
+    padding-bottom: 12px;
+  }
+
+  #app-shell main .trade-license-application form > .bg-slate-50\/70 h3,
+  #app-shell main .warish-application form > .bg-slate-50\/70 h3 {
+    color: #07583f;
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+
+  #app-shell main .application-form label,
+  #app-shell main .trade-license-application label,
+  #app-shell main .warish-application label {
+    line-height: 1.5;
+  }
+
+  #app-shell main .application-form input:not([type="checkbox"]):not([type="radio"]),
+  #app-shell main .application-form select,
+  #app-shell main .application-form textarea,
+  #app-shell main .trade-license-application input:not([type="checkbox"]):not([type="radio"]),
+  #app-shell main .trade-license-application select,
+  #app-shell main .trade-license-application textarea,
+  #app-shell main .warish-application input:not([type="checkbox"]):not([type="radio"]),
+  #app-shell main .warish-application select,
+  #app-shell main .warish-application textarea {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 40px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+  }
+
+  #app-shell main .application-form input:focus,
+  #app-shell main .application-form select:focus,
+  #app-shell main .application-form textarea:focus,
+  #app-shell main .trade-license-application input:focus,
+  #app-shell main .trade-license-application select:focus,
+  #app-shell main .trade-license-application textarea:focus,
+  #app-shell main .warish-application input:focus,
+  #app-shell main .warish-application select:focus,
+  #app-shell main .warish-application textarea:focus {
+    border-color: #0d9488 !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, .12) !important;
+    outline: none;
+  }
+
+  #app-shell main .trade-license-application > div:first-child {
+    background: linear-gradient(110deg, #07583f, #087653 65%, #0d9488) !important;
+    border-bottom-color: rgba(255,255,255,.15);
+  }
+
+  #app-shell main .trade-license-application form,
+  #app-shell main .warish-application form {
+    min-width: 0;
+  }
+
+  #app-shell main .application-form .application-fee-row {
+    border-radius: 12px !important;
+    border-color: #cfe5df !important;
+    background: #f2faf7 !important;
+  }
+
+  #app-shell main .application-form button[type="submit"],
+  #app-shell main .trade-license-application button[type="submit"],
+  #app-shell main .warish-application button[type="submit"] {
+    min-height: 44px;
+    border-radius: 10px;
+    box-shadow: 0 5px 14px rgba(7, 88, 63, .15);
+  }
+
+  #app-shell main .trade-license-application *,
+  #app-shell main .warish-application * {
+    min-width: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #app-shell main .application-form {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  #app-shell main .trade-license-application form,
+  #app-shell main .warish-application form {
+    padding: 14px;
+    gap: 16px;
+  }
+
+  #app-shell main .trade-license-application form > .bg-slate-50\/70,
+  #app-shell main .warish-application form > .bg-slate-50\/70 {
+    padding: 13px;
+    border-radius: 12px !important;
+  }
+
+  #app-shell main .application-titlebar {
+    align-items: flex-start;
+    border-radius: 10px;
+  }
+}
+
