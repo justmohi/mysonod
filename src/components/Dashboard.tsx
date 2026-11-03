@@ -357,7 +357,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
   const pendingCount = applications.filter(a => a.status === 'Pending').length;
 
   return (
-    <div className="space-y-6">
+    <div className="dashboard-redesign space-y-7">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#073b2b] via-[#0d5c3a] to-[#147653] px-6 py-7 sm:px-8 sm:py-9 text-white shadow-lg shadow-emerald-950/10">
+        <div className="pointer-events-none absolute -right-12 -top-16 h-64 w-64 rounded-full border-[28px] border-white/5" />
+        <div className="pointer-events-none absolute right-24 -bottom-24 h-56 w-56 rounded-full bg-emerald-300/10 blur-2xl" />
+        <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-emerald-50">
+              <ShieldCheck className="h-3.5 w-3.5" /> MySonod Digital Service Portal
+            </span>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
+              স্বাগতম, {userProfile?.name || currentUser?.displayName || 'ব্যবহারকারী'}
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/85">
+              প্রয়োজনীয় সনদ সেবা নির্বাচন করুন এবং আপনার আবেদনের অগ্রগতি এক জায়গা থেকে দেখুন।
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <button type="button" onClick={() => onNavigate('apply')} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-sm transition hover:bg-emerald-50">
+              <PlusCircle className="h-4 w-4" /> নতুন আবেদন
+            </button>
+            <button type="button" onClick={() => onNavigate('certificates')} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/15">
+              <FileText className="h-4 w-4" /> আমার আবেদন
+            </button>
+          </div>
+        </div>
+      </section>
       {/* Home certificate service grid — mirrors the main certificate selection page */}
       <section className="rounded-2xl bg-transparent">
         <div className="flex flex-wrap items-end justify-between gap-3 mb-4 px-1">
@@ -374,7 +399,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
           </span>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {HOME_CERTIFICATES.map((certificate) => {
             const Icon = CERTIFICATE_ICON_MAP[certificate.iconName] || FileText;
 
@@ -383,16 +408,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
                 key={certificate.type}
                 type="button"
                 onClick={() => onNavigate('apply_form', { certType: certificate.type })}
-                className="group min-h-[132px] rounded-xl bg-[#173f68] hover:bg-[#123556] text-white px-4 py-5 shadow-[0_8px_18px_rgba(15,23,42,0.14)] border border-[#28527d] transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 flex flex-col items-center justify-center text-center"
+                className="group relative min-h-[142px] overflow-hidden rounded-2xl border border-slate-200/90 bg-white px-4 py-5 text-slate-800 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-900/8 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 flex flex-col items-center justify-center text-center"
               >
-                <span className="w-12 h-12 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <Icon className="w-7 h-7 text-white" strokeWidth={2.2} />
+                <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-700 via-teal-500 to-emerald-300 opacity-0 transition-opacity group-hover:opacity-100" />
+                <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-800 ring-1 ring-emerald-100 transition-all group-hover:scale-105 group-hover:bg-emerald-700 group-hover:text-white">
+                  <Icon className="h-6 w-6" strokeWidth={2} />
                 </span>
-                <span className="text-sm sm:text-[15px] font-bold leading-snug font-bangla">
+                <span className="text-sm font-bold leading-snug text-slate-800 sm:text-[15px] font-bangla">
                   {certificate.titleBn}
                 </span>
-                <span className="mt-1 text-[10px] text-blue-100/80 opacity-0 group-hover:opacity-100 transition-opacity">
-                  আবেদন করুন
+                <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
+                  আবেদন করুন <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </span>
               </button>
             );
@@ -403,7 +429,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
       {/* Required Stat Cards: Total Balance & Last Top-up + Application Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Stat Card 1: Total Balance (Crucial Prompt Requirement) */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+        <div className="group rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
               মোট ওয়ালেট ব্যালেন্স (Total Balance)
@@ -478,7 +504,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
       </div>
 
       {/* Monthly Analytics Bar Chart (Chart.js - Prompt Requirement) */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div>
             <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
