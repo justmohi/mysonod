@@ -1137,15 +1137,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                         </div>
                       ) : null}
 
-                  {/* Duplicate Watermark / Badge if enabled */}
-                  {isDuplicateCopy && (
-                    <div className="absolute top-2 right-2 pointer-events-none z-20">
-                      <div className="bg-amber-100 text-amber-900 border-2 border-amber-600 px-3 py-1 rounded-md text-xs font-black uppercase tracking-widest shadow-xs">
-                        {lang === 'en' ? 'DUPLICATE COPY • OFFICIAL RECORD' : 'অনুলিপি • ডুপ্লিকেট কপি'}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Certificate Content - Positioned Above Watermark with clean flow */}
                   <div className={`certificate-content relative z-10 h-full flex flex-col justify-between flex-1 ${!isTableCertificate ? 'main-certificate-content' : ''}`}>
                     {/* Central Content Section Wrapped in Flexible Auto-Spreading Container */}
@@ -1663,11 +1654,6 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                     <div className="font-mono font-bold text-emerald-900 text-[10.5px]">
                       {application.trackingId}
                     </div>
-                    {isDuplicateCopy && (
-                      <span className="inline-block text-[9px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200">
-                        {lang === 'en' ? '[DUPLICATE COPY]' : '[অনুলিপি কপি]'}
-                      </span>
-                    )}
                   </div>
                 </div>
 
