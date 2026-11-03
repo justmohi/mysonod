@@ -358,31 +358,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onViewCertific
 
   return (
     <div className="dashboard-redesign space-y-7">
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#073b2b] via-[#0d5c3a] to-[#147653] px-6 py-7 sm:px-8 sm:py-9 text-white shadow-lg shadow-emerald-950/10">
-        <div className="pointer-events-none absolute -right-12 -top-16 h-64 w-64 rounded-full border-[28px] border-white/5" />
-        <div className="pointer-events-none absolute right-24 -bottom-24 h-56 w-56 rounded-full bg-emerald-300/10 blur-2xl" />
-        <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-emerald-50">
-              <ShieldCheck className="h-3.5 w-3.5" /> MySonod Digital Service Portal
-            </span>
-            <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-              স্বাগতম, {userProfile?.name || currentUser?.displayName || 'ব্যবহারকারী'}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/85">
-              প্রয়োজনীয় সনদ সেবা নির্বাচন করুন এবং আপনার আবেদনের অগ্রগতি এক জায়গা থেকে দেখুন।
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            <button type="button" onClick={() => onNavigate('apply')} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-sm transition hover:bg-emerald-50">
-              <PlusCircle className="h-4 w-4" /> নতুন আবেদন
-            </button>
-            <button type="button" onClick={() => onNavigate('certificates')} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/15">
-              <FileText className="h-4 w-4" /> আমার আবেদন
-            </button>
-          </div>
-        </div>
-      </section>
       {/* Home certificate service grid — mirrors the main certificate selection page */}
       <section className="rounded-2xl bg-transparent">
         <div className="flex flex-wrap items-end justify-between gap-3 mb-4 px-1">
