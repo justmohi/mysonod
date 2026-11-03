@@ -257,8 +257,8 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-slate-100">
-            <table className="w-full min-w-[1050px] text-xs text-left">
+          <div className="overflow-hidden rounded-xl border border-slate-100">
+            <table className="all-certificates-table w-full table-fixed text-xs text-left">
               <thead className="border-b border-slate-200 bg-slate-50/90 text-[10px] font-extrabold uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
