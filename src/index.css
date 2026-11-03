@@ -1465,3 +1465,54 @@ select option {
   }
 }
 
+/* Keep the All Certificates table and its action buttons visible without horizontal scrolling. */
+@media screen {
+  #app-shell main .all-certificates-table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+  }
+
+  #app-shell main .all-certificates-table th,
+  #app-shell main .all-certificates-table td {
+    min-width: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    vertical-align: middle;
+  }
+
+  #app-shell main .all-certificates-table thead th {
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  #app-shell main .all-certificates-table th:nth-child(1) { width: 14%; }
+  #app-shell main .all-certificates-table th:nth-child(2) { width: 12%; }
+  #app-shell main .all-certificates-table th:nth-child(3) { width: 12%; }
+  #app-shell main .all-certificates-table th:nth-child(4) { width: 13%; }
+  #app-shell main .all-certificates-table th:nth-child(5) { width: 12%; }
+  #app-shell main .all-certificates-table th:nth-child(6) { width: 10%; }
+  #app-shell main .all-certificates-table th:nth-child(7) { width: 11%; }
+  #app-shell main .all-certificates-table th:nth-child(8) { width: 16%; }
+
+  #app-shell main .all-certificates-table td:last-child > div {
+    min-width: 0;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  #app-shell main .all-certificates-table td:last-child button {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #app-shell main .all-certificates-table td:last-child button span {
+    min-width: 0;
+  }
+}
+
