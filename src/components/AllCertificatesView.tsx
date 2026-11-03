@@ -191,25 +191,6 @@ export const AllCertificatesView: React.FC<AllCertificatesViewProps> = ({
 
   return (
     <div className="all-certificates-page space-y-6">
-      {/* Page introduction */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#073b2b] via-[#0d5c3a] to-[#147653] p-6 text-white shadow-lg shadow-emerald-950/10 sm:p-8">
-        <div className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full border-[24px] border-white/5" />
-        <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <span className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wide text-emerald-50">
-              <ShieldCheck className="h-3.5 w-3.5" /> DIGITAL RECORD ROOM
-            </span>
-            <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">সকল প্রত্যয়ন পত্র ও লাইসেন্স</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/85">
-              {isStaff ? 'সকল আবেদন যাচাই, সম্পাদনা ও অনুমোদনের রেকর্ড এক জায়গায় পরিচালনা করুন।' : 'আপনার দাখিলকৃত ও অনুমোদিত সকল সনদের অবস্থা এবং প্রিন্ট কপি দেখুন।'}
-            </p>
-          </div>
-          <button onClick={() => onNavigate('apply')} className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-emerald-900 shadow-sm transition hover:bg-emerald-50">
-            <Plus className="h-4 w-4" /> নতুন আবেদন করুন
-          </button>
-        </div>
-      </div>
-
       {/* Search and filters */}
       <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
