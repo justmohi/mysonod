@@ -414,7 +414,7 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
   };
 
   return (
-    <div className="w-full font-bangla">
+    <div className="warish-application w-full font-bangla">
       {/* Main Form Body */}
       <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8 space-y-6">
       <datalist id="mysonod-village-suggestions">{villageSuggestions.map((name, index) => <option key={`${name}-${index}`} value={name} />)}</datalist>
