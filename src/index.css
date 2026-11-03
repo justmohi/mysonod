@@ -1226,8 +1226,8 @@ select option {
   }
 
   #app-shell aside {
-    background: linear-gradient(180deg, #073f31 0%, #06382f 58%, #082f2b 100%) !important;
-    border-right: 1px solid rgba(167, 243, 208, .12);
+    background: linear-gradient(180deg, #17243d 0%, #111d33 56%, #0b1528 100%) !important;
+    border-right: 1px solid rgba(148, 163, 184, .16);
   }
 
   #app-shell aside button {
