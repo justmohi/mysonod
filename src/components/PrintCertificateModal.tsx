@@ -87,6 +87,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   }, [application?.trackingId, application?.status, settings.updatedAt, settings.unionName]);
 
   if (!application) return null;
+  // Keep a stable non-null reference for nested certificate JSX expressions.
+  const applicationData: CertificateApplication = application;
 
   const certMeta = CERTIFICATE_CATALOG[application.certificateType];
   const titleBn = application.certificateTitleBn || certMeta?.titleBn || 'প্রত্যয়ন পত্র';
@@ -1319,7 +1321,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             <span>{true ? '1. Business & Licensee Particulars' : '১. ব্যবসা ও লাইসেন্সধারীর পরিচিতি'}</span>
                             <span className="font-mono text-[12px] bg-emerald-900/10 text-emerald-950 px-2.5 py-0.5 rounded border border-emerald-500/40 font-bold">
                               {true ? 'Fiscal Year: ' : 'অর্থবছর: '}
-                              {application.fiscalYear || '2026-2027'}
+                              {applicationData.fiscalYear || '2026-2027'}
                             </span>
                           </div>
 
@@ -1328,7 +1330,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true ? "Business Name:" : "ব্যবসা প্রতিষ্ঠানের নাম:"}
                               </span>
-                              <strong className="text-emerald-950 font-bold flex-1">{application.businessName || '—'}</strong>
+                              <strong className="text-emerald-950 font-bold flex-1">{applicationData.businessName || '—'}</strong>
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
@@ -1336,7 +1338,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 {true ? "Owner's Name:" : "মালিকের নাম:"}
                               </span>
                               <strong className="text-slate-900 font-bold flex-1">
-                                {application.ownerName || application.userName || application.applicantNameBn || '—'}
+                                {applicationData.ownerName || applicationData.userName || applicationData.applicantNameBn || '—'}
                               </strong>
 
                             </div>
@@ -1344,11 +1346,11 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             <div className="flex border-b border-slate-100 pb-1">
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true
-                                  ? (application.guardianType === 'husband' ? "Husband Name:" : "Father Name:")
-                                  : (application.guardianType === 'husband' ? "স্বামীর নাম:" : "পিতার নাম:")}
+                                  ? (applicationData.guardianType === 'husband' ? "Husband Name:" : "Father Name:")
+                                  : (applicationData.guardianType === 'husband' ? "স্বামীর নাম:" : "পিতার নাম:")}
                               </span>
                               <span className="text-slate-900 font-semibold flex-1">
-                                {application.ownerFatherOrHusbandName || application.fatherName || application.spouseName || '—'}
+                                {applicationData.ownerFatherOrHusbandName || applicationData.fatherName || applicationData.spouseName || '—'}
                               </span>
                             </div>
 
@@ -1357,7 +1359,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                                 {true ? "Mother's Name:" : "মাতার নাম:"}
                               </span>
                               <span className="text-slate-900 font-semibold flex-1">
-                                {application.ownerMotherName || application.motherName || '—'}
+                                {applicationData.ownerMotherName || applicationData.motherName || '—'}
                               </span>
                             </div>
 
@@ -1365,7 +1367,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true ? "Nature of Business:" : "ব্যবসায়ের প্রকৃতি:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1">{true ? (({ 'একক মালিকানা': 'Sole Proprietorship', 'যৌথ / অংশীদারি': 'Partnership', 'প্রাইভেট লিমিটেড কোম্পানি': 'Private Limited Company', 'পাবলিক লিমিটেড কোম্পানি': 'Public Limited Company', 'সমবায় সমিতি': 'Cooperative', 'অন্যান্য': 'Other' } as Record<string, string>)[application.businessNature || 'একক মালিকানা'] || application.businessNature || 'Sole Proprietorship') : (application.businessNature || 'একক মালিকানা')}</strong>
+                              <strong className="text-slate-900 font-bold flex-1">{true ? (({ 'একক মালিকানা': 'Sole Proprietorship', 'যৌথ / অংশীদারি': 'Partnership', 'প্রাইভেট লিমিটেড কোম্পানি': 'Private Limited Company', 'পাবলিক লিমিটেড কোম্পানি': 'Public Limited Company', 'সমবায় সমিতি': 'Cooperative', 'অন্যান্য': 'Other' } as Record<string, string>)[applicationData.businessNature || 'একক মালিকানা'] || applicationData.businessNature || 'Sole Proprietorship') : (applicationData.businessNature || 'একক মালিকানা')}</strong>
                             </div>
 
                             <div className="flex border-b border-slate-100 pb-1">
@@ -1374,8 +1376,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               </span>
                               <span className="font-mono font-bold text-slate-900 flex-1">
                                 {true 
-                                  ? (application.ownerNidOrBirth || application.nidOrBirthReg) 
-                                  : (application.ownerNidOrBirth || application.nidOrBirthReg || '').toString().replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())}
+                                  ? (applicationData.ownerNidOrBirth || applicationData.nidOrBirthReg) 
+                                  : (applicationData.ownerNidOrBirth || applicationData.nidOrBirthReg || '').toString().replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString())}
                               </span>
                             </div>
 
@@ -1383,7 +1385,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true ? "Category / Type of Trade:" : "ব্যবসায়ের ধরন:"}
                               </span>
-                              <strong className="text-slate-900 font-bold flex-1">{application.businessType || (true ? 'General Business' : 'সাধারণ ব্যবসা')}</strong>
+                              <strong className="text-slate-900 font-bold flex-1">{applicationData.businessType || (true ? 'General Business' : 'সাধারণ ব্যবসা')}</strong>
                             </div>
 
                             <div className="flex items-center gap-1 border-b border-slate-100 pb-1">
@@ -1392,8 +1394,8 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               </span>
                               <strong className="min-w-0 whitespace-nowrap text-[12px] text-emerald-900 font-bold">
                                 {(() => {
-                                  const startDate = String(application.validityStart || '01-07-2026');
-                                  const endDate = String(application.validityEnd || '30-06-2027');
+                                  const startDate = String(applicationData.validityStart || '01-07-2026');
+                                  const endDate = String(applicationData.validityEnd || '30-06-2027');
                                   const startYear = startDate.match(/\d{4}/)?.[0] || '2026';
                                   const endYear = endDate.match(/\d{4}/)?.[0] || '2027';
                                   return `${startYear}-${endYear}`;
@@ -1405,26 +1407,26 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span className="w-44 text-slate-600 shrink-0 font-medium">
                                 {true ? "Business Address:" : "ব্যবসা প্রতিষ্ঠানের ঠিকানা:"}
                               </span>
-                              <span className="text-slate-900 font-semibold flex-1">{application.businessAddress || '—'}</span>
+                              <span className="text-slate-900 font-semibold flex-1">{applicationData.businessAddress || '—'}</span>
                             </div>
 
-                            {application.showCapitalOnPrint !== false && (
+                            {applicationData.showCapitalOnPrint !== false && (
                               <div className="flex border-b border-slate-100 pb-1">
                                 <span className="w-44 text-slate-600 shrink-0 font-medium">
                                   {true ? "Invested Capital:" : "ব্যবসার মূলধন:"}
                                 </span>
                                 <strong className="text-emerald-900 font-bold flex-1">
-                                  {true ? String(application.businessCapital || 0).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(application.businessCapital)}
+                                  {true ? String(applicationData.businessCapital || 0).replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : formatCurrencyBn(applicationData.businessCapital)}
                                 </strong>
                               </div>
                             )}
 
-                            {application.tinNumber && (
+                            {applicationData.tinNumber && (
                               <div className="flex border-b border-slate-100 pb-1">
                                 <span className="w-44 text-slate-600 shrink-0 font-medium">
                                   {true ? "e-TIN Number:" : "ই-টিন নম্বর:"}
                                 </span>
-                                <span className="font-mono font-bold text-slate-900 flex-1">{application.tinNumber}</span>
+                                <span className="font-mono font-bold text-slate-900 flex-1">{applicationData.tinNumber}</span>
                               </div>
                             )}
                           </div>
@@ -1438,9 +1440,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span>{true ? 'Present Address:' : 'মালিকের বর্তমান ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>{true ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{true ? (presentVillageEn || '—') : (application.presentVillage || application.village || '—')}</b></div>
-                              <div>{true ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{true ? String(presentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.presentWard || application.wardNo)}</b> | {true ? 'Post Office:' : 'ডাকঘর:'} <b>{true ? (presentPostEn || '—') : (application.presentPost || application.postOffice || '—')}</b></div>
-                              <div>{true ? 'Upazila:' : 'উপজেলা:'} <b>{true ? presentUpazilaEn : (application.presentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {true ? 'District:' : 'জেলা:'} <b>{true ? presentDistrictEn : (application.presentDistrict || settings.district || districtFallbackBn)}</b></div>
+                              <div>{true ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{true ? (presentVillageEn || '—') : (applicationData.presentVillage || applicationData.village || '—')}</b></div>
+                              <div>{true ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{true ? String(presentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(applicationData.presentWard || applicationData.wardNo)}</b> | {true ? 'Post Office:' : 'ডাকঘর:'} <b>{true ? (presentPostEn || '—') : (applicationData.presentPost || applicationData.postOffice || '—')}</b></div>
+                              <div>{true ? 'Upazila:' : 'উপজেলা:'} <b>{true ? presentUpazilaEn : (applicationData.presentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {true ? 'District:' : 'জেলা:'} <b>{true ? presentDistrictEn : (applicationData.presentDistrict || settings.district || districtFallbackBn)}</b></div>
                             </div>
                           </div>
 
@@ -1450,9 +1452,9 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                               <span>{true ? 'Permanent Address:' : 'মালিকের স্থায়ী ঠিকানা:'}</span>
                             </h4>
                             <div className="space-y-0.5 text-slate-800 leading-relaxed">
-                              <div>{true ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{true ? (permanentVillageEn || '—') : (application.permanentVillage || application.village || '—')}</b></div>
-                              <div>{true ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{true ? String(permanentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(application.permanentWard || application.wardNo)}</b> | {true ? 'Post Office:' : 'ডাকঘর:'} <b>{true ? (permanentPostEn || '—') : (application.permanentPost || application.postOffice || '—')}</b></div>
-                              <div>{true ? 'Upazila:' : 'উপজেলা:'} <b>{true ? permanentUpazilaEn : (application.permanentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {true ? 'District:' : 'জেলা:'} <b>{true ? permanentDistrictEn : (application.permanentDistrict || settings.district || districtFallbackBn)}</b></div>
+                              <div>{true ? 'Village / Road:' : 'গ্রাম/সড়ক:'} <b>{true ? (permanentVillageEn || '—') : (applicationData.permanentVillage || applicationData.village || '—')}</b></div>
+                              <div>{true ? 'Ward No:' : 'ওয়ার্ড নং:'} <b>{true ? String(permanentWardEn || '—').replace(/[০-৯]/g, digit => '০১২৩৪৫৬৭৮৯'.indexOf(digit).toString()) : toBengaliNumber(applicationData.permanentWard || applicationData.wardNo)}</b> | {true ? 'Post Office:' : 'ডাকঘর:'} <b>{true ? (permanentPostEn || '—') : (applicationData.permanentPost || applicationData.postOffice || '—')}</b></div>
+                              <div>{true ? 'Upazila:' : 'উপজেলা:'} <b>{true ? permanentUpazilaEn : (applicationData.permanentUpazila || settings.upazila || upazilaFallbackBn)}</b> | {true ? 'District:' : 'জেলা:'} <b>{true ? permanentDistrictEn : (applicationData.permanentDistrict || settings.district || districtFallbackBn)}</b></div>
                             </div>
                           </div>
                         </div>
