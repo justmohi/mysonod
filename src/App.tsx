@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { UnionSettingsProvider } from './context/UnionSettingsContext';
 import { Header } from './components/Header';
@@ -28,6 +28,12 @@ function AppContent() {
   const [selectedCertificateForPrint, setSelectedCertificateForPrint] = useState<CertificateApplication | null>(null);
   const [isPrintDuplicate, setIsPrintDuplicate] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const mainContentRef = useRef<HTMLElement | null>(null);
+
+  // Reset the shared scroll container whenever the active page changes.
+  useEffect(() => {
+    mainContentRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [currentView]);
 
   // Test connection on boot per Firebase skill guidelines
   useEffect(() => {
@@ -108,7 +114,7 @@ function AppContent() {
             />
 
             {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <main ref={mainContentRef} className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
               {currentView === 'certificate_stats' && <CertificateApplicationStats />}
 
               {currentView === 'dashboard' && (
