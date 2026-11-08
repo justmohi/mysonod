@@ -1824,33 +1824,35 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </div>
 
               {selectedType !== 'guardian_permission' && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? 'Upazila *' : 'উপজেলা *'}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={presentUpazila}
-                  onChange={(e) => handlePresentUpazilaChange(e.target.value)}
-                  placeholder={language === 'en' ? 'Upazila' : 'উপজেলা'}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
-                />
-              </div>
+                <>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      {language === 'en' ? 'Upazila *' : 'উপজেলা *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={presentUpazila}
+                      onChange={(e) => handlePresentUpazilaChange(e.target.value)}
+                      placeholder={language === 'en' ? 'Upazila' : 'উপজেলা'}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? 'District *' : 'জেলা *'}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={presentDistrict}
-                  onChange={(e) => handlePresentDistrictChange(e.target.value)}
-                  placeholder={language === 'en' ? 'District' : 'জেলা'}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
-                />
-              </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      {language === 'en' ? 'District *' : 'জেলা *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={presentDistrict}
+                      onChange={(e) => handlePresentDistrictChange(e.target.value)}
+                      placeholder={language === 'en' ? 'District' : 'জেলা'}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
+                    />
+                  </div>
+                </>
               )}
             </div>
           </div>
