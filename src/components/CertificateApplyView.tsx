@@ -1756,12 +1756,12 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           </div>
 
           {/* 2.1 Present Address Block */}
-          <div className="bg-slate-50/70 p-4 rounded-xl border border-slate-200">
+          <div className={`bg-slate-50/70 p-4 rounded-xl border border-slate-200 ${selectedType === 'guardian_permission' ? 'guardian-permission-address' : ''}`}>
             <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-emerald-600" />
               <span>{language === 'en' ? 'Present Address *' : 'বর্তমান ঠিকানা *'}</span>
             </h4>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+            <div className={`grid grid-cols-2 md:grid-cols-5 gap-3 text-sm ${selectedType === 'guardian_permission' ? 'guardian-permission-address-grid' : ''}`}>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'en' ? 'Village / Para *' : 'গ্রাম / মহল্লা *'}
