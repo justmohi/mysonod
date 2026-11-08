@@ -1208,7 +1208,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           }}
         />
       ) : (
-        <form onSubmit={handleSubmit} className="application-form space-y-5">
+        <form onSubmit={handleSubmit} className={`application-form space-y-5 ${selectedType === 'guardian_permission' ? 'guardian-permission-form' : ''}`}>
         {/* Clean Duplicate Copy / Previous Record Notice */}
         {sharedProfileFound && !existingRecordFound && (
           <div className="bg-blue-50/95 border border-blue-300 px-4 py-3.5 rounded-xl shadow-2xs animate-in fade-in flex flex-wrap items-center justify-between gap-3">
@@ -1546,7 +1546,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               </label>
             </>
           ) : (
-            <div className="application-basic-grid grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+            <div className={`application-basic-grid grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm ${selectedType === 'guardian_permission' ? 'md:grid-cols-3' : ''}`}>
               {language !== 'en' && (
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -1737,7 +1737,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           <>
         {/* Section 2: Address Info (Present & Permanent Addresses) */}
         <div className="space-y-5">
-          <div className="pb-2 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div className={selectedType === 'guardian_permission' ? 'hidden' : 'pb-2 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2'}>
             <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
               <Home className="w-4 h-4 text-emerald-600" />
               <span>{language === 'en' ? '2. Present & Permanent Address' : '২. বর্তমান ও স্থায়ী ঠিকানা'}</span>
@@ -1823,6 +1823,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
+              {selectedType !== 'guardian_permission' && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'en' ? 'Upazila *' : 'উপজেলা *'}
@@ -1837,6 +1838,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
+              {selectedType !== 'guardian_permission' && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'en' ? 'District *' : 'জেলা *'}
@@ -1850,11 +1852,13 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
                 />
               </div>
+              )}
+              )}
             </div>
           </div>
 
           {/* 2.2 Permanent Address Block */}
-          {!sameAsPresent && (
+          {!sameAsPresent && selectedType !== 'guardian_permission' && (
           <div className="p-4 rounded-xl border bg-slate-50/70 border-slate-200">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
