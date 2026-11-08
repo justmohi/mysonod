@@ -1838,7 +1838,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
-              {selectedType !== 'guardian_permission' && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'en' ? 'District *' : 'জেলা *'}
@@ -1852,7 +1851,6 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white text-xs"
                 />
               </div>
-              )}
               )}
             </div>
           </div>
