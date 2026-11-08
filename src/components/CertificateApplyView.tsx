@@ -1550,14 +1550,14 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
               {language !== 'en' && (
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    আবেদনকারীর নাম (বাংলায়) *
+                    {selectedType === 'guardian_permission' ? 'অভিভাবকের নাম *' : 'আবেদনকারীর নাম (বাংলায়) *'}
                   </label>
                   <input
                     type="text"
                     required
                     value={applicantNameBn}
                     onChange={(e) => setApplicantNameBn(e.target.value)}
-                    placeholder="আবেদনকারীর নাম (বাংলা)"
+                    placeholder={selectedType === 'guardian_permission' ? 'অভিভাবকের নাম লিখুন' : 'আবেদনকারীর নাম (বাংলা)'}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                   />
                 </div>
@@ -1671,6 +1671,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                 />
               </div>
 
+              {selectedType !== 'guardian_permission' && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'en' ? 'Date of Birth (DOB)' : 'জন্ম তারিখ'}
@@ -1682,6 +1683,8 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
                 />
               </div>
+              )}
+
 
 
               <div>
@@ -2296,31 +2299,44 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           </div>
         )}
 
-        {/* Guardian Permission */}
+        {/* Guardian Permission: child and employment details */}
         {selectedType === 'guardian_permission' && (
-          <div className="border-t pt-6 grid md:grid-cols-3 gap-4">
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder={language === 'en' ? 'Guardian Name' : 'অভিভাবকের নাম'}
-              value={guardianName}
-              onChange={(e) => setGuardianName(e.target.value)}
-              required
-            />
-
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder={language === 'en' ? 'Relationship' : 'সম্পর্ক'}
-              value={guardianRelation}
-              onChange={(e) => setGuardianRelation(e.target.value)}
-            />
-
-            <input
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder={language === 'en' ? 'Purpose of permission' : 'অনুমতির উদ্দেশ্য'}
-              value={permissionPurpose}
-              onChange={(e) => setPermissionPurpose(e.target.value)}
-              required
-            />
+          <div className="guardian-permission-extra-fields grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                {language === 'en' ? "Son's / Daughter's Name *" : 'পাত্রীর নাম *'}
+              </label>
+              <input
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder={language === 'en' ? "Enter son's / daughter's name" : 'পাত্রীর নাম লিখুন'}
+                value={guardianName}
+                onChange={(e) => setGuardianName(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                {language === 'en' ? 'Job / Organization Name *' : 'চাকুরির নাম *'}
+              </label>
+              <input
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder={language === 'en' ? 'Enter job / organization name' : 'চাকুরির নাম লিখুন'}
+                value={guardianRelation}
+                onChange={(e) => setGuardianRelation(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                {language === 'en' ? 'Comments' : 'মন্তব্য'}
+              </label>
+              <input
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder={language === 'en' ? 'Write comments' : 'মন্তব্য লিখুন'}
+                value={permissionPurpose}
+                onChange={(e) => setPermissionPurpose(e.target.value)}
+              />
+            </div>
           </div>
         )}
 
