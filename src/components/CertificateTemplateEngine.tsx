@@ -717,18 +717,18 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
   if (type === 'guardian_permission') {
     return (
       <div className="border border-slate-300 rounded-lg overflow-hidden bg-white text-xs">
-        <div className="bg-indigo-100/90 px-3 py-1.5 font-bold text-indigo-950 border-b border-slate-300 flex items-center gap-1.5">
-          <UserCheck className="w-3.5 h-3.5 text-indigo-700" />
-          <span>{isEn ? '3. Guardian Particulars & Permission Purpose' : '৩. অভিভাবকের বিবরণ ও অনুমতির উদ্দেশ্য:'}</span>
+        <div className="bg-teal-100/90 px-3 py-1.5 font-bold text-teal-950 border-b border-slate-300 flex items-center gap-1.5">
+          <UserCheck className="w-3.5 h-3.5 text-teal-700" />
+          <span>{isEn ? '3. Guardian Permission Details' : '৩. অভিভাবকের অনুমতিপত্রের বিবরণ:'}</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 text-[11.5px] bg-slate-50/50">
           <div>
-            <span className="text-slate-600 block">অভিভাবকের নাম:</span>
-            <b className="text-slate-900">{application.guardianName || application.fatherName || '—'}</b>
+            <span className="text-slate-600 block">{isEn ? "Son's / Daughter's Name:" : 'পাত্রীর নাম:'}</span>
+            <b className="text-slate-900">{application.guardianName || '—'}</b>
           </div>
           <div>
-            <span className="text-slate-600 block">সম্পর্ক:</span>
-            <b>{application.guardianRelation || 'পিতা/মাতা'}</b>
+            <span className="text-slate-600 block">{isEn ? 'Job / Organization Name:' : 'চাকুরির নাম:'}</span>
+            <b>{application.guardianRelation || '—'}</b>
           </div>
           {application.nidOrBirthReg && (
             <div>
@@ -738,10 +738,12 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
               <b className="text-slate-900">{application.nidOrBirthReg}</b>
             </div>
           )}
-          <div>
-            <span className="text-slate-600 block">অনুমতির উদ্দেশ্য:</span>
-            <b>{application.permissionPurpose || 'শিক্ষা ও ভ্রমণের উদ্দেশ্যে'}</b>
-          </div>
+          {application.permissionPurpose && (
+            <div className="sm:col-span-3">
+              <span className="text-slate-600 block">মন্তব্য:</span>
+              <b>{application.permissionPurpose}</b>
+            </div>
+          )}
         </div>
       </div>
     );
