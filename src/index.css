@@ -1804,3 +1804,67 @@ select option {
     transition: none !important;
   }
 }
+
+
+/* Guardian permission application: match the supplied compact 3-column sample. */
+@media screen {
+  #app-shell .guardian-permission-form {
+    background: #fff;
+    color: #172b35;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 22px;
+    max-width: 760px;
+    margin: 14px auto 0;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid input:not([type="checkbox"]),
+  #app-shell .guardian-permission-form .application-basic-grid select,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields input {
+    min-height: 31px;
+    padding: 6px 9px;
+    border: 1px solid #a8c7c9;
+    border-radius: 6px;
+    background: #bdf8f6;
+    color: #18363b;
+    font-size: 12px;
+    box-shadow: none;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid input:focus,
+  #app-shell .guardian-permission-form .application-basic-grid select:focus,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields input:focus {
+    outline: 2px solid rgba(20, 165, 157, .2);
+    border-color: #20aaa1;
+  }
+
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 760px;
+    margin: 14px auto 0;
+    gap: 14px 22px;
+  }
+
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields label,
+  #app-shell .guardian-permission-form .application-basic-grid label {
+    color: #263b40;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields > div {
+    min-width: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #app-shell .guardian-permission-form .application-basic-grid,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    max-width: none;
+    gap: 10px;
+  }
+}
