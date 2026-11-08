@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { UnionSettingsProvider } from './context/UnionSettingsContext';
 import { Header } from './components/Header';
@@ -30,9 +30,16 @@ function AppContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const mainContentRef = useRef<HTMLElement | null>(null);
 
-  // Reset the shared scroll container whenever the active page changes.
-  useEffect(() => {
-    mainContentRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  // Reset both the document scroll and the app's content scroller on page changes.
+  // The app can scroll at either level depending on viewport height and flex layout.
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
+      mainContentRef.current.scrollLeft = 0;
+    }
   }, [currentView]);
 
   // Test connection on boot per Firebase skill guidelines
@@ -41,6 +48,15 @@ function AppContent() {
   }, []);
 
   const handleNavigate = (view: string, data?: any) => {
+    // Reset immediately as well as after the destination view has rendered.
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
+      mainContentRef.current.scrollLeft = 0;
+    }
+
     if (view === 'apply_form') {
       if (data?.certType) {
         setSelectedCertType(data.certType);
