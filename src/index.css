@@ -1806,7 +1806,151 @@ select option {
 }
 
 
-/* Guardian permission application: match the supplied compact 3-column sample. */
+/* Guardian permission form: balanced, aligned desktop layout with compact mobile stacking. */
+@media screen {
+  #app-shell .guardian-permission-form {
+    background: #fff;
+    color: #172b35;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+    gap: 18px 20px;
+    width: min(100%, 920px);
+    max-width: 920px;
+    margin: 18px auto 0;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div {
+    min-width: 0;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid .guardian-name-combined {
+    grid-column: span 2;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div:nth-child(3) {
+    grid-column: 1;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div:nth-child(4) {
+    grid-column: 2 / span 2;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid input:not([type="checkbox"]),
+  #app-shell .guardian-permission-form .application-basic-grid select,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields input {
+    min-height: 40px;
+    padding: 8px 11px;
+    border: 1px solid #b8d4d8;
+    border-radius: 8px;
+    background: #e1f8f8;
+    color: #18363b;
+    font-size: 13px;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid input:focus,
+  #app-shell .guardian-permission-form .application-basic-grid select:focus,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields input:focus {
+    outline: none;
+    border-color: #20aaa1;
+    background: #f4ffff;
+    box-shadow: 0 0 0 3px rgba(20, 165, 157, .13);
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid label,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields label {
+    display: block;
+    margin-bottom: 6px;
+    color: #344b53;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+  }
+
+  #app-shell .guardian-permission-form .guardian-name-combined > div {
+    grid-template-columns: minmax(105px, .72fr) minmax(0, 1.55fr);
+    gap: 12px;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div:nth-child(4) > div:first-child {
+    align-items: end;
+    gap: 12px;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div:nth-child(4) select {
+    width: 210px;
+    max-width: 42%;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+
+  #app-shell .guardian-permission-form .guardian-permission-address {
+    margin: 24px auto 0;
+    padding: 18px 20px;
+    border: 1px solid #d8e8e9;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fbfefe 0%, #f4fbfb 100%);
+    box-shadow: 0 3px 12px rgba(20, 70, 78, .035);
+  }
+
+  #app-shell .guardian-permission-form .guardian-permission-address-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: min(100%, 920px);
+    max-width: 920px;
+    margin: 20px auto 0;
+    gap: 18px 20px;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields > div {
+    min-width: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #app-shell .guardian-permission-form .application-basic-grid {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: none;
+    gap: 14px;
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid .guardian-name-combined,
+  #app-shell .guardian-permission-form .application-basic-grid > div:nth-child(3),
+  #app-shell .guardian-permission-form .application-basic-grid > div:nth-child(4) {
+    grid-column: auto;
+  }
+
+  #app-shell .guardian-permission-form .guardian-name-combined > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #app-shell .guardian-permission-form .application-basic-grid > div:nth-child(4) select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #app-shell .guardian-permission-form .guardian-permission-address-grid,
+  #app-shell .guardian-permission-form .guardian-permission-extra-fields {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: none;
+    gap: 14px;
+  }
+
+  #app-shell .guardian-permission-form .guardian-permission-address {
+    padding: 14px;
+  }
+}
 @media screen {
   #app-shell .guardian-permission-form {
     background: #fff;
