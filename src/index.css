@@ -2012,3 +2012,47 @@ select option {
     gap: 10px;
   }
 }
+
+
+/* Family certificate: make applicant NID / birth-registration field prominent. */
+@media screen {
+  #app-shell main .application-form .family-nid-field {
+    padding: 12px 14px;
+    border: 1px solid #d7e6e8;
+    border-radius: 10px;
+    background: #f5fbfb;
+  }
+
+  #app-shell main .application-form .family-nid-field > div:first-child {
+    align-items: center;
+  }
+
+  #app-shell main .application-form .family-nid-field > div:first-child label {
+    color: #174b54 !important;
+    font-weight: 700 !important;
+  }
+
+  #app-shell main .application-form .family-nid-field select {
+    width: auto;
+    min-width: 180px;
+    min-height: 34px;
+    margin: 0;
+    background: #fff !important;
+  }
+
+  #app-shell main .application-form .family-nid-field input {
+    min-height: 40px;
+    background: #e4f8f8 !important;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  #app-shell main .application-form .family-nid-field > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #app-shell main .application-form .family-nid-field select {
+    width: 100%;
+  }
+}
