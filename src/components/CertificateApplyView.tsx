@@ -1687,16 +1687,18 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
 
 
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
+              <div className={selectedType === 'family' ? 'family-nid-field' : ''}>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <label className="block text-xs font-semibold text-slate-700">
-                    {language === 'en' ? 'National ID / Birth Registration No' : 'এনআইডি / জন্ম নিবন্ধন নম্বর'}
+                    {language === 'en'
+                      ? (selectedType === 'family' ? "Applicant's National ID / Birth Registration No" : 'National ID / Birth Registration No')
+                      : (selectedType === 'family' ? 'আবেদনকারীর জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন নম্বর' : 'এনআইডি / জন্ম নিবন্ধন নম্বর')}
                   </label>
                   {(selectedType === 'citizenship' || selectedType === 'nationality' || selectedType === 'new_voter' || selectedType === 'family' || selectedType === 'character' || selectedType === 'guardian_permission') && (
                     <select
                       value={identityNumberType}
                       onChange={(e) => setIdentityNumberType(e.target.value as 'nid' | 'birth_reg')}
-                      className="mt-2 w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm"
+                      className="px-3 py-2 border border-slate-300 rounded-lg bg-white text-xs"
                     >
                       <option value="nid">{language === 'en' ? 'National ID number' : 'জাতীয় পরিচয়পত্র নং'}</option>
                       <option value="birth_reg">{language === 'en' ? 'Birth registration number' : 'জন্ম সনদ নং'}</option>
@@ -1719,7 +1721,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                   type="text"
                   value={nidOrBirthReg}
                   onChange={(e) => setNidOrBirthReg(e.target.value)}
-                  placeholder={language === 'en' ? 'Enter NID / Birth Reg No (10, 13 or 17 digits)' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন (১০, ১৩ বা ১৭ ডিজিট)'}
+                  placeholder={language === 'en' ? 'Enter NID / Birth Reg No (10, 13 or 17 digits)' : (selectedType === 'family' ? 'আবেদনকারীর জাতীয় পরিচয়পত্র নম্বর লিখুন' : 'জাতীয় পরিচয়পত্র নম্বর লিখুন (১০, ১৩ বা ১৭ ডিজিট)')}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono text-sm"
                 />
                 {nidCheckedStatus === 'not_found' && !existingRecordFound && !checkingNid && (
