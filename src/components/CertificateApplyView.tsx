@@ -695,7 +695,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
   };
 
   const addFamilyRow = () => {
-    setFamilyMembers([...familyMembers, { name: '', relation: 'পুত্র', age: '', dob: '' }]);
+    setFamilyMembers([...familyMembers, { name: '', relation: 'পুত্র', age: '', dob: '', nidOrBirth: '' }]);
   };
 
   const removeFamilyRow = (idx: number) => {
@@ -2078,6 +2078,15 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                     value={member.relation}
                     onChange={(e) => updateFamilyRow(idx, 'relation', e.target.value)}
                     className="w-28 px-2 py-1 text-xs border border-slate-300 rounded"
+                  />
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder={language === 'en' ? 'NID / Birth Reg No (optional)' : 'জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন নং (ঐচ্ছিক)'}
+                    aria-label={language === 'en' ? 'Member NID / Birth Registration Number' : 'সদস্যের জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন নম্বর'}
+                    value={member.nidOrBirth || ''}
+                    onChange={(e) => updateFamilyRow(idx, 'nidOrBirth', e.target.value)}
+                    className="flex-1 min-w-[170px] px-2 py-1 text-xs border border-slate-300 rounded"
                   />
                   <input
                     type="date"
