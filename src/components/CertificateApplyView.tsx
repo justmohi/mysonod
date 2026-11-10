@@ -817,7 +817,7 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           gender,
           maritalStatus: maritalStatus || 'বিবাহিত',
           nidOrBirthReg,
-          identityNumberType: (selectedType === 'citizenship' || selectedType === 'nationality' || selectedType === 'new_voter' || selectedType === 'same_name' || selectedType === 'family' || selectedType === 'character' || selectedType === 'guardian_permission') ? identityNumberType : undefined,
+          identityNumberType,
           mobile: mobile.trim(),
           occupation: occupation || undefined,
           fee: 2.0,
@@ -1694,16 +1694,15 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
                       ? (selectedType === 'family' ? "Applicant's National ID / Birth Registration No" : 'National ID / Birth Registration No')
                       : (selectedType === 'family' ? 'আবেদনকারীর জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন নম্বর' : 'এনআইডি / জন্ম নিবন্ধন নম্বর')}
                   </label>
-                  {(selectedType === 'citizenship' || selectedType === 'nationality' || selectedType === 'new_voter' || selectedType === 'family' || selectedType === 'character' || selectedType === 'guardian_permission') && (
-                    <select
-                      value={identityNumberType}
-                      onChange={(e) => setIdentityNumberType(e.target.value as 'nid' | 'birth_reg')}
-                      className="px-3 py-2 border border-slate-300 rounded-lg bg-white text-xs"
-                    >
-                      <option value="nid">{language === 'en' ? 'National ID number' : 'জাতীয় পরিচয়পত্র নং'}</option>
-                      <option value="birth_reg">{language === 'en' ? 'Birth registration number' : 'জন্ম সনদ নং'}</option>
-                    </select>
-                  )}
+                  <select
+                    aria-label={language === 'en' ? 'Select identity document type' : 'পরিচয়পত্রের ধরন নির্বাচন করুন'}
+                    value={identityNumberType}
+                    onChange={(e) => setIdentityNumberType(e.target.value as 'nid' | 'birth_reg')}
+                    className="px-3 py-2 border border-slate-300 rounded-lg bg-white text-xs"
+                  >
+                    <option value="nid">{language === 'en' ? 'National ID number' : 'জাতীয় পরিচয়পত্র নং'}</option>
+                    <option value="birth_reg">{language === 'en' ? 'Birth registration number' : 'জন্ম সনদ নং'}</option>
+                  </select>
                   {checkingNid && (
                     <span className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1.5 animate-pulse">
                       <span className="inline-block w-3 h-3 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin" />
