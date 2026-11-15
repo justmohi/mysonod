@@ -1148,6 +1148,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
             </p>
           </div>
         ) : (
+          <>
         {/* Inheritance & Succession */}
         {(type === 'inheritance' || type === 'succession') ? (
           <div className={tableContainerSpacing}>
@@ -1266,6 +1267,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                 </p>
               </>
             )}
+          </>
           </>
         )}
         )}
