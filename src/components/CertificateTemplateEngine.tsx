@@ -241,7 +241,7 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
             {isEn ? `Total Heirs: ${heirs.length}` : `মোট ওয়ারিশ: ${toBengaliNumber(heirs.length)} জন`}
           </span>
         </div>
-        <table style={familyTableStyle} className={`w-full text-center border-collapse ${appTableModeClass}`}>
+        <table className={`w-full text-center border-collapse ${appTableModeClass}`}>
           <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-300">
             <tr>
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 w-12 text-center">{isEn ? 'SL' : 'ক্রমিক নং'}</th>
@@ -283,19 +283,6 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
   if (type === 'family') {
     const members = application.familyMembers || [];
     const membersCount = members.length;
-    // Allocate more table width to the member-name column when names are longer.
-    const longestMemberName = members.reduce((max, member) => Math.max(max, String(member.name || '').trim().length), 0);
-    const familyNameColumnWidth = `${Math.min(34, Math.max(20, 16 + longestMemberName * 0.45))}%`;
-    const familyTableStyle: React.CSSProperties = { width: '100%', tableLayout: 'auto' };
-    const familyNameCellStyle: React.CSSProperties = {
-      ...dynamicCellTdStyle,
-      width: familyNameColumnWidth,
-      minWidth: '90px',
-      whiteSpace: 'normal',
-      overflowWrap: 'anywhere',
-      wordBreak: 'normal',
-      verticalAlign: 'middle'
-    };
     const appTableModeClass = membersCount <= 5 ? 'table-normal' : (membersCount <= 12 ? 'table-compact' : 'table-ultra-compact');
     const appCellPadding = membersCount <= 5 ? '4px 6px' : (membersCount <= 12 ? '2.5px 5px' : '1.5px 4px');
     const appFontSize = membersCount <= 5 ? '11px' : (membersCount <= 12 ? '10px' : '9.5px');
@@ -1104,6 +1091,20 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
     padding: tableRowsCount <= 5 ? '6px 8px' : (tableRowsCount <= 12 ? '3px 6px' : '2px 4px'),
     fontSize: tableRowsCount <= 5 ? '14px' : (tableRowsCount <= 12 ? '12px' : '11px'),
     lineHeight: tableRowsCount <= 5 ? 1.3 : (tableRowsCount <= 12 ? 1.2 : 1.1)
+  };
+
+  const familyMembersForLayout = application.familyMembers || [];
+  const longestFamilyMemberName = familyMembersForLayout.reduce((max, member) => Math.max(max, String(member.name || '').trim().length), 0);
+  const familyNameColumnWidth = `${Math.min(34, Math.max(20, 16 + longestFamilyMemberName * 0.45))}%`;
+  const familyTableStyle: React.CSSProperties = { width: '100%', tableLayout: 'auto' };
+  const familyNameCellStyle: React.CSSProperties = {
+    ...dynamicCellTdStyle,
+    width: familyNameColumnWidth,
+    minWidth: '90px',
+    whiteSpace: 'normal',
+    overflowWrap: 'anywhere',
+    wordBreak: 'normal',
+    verticalAlign: 'middle'
   };
 
   const dynamicHeaderThStyle: React.CSSProperties = {
