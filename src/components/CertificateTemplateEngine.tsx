@@ -1268,6 +1268,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
               </>
             )}
           </>
+        )}
           </>
         )}
       </div>
