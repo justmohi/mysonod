@@ -1137,6 +1137,17 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
   if (isEn) {
     return (
       <div className={isTableCertificate ? tableContainerSpacing : 'space-y-4'}>
+        {/* Death Certificate - English reference layout */}
+        {type === 'death' ? (
+          <div className="space-y-6">
+            <p className="text-justify text-slate-900 text-[16px] sm:text-[17px] leading-[1.85]">
+              This is to certify that <strong>{application.deathPersonName || application.deceasedPersonName || application.applicantNameEn || application.applicantNameBn || '—'}</strong>, Birth Cert/NID No: <strong>{application.deceasedIdNumber || application.nidOrBirthReg || ''}</strong>, Father: <strong>{application.deceasedFatherOrHusbandName || application.fatherNameEn || application.fatherName || '—'}</strong>, Mother: <strong>{application.motherNameEn || application.motherName || '—'}</strong>, Village: <strong>{presentVillage}</strong>, Ward: <strong>{presentWard}</strong>, Post: <strong>{presentPost}</strong>, Upazila: <strong>{presentUpazila}</strong>, District: <strong>{presentDistrict}</strong>. He/She was a permanent resident of this area. According to my knowledge and the information provided by the family and the UP Death Register, he/she passed away due to <strong>{application.deathCause || application.deathReason || ''}</strong> on <strong>{application.deathDate ? new Date(`${application.deathDate}T00:00:00`).toLocaleDateString('en-GB') : ''}</strong>. This is recorded in the UP Death Register Book No: <strong>{application.deathBookNumber || ''}</strong>.
+            </p>
+            <p className="pt-3 text-left text-slate-900 text-[16px] sm:text-[17px] leading-relaxed">
+              I pray for the salvation of his/her departed soul.
+            </p>
+          </div>
+        ) : (
         {/* Inheritance & Succession */}
         {(type === 'inheritance' || type === 'succession') ? (
           <div className={tableContainerSpacing}>
@@ -1256,6 +1267,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
               </>
             )}
           </>
+        )}
         )}
       </div>
     );
