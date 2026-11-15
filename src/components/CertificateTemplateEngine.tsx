@@ -1095,15 +1095,15 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
 
   const familyMembersForLayout = application.familyMembers || [];
   const longestFamilyMemberName = familyMembersForLayout.reduce((max, member) => Math.max(max, String(member.name || '').trim().length), 0);
-  const familyNameColumnWidth = `${Math.min(34, Math.max(20, 16 + longestFamilyMemberName * 0.45))}%`;
+  const familyNameColumnWidth = `${Math.min(40, Math.max(28, 24 + Math.max(0, longestFamilyMemberName - 12) * 0.65))}%`;
   const familyTableStyle: React.CSSProperties = { width: '100%', tableLayout: 'auto' };
   const familyNameCellStyle: React.CSSProperties = {
     ...dynamicCellTdStyle,
     width: familyNameColumnWidth,
-    minWidth: '90px',
+    minWidth: '150px',
     whiteSpace: 'normal',
-    overflowWrap: 'anywhere',
-    wordBreak: 'normal',
+    overflowWrap: 'break-word',
+    wordBreak: 'keep-all',
     verticalAlign: 'middle'
   };
 
@@ -1316,7 +1316,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
               <thead className="bg-emerald-100 text-slate-900 font-bold">
                 <tr>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-12 text-center">ক্রমিক</th>
-                  <th style={dynamicHeaderThStyle} className="border border-slate-400 text-left pl-2">নাম</th>
+                  <th style={{ ...dynamicHeaderThStyle, width: familyNameColumnWidth, minWidth: '150px', whiteSpace: 'normal' }} className="border border-slate-400 text-left pl-2">নাম</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-24 text-center">সম্পর্ক</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 text-center">জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 text-center">জন্ম তারিখ</th>
@@ -1329,7 +1329,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                   application.familyMembers.map((m, i) => (
                     <tr key={i} className="text-center">
                       <td style={dynamicCellTdStyle} className="border border-slate-400 font-semibold">{toBengaliNumber(i + 1)}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
+                      <td style={familyNameCellStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400">{m.relation}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 font-mono">{toBengaliNumber((m as any).nidOrBirth || '—')}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 text-center">{m.dob ? new Date(`${m.dob}T00:00:00`).toLocaleDateString('bn-BD') : '—'}</td>
