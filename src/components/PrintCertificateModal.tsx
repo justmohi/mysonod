@@ -106,6 +106,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
   const mobileFallbackBn = isOperator ? '' : '০১৭৪১-১৮৫৭৬৫';
   const mobileFallbackEn = isOperator ? '' : '01741-185765';
   const titleEn = application.certificateTitleEn || certMeta?.titleEn || 'Official Certificate';
+  const isEnglishDeathCertificate = application.certificateType === 'death' && lang === 'en';
 
 
   const isTableCertificate = application.certificateType === 'inheritance' || 
@@ -1510,7 +1511,7 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                     <>
                       {/* Certificate Title Box */}
                       <div className={`${isUltraCompactTable ? 'my-0.5' : (isTableCertificate ? (isHighRowTable ? 'my-1' : 'my-1.5 sm:my-2') : 'my-3 sm:my-3.5')} text-center`}>
-                        <div className={`inline-block bg-[#0d5c3a] text-white ${isUltraCompactTable ? 'px-4 py-0.5' : (isTableCertificate ? 'px-5 py-1' : 'px-8 py-1.5')} rounded-lg shadow-sm border-2 border-[#d97706]`}>
+                        <div className={isEnglishDeathCertificate ? 'inline-block bg-[#f3f3f3] text-black px-7 py-1 rounded-lg border border-black' : `inline-block bg-[#0d5c3a] text-white ${isUltraCompactTable ? 'px-4 py-0.5' : (isTableCertificate ? 'px-5 py-1' : 'px-8 py-1.5')} rounded-lg shadow-sm border-2 border-[#d97706]`}>
                           <h2 className={`${isUltraCompactTable ? 'text-sm sm:text-base' : (isTableCertificate ? 'text-base sm:text-lg md:text-xl' : 'text-lg sm:text-xl md:text-2xl')} font-extrabold tracking-wide uppercase`}>
                             {lang === 'en' ? titleEn : (titleBn || 'নাগরিকত্ব সনদ')}
                           </h2>
@@ -1528,10 +1529,10 @@ export const PrintCertificateModal: React.FC<PrintCertificateModalProps> = ({
                             : 'text-[16px] sm:text-[17.5px] space-y-4 mt-1 flex-1 flex flex-col justify-start'
                         }`}
                         style={{ 
-                          fontFamily: "'Tiro Bangla', serif", 
-                          lineHeight: isTableCertificate 
+                          fontFamily: isEnglishDeathCertificate ? "'Times New Roman', serif" : "'Tiro Bangla', serif", 
+                          lineHeight: isEnglishDeathCertificate ? 1.85 : (isTableCertificate 
                             ? (isUltraCompactTable ? 1.2 : (isHighRowTable ? 1.35 : 1.6)) 
-                            : 2.0 
+                            : 2.0)
                         }}
                       >
                         <DynamicCertificateBody
