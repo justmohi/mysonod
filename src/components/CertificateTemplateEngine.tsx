@@ -241,7 +241,7 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
             {isEn ? `Total Heirs: ${heirs.length}` : `মোট ওয়ারিশ: ${toBengaliNumber(heirs.length)} জন`}
           </span>
         </div>
-        <table className={`w-full text-center border-collapse ${appTableModeClass}`}>
+        <table style={familyTableStyle} className={`w-full text-center border-collapse ${appTableModeClass}`}>
           <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-300">
             <tr>
               <th style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 w-12 text-center">{isEn ? 'SL' : 'ক্রমিক নং'}</th>
@@ -283,6 +283,19 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
   if (type === 'family') {
     const members = application.familyMembers || [];
     const membersCount = members.length;
+    // Allocate more table width to the member-name column when names are longer.
+    const longestMemberName = members.reduce((max, member) => Math.max(max, String(member.name || '').trim().length), 0);
+    const familyNameColumnWidth = `${Math.min(34, Math.max(20, 16 + longestMemberName * 0.45))}%`;
+    const familyTableStyle: React.CSSProperties = { width: '100%', tableLayout: 'auto' };
+    const familyNameCellStyle: React.CSSProperties = {
+      ...dynamicCellTdStyle,
+      width: familyNameColumnWidth,
+      minWidth: '90px',
+      whiteSpace: 'normal',
+      overflowWrap: 'anywhere',
+      wordBreak: 'normal',
+      verticalAlign: 'middle'
+    };
     const appTableModeClass = membersCount <= 5 ? 'table-normal' : (membersCount <= 12 ? 'table-compact' : 'table-ultra-compact');
     const appCellPadding = membersCount <= 5 ? '4px 6px' : (membersCount <= 12 ? '2.5px 5px' : '1.5px 4px');
     const appFontSize = membersCount <= 5 ? '11px' : (membersCount <= 12 ? '10px' : '9.5px');
@@ -315,7 +328,7 @@ export const DynamicApplicationFormDetails: React.FC<TemplateEngineProps> = ({
               members.map((m, i) => (
                 <tr key={i} className="border-b border-slate-200">
                   <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 font-bold">{toBengaliNumber(i + 1)}</td>
-                  <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2 font-semibold text-slate-900">{m.name}</td>
+                  <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight, whiteSpace: 'normal', overflowWrap: 'anywhere', verticalAlign: 'middle' }} className="border-r border-slate-300 text-left pl-2 font-semibold text-slate-900">{m.name}</td>
                   <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300">{m.relation}</td>
                   <td style={{ padding: appCellPadding, fontSize: appFontSize, lineHeight: appLineHeight }} className="border-r border-slate-300 text-left pl-2 font-mono">
                     {toBengaliNumber((m as any).nidOrBirth || '—')}
@@ -1189,7 +1202,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                     application.familyMembers.map((m, i) => (
                       <tr key={i} className="text-center">
                         <td style={dynamicCellTdStyle} className="border border-slate-400 font-semibold">{i + 1}</td>
-                        <td style={dynamicCellTdStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
+                        <td style={familyNameCellStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400">{relationLabelEn(m.relation)}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400 text-left pl-2 font-mono">{(m as any).nidOrBirth || '—'}</td>
                         <td style={dynamicCellTdStyle} className="border border-slate-400 text-center">{m.dob ? new Date(`${m.dob}T00:00:00`).toLocaleDateString('en-GB') : '—'}</td>
@@ -1298,7 +1311,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
             এই মর্মে পারিবারিক সনদপত্র প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>{application.dob && <>, জন্ম তারিখ: <strong>{formatBengaliDate(application.dob)}</strong></>}, {nidBn && <>{nidBn && <>জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong></>}, </>} {familyGuardianLabelBn}: <strong>{familyGuardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। স্থানীয় তদন্ত ও তথ্য দাতার তথ্য মতে নিম্নে লিখিত ব্যক্তিবর্গ তাহার পরিবারের নিয়মিত আইনসম্মত সদস্য:
           </p>
           <div className={`overflow-x-auto ${tableSpacingClass}`}>
-            <table className={`w-full border border-slate-400 bg-white/95 ${tableModeClass}`}>
+            <table style={familyTableStyle} className={`w-full border border-slate-400 bg-white/95 ${tableModeClass}`}>
               <thead className="bg-emerald-100 text-slate-900 font-bold">
                 <tr>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-12 text-center">ক্রমিক</th>
