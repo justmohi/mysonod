@@ -1104,7 +1104,12 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
     whiteSpace: 'normal',
     overflowWrap: 'break-word',
     wordBreak: 'keep-all',
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
+    backgroundColor: 'transparent'
+  };
+  const familyMemberCellStyle: React.CSSProperties = {
+    ...dynamicCellTdStyle,
+    backgroundColor: 'transparent'
   };
 
   const dynamicHeaderThStyle: React.CSSProperties = {
@@ -1312,7 +1317,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
             এই মর্মে পারিবারিক সনদপত্র প্রদান করা যাইতেছে যে, <strong>{nameBn}</strong>{application.dob && <>, জন্ম তারিখ: <strong>{formatBengaliDate(application.dob)}</strong></>}, {nidBn && <>{nidBn && <>জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong></>}, </>} {familyGuardianLabelBn}: <strong>{familyGuardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা। স্থানীয় তদন্ত ও তথ্য দাতার তথ্য মতে নিম্নে লিখিত ব্যক্তিবর্গ তাহার পরিবারের নিয়মিত আইনসম্মত সদস্য:
           </p>
           <div className={`overflow-x-auto ${tableSpacingClass}`}>
-            <table style={familyTableStyle} className={`w-full border border-slate-400 bg-white/95 ${tableModeClass}`}>
+            <table style={familyTableStyle} className={`w-full border border-slate-400 bg-transparent ${tableModeClass}`}>
               <thead className="bg-emerald-100 text-slate-900 font-bold">
                 <tr>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-12 text-center">ক্রমিক</th>
@@ -1328,7 +1333,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                 {application.familyMembers && application.familyMembers.length > 0 ? (
                   application.familyMembers.map((m, i) => (
                     <tr key={i} className="text-center">
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 font-semibold">{toBengaliNumber(i + 1)}</td>
+                      <td style={familyMemberCellStyle} className="border border-slate-400 font-semibold">{toBengaliNumber(i + 1)}</td>
                       <td style={familyNameCellStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{m.name}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400">{m.relation}</td>
                       <td style={dynamicCellTdStyle} className="border border-slate-400 font-mono">{toBengaliNumber((m as any).nidOrBirth || '—')}</td>
