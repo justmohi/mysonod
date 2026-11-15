@@ -1287,7 +1287,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
             এই মর্মে ওয়ারিশান সনদপত্র প্রদান করা যাইতেছে যে, <strong>{deceasedNameBn}</strong>{deceasedIdNumberBn && <>, {deceasedIdTypeBn} নং: <strong>{deceasedIdNumberBn}</strong></>}, {deceasedGuardianTypeBn}: <strong>{deceasedGuardianNameBn}</strong>, মাতা: <strong>{deceasedMotherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা ছিলেন। {deathDateBn ? <>তথ্য দাতার তথ্য মতে তিনি বিগত <strong>{deathDateBn}</strong> ইং তারিখে </> : <>তথ্য দাতার তথ্য মতে তিনি </>}নিম্নে বর্ণিত আইনগত ওয়ারিশ রেখে মৃত্যু বরণ করেন।
           </p>
           <div className={`overflow-x-auto ${tableSpacingClass}`}>
-            <table className={`w-full border border-slate-400 bg-white/95 ${tableModeClass}`}>
+            <table className={`w-full border border-slate-400 bg-transparent ${tableModeClass}`}>
               <thead className="bg-emerald-100 text-slate-900 font-bold">
                 <tr>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-12 text-center">ক্রমিক নং</th>
@@ -1302,17 +1302,17 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                 {application.heirs && application.heirs.length > 0 ? (
                   application.heirs.map((h, i) => (
                     <tr key={i} className="text-center">
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 font-semibold">{isEn ? i + 1 : toBengaliNumber(i + 1)}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{h.name || '—'}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400">{h.relation || '—'}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 text-left pl-2 font-mono">{h.nidOrBirth && h.nidOrBirth !== '-' ? toBengaliNumber(h.nidOrBirth) : '—'}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400">{h.dob ? `${formatBengaliDate(h.dob)} ${h.age ? `(${toBengaliNumber(h.age)} বছর)` : ''}` : (h.age ? `${toBengaliNumber(h.age)} বছর` : '—')}</td>
-                      <td style={dynamicCellTdStyle} className="border border-slate-400 text-slate-700">{String(h.remarks || '').trim() === 'আইনগত ওয়ারিশ' ? '' : (h.remarks || '')}</td>
+                      <td style={familyMemberCellStyle} className="border border-slate-400 font-semibold">{isEn ? i + 1 : toBengaliNumber(i + 1)}</td>
+                      <td style={familyMemberCellStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{h.name || '—'}</td>
+                      <td style={familyMemberCellStyle} className="border border-slate-400">{h.relation || '—'}</td>
+                      <td style={familyMemberCellStyle} className="border border-slate-400 text-left pl-2 font-mono">{h.nidOrBirth && h.nidOrBirth !== '-' ? toBengaliNumber(h.nidOrBirth) : '—'}</td>
+                      <td style={familyMemberCellStyle} className="border border-slate-400">{h.dob ? `${formatBengaliDate(h.dob)} ${h.age ? `(${toBengaliNumber(h.age)} বছর)` : ''}` : (h.age ? `${toBengaliNumber(h.age)} বছর` : '—')}</td>
+                      <td style={familyMemberCellStyle} className="border border-slate-400 text-slate-700">{String(h.remarks || '').trim() === 'আইনগত ওয়ারিশ' ? '' : (h.remarks || '')}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} style={dynamicCellTdStyle} className="border border-slate-400 text-center text-slate-500">কোনো ওয়ারিশ তালিকা পাওয়া যায়নি</td>
+                    <td colSpan={6} style={familyMemberCellStyle} className="border border-slate-400 text-center text-slate-500">কোনো ওয়ারিশ তালিকা পাওয়া যায়নি</td>
                   </tr>
                 )}
               </tbody>
