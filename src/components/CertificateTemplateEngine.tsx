@@ -1270,7 +1270,6 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                     <div className="w-[220px] text-center">
                       <div className="h-9 border-b border-slate-900" />
                       <p className="mt-2 text-sm font-semibold text-slate-900">Guardian's Signature</p>
-                      <p className="text-xs text-slate-700">Name: {application.applicantNameEn || application.applicantNameBn || '—'}</p>
                     </div>
                   </div>
                 )}
@@ -1583,7 +1582,6 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
           <div className="w-[220px] text-center">
             <div className="h-9 border-b border-slate-900" />
             <p className="mt-2 text-sm font-semibold text-slate-900">অভিভাবকের স্বাক্ষর</p>
-            <p className="text-xs text-slate-700">নাম: {nameBn}</p>
           </div>
         </div>
       )}
