@@ -1265,6 +1265,15 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                 <p className="pt-2 text-slate-900 font-medium">
                   I wish him/her every happiness, peace, and prosperity in all future endeavours.
                 </p>
+                {type === 'guardian_permission' && (
+                  <div className="mt-10 flex justify-start">
+                    <div className="w-[220px] text-center">
+                      <div className="h-9 border-b border-slate-900" />
+                      <p className="mt-2 text-sm font-semibold text-slate-900">Guardian's Signature</p>
+                      <p className="text-xs text-slate-700">Name: {application.applicantNameEn || application.applicantNameBn || '—'}</p>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </>
@@ -1568,6 +1577,15 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
         <p className={pClass}>
           আমি, <strong>{nameBn}</strong>, {nidBn && <>জাতীয় পরিচয়পত্র নং: <strong>{nidBn}</strong>, </>}{guardianLabelBn}: <strong>{guardianNameBn}</strong>, মাতা: <strong>{motherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>, এই মর্মে অঙ্গীকার করছি যে, আমার পুত্র/কন্যা <strong>{application.guardianName || '—'}</strong>। সে <strong>{application.guardianRelation || '—'}</strong>-এ যোগ দিয়ে দেশ রক্ষার কাজে নিয়োগ করার জন্য আমি সুস্থ মস্তিষ্কে এবং স্বজ্ঞানে অনুমতি প্রদান করিলাম। {application.permissionPurpose ? <><strong>{application.permissionPurpose}</strong>। </> : null}<span className="certificate-closing-sentence">আমি তাহার জীবনের সার্বিক উন্নতি ও মঙ্গল কামনা করি।</span>
         </p>
+      )}
+      {type === 'guardian_permission' && (
+        <div className="mt-10 flex justify-start">
+          <div className="w-[220px] text-center">
+            <div className="h-9 border-b border-slate-900" />
+            <p className="mt-2 text-sm font-semibold text-slate-900">অভিভাবকের স্বাক্ষর</p>
+            <p className="text-xs text-slate-700">নাম: {nameBn}</p>
+          </div>
+        </div>
       )}
 
       {/* 26. General / Miscellaneous & Other Certificates (সাধারণ ও অন্যান্য প্রত্যয়ন) */}
