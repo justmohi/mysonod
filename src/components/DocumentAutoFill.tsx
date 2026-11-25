@@ -9,6 +9,7 @@ declare global {
         languages: string,
         options?: { logger?: (message: { status?: string; progress?: number }) => void }
       ) => Promise<{ data: { text: string } }>;
+    };
   }
 }
 
