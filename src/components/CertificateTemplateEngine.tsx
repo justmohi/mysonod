@@ -1093,7 +1093,9 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
     lineHeight: tableRowsCount <= 5 ? 1.3 : (tableRowsCount <= 12 ? 1.2 : 1.1)
   };
 
-  const familyMembersForLayout = application.familyMembers || [];
+  const familyMembersForLayout = (type === 'inheritance' || type === 'succession')
+    ? (application.heirs || [])
+    : (application.familyMembers || []);
   const longestFamilyMemberName = familyMembersForLayout.reduce((max, member) => Math.max(max, String(member.name || '').trim().length), 0);
   const familyNameColumnWidth = `${Math.min(40, Math.max(28, 24 + Math.max(0, longestFamilyMemberName - 12) * 0.65))}%`;
   const familyTableStyle: React.CSSProperties = { width: '100%', tableLayout: 'auto' };
@@ -1295,11 +1297,11 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
             এই মর্মে ওয়ারিশান সনদপত্র প্রদান করা যাইতেছে যে, <strong>{deceasedNameBn}</strong>{deceasedIdNumberBn && <>, {deceasedIdTypeBn} নং: <strong>{deceasedIdNumberBn}</strong></>}, {deceasedGuardianTypeBn}: <strong>{deceasedGuardianNameBn}</strong>, মাতা: <strong>{deceasedMotherNameBn}</strong>, গ্রাম: <strong>{villageBn}</strong>, ওয়ার্ড: <strong>{wardNoBn}</strong>, ডাকঘর: <strong>{postOfficeBn}</strong>, ইউনিয়ন: <strong>{unionNameBn}</strong>, উপজেলা: <strong>{upazilaBn}</strong>, জেলা: <strong>{districtBn}</strong>। তিনি অত্র ইউনিয়নের <strong>{wardNoBn}</strong> নং ওয়ার্ডের একজন স্থায়ী বাসিন্দা ছিলেন। {deathDateBn ? <>তথ্য দাতার তথ্য মতে তিনি বিগত <strong>{deathDateBn}</strong> ইং তারিখে </> : <>তথ্য দাতার তথ্য মতে তিনি </>}নিম্নে বর্ণিত আইনগত ওয়ারিশ রেখে মৃত্যু বরণ করেন।
           </p>
           <div className={`overflow-x-auto ${tableSpacingClass}`}>
-            <table className={`w-full border border-slate-400 bg-transparent ${tableModeClass}`}>
+            <table style={familyTableStyle} className={`w-full border border-slate-400 bg-transparent ${tableModeClass}`}>
               <thead className="bg-emerald-100 text-slate-900 font-bold">
                 <tr>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-12 text-center">ক্রমিক নং</th>
-                  <th style={dynamicHeaderThStyle} className="border border-slate-400 text-left pl-2">ওয়ারিশের নাম</th>
+                  <th style={{ ...dynamicHeaderThStyle, width: familyNameColumnWidth, minWidth: '150px', whiteSpace: 'normal' }} className="border border-slate-400 text-left pl-2">ওয়ারিশের নাম</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-24 text-center">সম্পর্ক</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 text-left pl-2">ভোটার আইডি / জন্ম সনদ</th>
                   <th style={dynamicHeaderThStyle} className="border border-slate-400 w-32 text-center">জন্ম তারিখ / বয়স</th>
@@ -1311,7 +1313,7 @@ export const DynamicCertificateBody: React.FC<TemplateEngineProps> = ({
                   application.heirs.map((h, i) => (
                     <tr key={i} className="text-center">
                       <td style={familyMemberCellStyle} className="border border-slate-400 font-semibold">{isEn ? i + 1 : toBengaliNumber(i + 1)}</td>
-                      <td style={familyMemberCellStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{h.name || '—'}</td>
+                      <td style={familyNameCellStyle} className="border border-slate-400 font-bold text-left pl-2 text-slate-900">{h.name || '—'}</td>
                       <td style={familyMemberCellStyle} className="border border-slate-400">{h.relation || '—'}</td>
                       <td style={familyMemberCellStyle} className="border border-slate-400 text-left pl-2 font-mono">{h.nidOrBirth && h.nidOrBirth !== '-' ? toBengaliNumber(h.nidOrBirth) : '—'}</td>
                       <td style={familyMemberCellStyle} className="border border-slate-400">{h.dob ? `${formatBengaliDate(h.dob)} ${h.age ? `(${toBengaliNumber(h.age)} বছর)` : ''}` : (h.age ? `${toBengaliNumber(h.age)} বছর` : '—')}</td>
