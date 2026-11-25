@@ -52,6 +52,7 @@ import {
 import { EditCertificateModal } from './EditCertificateModal';
 import { WarishApplicationForm } from './WarishApplicationForm';
 import { TradeLicenseApplicationForm } from './TradeLicenseApplicationForm';
+import { DocumentAutoFill } from './DocumentAutoFill';
 
 interface CertificateApplyViewProps {
   initialType?: CertificateType;
@@ -1209,6 +1210,43 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
         />
       ) : (
         <form onSubmit={handleSubmit} className={`application-form space-y-5 ${selectedType === 'guardian_permission' ? 'guardian-permission-form' : ''}`}>
+        <DocumentAutoFill language={language} onTextRecognized={(text) => {
+          const pick = (...labels: string[]) => {
+            for (const label of labels) {
+              const match = text.match(new RegExp('(?:' + label + ')\\s*[:：]?\\s*([^\\n,;]+)', 'i'));
+              if (match?.[1]?.trim()) return match[1].trim();
+            }
+            return '';
+          };
+          const name = pick('আবেদনকারীর নাম', 'নাম');
+          const father = pick('পিতার নাম', 'পিতা');
+          const mother = pick('মাতার নাম', 'মাতা');
+          const nid = pick('জাতীয় পরিচয়পত্র নং', 'জাতীয় পরিচয়পত্র নং', 'জন্ম নিবন্ধন নং', 'NID');
+          const villageName = pick('গ্রাম ?/ ?মহল্লা', 'গ্রাম', 'ঠিকানা');
+          const ward = pick('ওয়ার্ড নং', 'ওয়ার্ড নং', 'ওয়ার্ড', 'ওয়ার্ড');
+          const post = pick('ডাকঘর', 'পোস্ট অফিস');
+          const mobileNumber = pick('মোবাইল নম্বর', 'মোবাইল', 'Mobile');
+          if (name) setApplicantNameBn(name);
+          if (father) setFatherName(father);
+          if (mother) setMotherName(mother);
+          if (nid) setNidOrBirthReg(nid.replace(/[^\\d০-৯]/g, ''));
+          if (villageName) { setPresentVillage(villageName); setVillage(villageName); if (sameAsPresent) setPermanentVillage(villageName); }
+          if (ward) handlePresentWardChange(ward);
+          if (post) handlePresentPostChange(post);
+          if (mobileNumber) setMobile(mobileNumber.replace(/[^\\d০-৯+]/g, ''));
+          if (selectedType === 'family') {
+            const rows = text.split('\\n').map(line => line.trim()).filter(Boolean);
+            const parsedMembers = rows.map(line => {
+              const parts = line.split(/\\s{2,}|\\t/).map(part => part.trim()).filter(Boolean);
+              if (parts.length < 2) return null;
+              const relation = parts.find(part => /পুত্র|কন্যা|স্ত্রী|স্বামী|মেয়ে|ছেলে|son|daughter|wife|husband/i.test(part));
+              if (!relation) return null;
+              const relationValue = /কন্যা|মেয়ে|daughter/i.test(relation) ? 'কন্যা' : /স্ত্রী|wife/i.test(relation) ? 'স্ত্রী' : /স্বামী|husband/i.test(relation) ? 'স্বামী' : 'পুত্র';
+              return { name: parts.find(part => part !== relation && !/^[০-৯0-9]+$/.test(part)) || '', relation: relationValue, age: '', dob: '', nidOrBirth: (line.match(/[০-৯0-9]{10,17}/)?.[0] || '') };
+            }).filter((item): item is FamilyMemberItem => Boolean(item?.name));
+            if (parsedMembers.length) setFamilyMembers(parsedMembers);
+          }
+        }} />
         {/* Clean Duplicate Copy / Previous Record Notice */}
         {sharedProfileFound && !existingRecordFound && (
           <div className="bg-blue-50/95 border border-blue-300 px-4 py-3.5 rounded-xl shadow-2xs animate-in fade-in flex flex-wrap items-center justify-between gap-3">
