@@ -1235,15 +1235,17 @@ export const CertificateApplyView: React.FC<CertificateApplyViewProps> = ({
           if (post) handlePresentPostChange(post);
           if (mobileNumber) setMobile(mobileNumber.replace(/[^\\d০-৯+]/g, ''));
           if (selectedType === 'family') {
-            const rows = text.split('\\n').map(line => line.trim()).filter(Boolean);
-            const parsedMembers = rows.map(line => {
-              const parts = line.split(/\\s{2,}|\\t/).map(part => part.trim()).filter(Boolean);
-              if (parts.length < 2) return null;
+            const rows = text.split('\n').map(line => line.trim()).filter(Boolean);
+            const parsedMembers: FamilyMemberItem[] = [];
+            rows.forEach(line => {
+              const parts = line.split(/\s{2,}|\t/).map(part => part.trim()).filter(Boolean);
+              if (parts.length < 2) return;
               const relation = parts.find(part => /পুত্র|কন্যা|স্ত্রী|স্বামী|মেয়ে|ছেলে|son|daughter|wife|husband/i.test(part));
-              if (!relation) return null;
+              if (!relation) return;
               const relationValue = /কন্যা|মেয়ে|daughter/i.test(relation) ? 'কন্যা' : /স্ত্রী|wife/i.test(relation) ? 'স্ত্রী' : /স্বামী|husband/i.test(relation) ? 'স্বামী' : 'পুত্র';
-              return { name: parts.find(part => part !== relation && !/^[০-৯0-9]+$/.test(part)) || '', relation: relationValue, age: '', dob: '', nidOrBirth: (line.match(/[০-৯0-9]{10,17}/)?.[0] || '') };
-            }).filter((item): item is FamilyMemberItem => Boolean(item?.name));
+              const memberName = parts.find(part => part !== relation && !/^[০-৯0-9]+$/.test(part)) || '';
+              if (memberName) parsedMembers.push({ name: memberName, relation: relationValue, age: '', dob: '', nidOrBirth: (line.match(/[০-৯0-9]{10,17}/)?.[0] || '') });
+            });
             if (parsedMembers.length) setFamilyMembers(parsedMembers);
           }
         }} />
