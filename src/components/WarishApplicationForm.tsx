@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { DocumentAutoFill } from './DocumentAutoFill';
 import { useAuth } from '../context/AuthContext';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
@@ -438,6 +439,32 @@ export const WarishApplicationForm: React.FC<WarishApplicationFormProps> = ({
           </div>
         )}
 
+        <DocumentAutoFill onTextRecognized={(text) => {
+          const pick = (...labels: string[]) => {
+            for (const label of labels) {
+              const match = text.match(new RegExp('(?:' + label + ')\\s*[:：]?\\s*([^\\n,;]+)', 'i'));
+              if (match?.[1]?.trim()) return match[1].trim();
+            }
+            return '';
+          };
+          const deceased = pick('মৃত ব্যক্তির নাম', 'মৃতের নাম', 'নাম');
+          const id = pick('জাতীয় পরিচয়পত্র নং', 'জাতীয় পরিচয়পত্র নং', 'জন্ম নিবন্ধন নং', 'NID');
+          const father = pick('পিতার নাম', 'পিতা');
+          const mother = pick('মাতার নাম', 'মাতা');
+          const villageName = pick('গ্রাম ?/ ?মহল্লা', 'গ্রাম', 'ঠিকানা');
+          const ward = pick('ওয়ার্ড নং', 'ওয়ার্ড নং', 'ওয়ার্ড', 'ওয়ার্ড');
+          const post = pick('ডাকঘর', 'পোস্ট অফিস');
+          const applicant = pick('আবেদনকারীর নাম', 'আবেদনকারীর');
+          if (deceased) setDeceasedName(deceased);
+          if (id) setDeceasedIdNumber(id.replace(/[^\\d০-৯]/g, ''));
+          if (father) setGuardianName(father);
+          if (mother) setMotherName(mother);
+          if (villageName) setVillage(villageName);
+          if (ward) setWardNo(ward);
+          if (post) setPostOffice(post);
+          if (applicant) setApplicantNameBn(applicant);
+        }} />
+        
         {/* Section 1: মৃত ব্যক্তির তথ্য (Deceased Person Information) */}
         <div className="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
