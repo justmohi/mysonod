@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DocumentAutoFill } from './DocumentAutoFill';
 import { useAuth } from '../context/AuthContext';
 import { useUnionSettings } from '../context/UnionSettingsContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
@@ -507,6 +508,30 @@ export const TradeLicenseApplicationForm: React.FC<TradeLicenseApplicationFormPr
             <p className="font-bold">{successMessage}</p>
           </div>
         )}
+
+        <DocumentAutoFill language={isEnglish ? 'en' : 'bn'} onTextRecognized={(text) => {
+          const pick = (...labels: string[]) => {
+            for (const label of labels) {
+              const match = text.match(new RegExp('(?:' + label + ')\\s*[:：]?\\s*([^\\n,;]+)', 'i'));
+              if (match?.[1]?.trim()) return match[1].trim();
+            }
+            return '';
+          };
+          const business = pick('প্রতিষ্ঠানের নাম', 'ব্যবসা প্রতিষ্ঠানের নাম', 'Business Name');
+          const owner = pick('মালিকের নাম', 'উদ্যোক্তার নাম', 'আবেদনকারীর নাম', 'নাম');
+          const father = pick('পিতার নাম', 'পিতা');
+          const mother = pick('মাতার নাম', 'মাতা');
+          const nid = pick('জাতীয় পরিচয়পত্র নং', 'জাতীয় পরিচয়পত্র নং', 'জন্ম নিবন্ধন নং', 'NID');
+          const mobile = pick('মোবাইল নম্বর', 'মোবাইল', 'Mobile');
+          const village = pick('গ্রাম ?/ ?মহল্লা', 'গ্রাম', 'ঠিকানা');
+          if (business) setBusinessName(business);
+          if (owner) setOwnerName(owner);
+          if (father) setOwnerFatherOrHusbandName(father);
+          if (mother) setOwnerMotherName(mother);
+          if (nid) setOwnerNidOrBirth(nid.replace(/[^\\d০-৯]/g, ''));
+          if (mobile) setOwnerMobile(mobile.replace(/[^\\d০-৯+]/g, ''));
+          if (village) setPresentAddress(prev => ({ ...prev, village }));
+        }} />
 
         {/* ========================================================
             Section 1: অফিসিয়াল তথ্য (Official Information)
